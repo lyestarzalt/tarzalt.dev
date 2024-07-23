@@ -12,7 +12,6 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          submodules: true  # Ensure that all submodules are checked out
           fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
 
       - name: Initialize Submodules
@@ -33,7 +32,8 @@ jobs:
       - name: Build
         run: hugo --minify
 
-      - uses: FirebaseExtended/action-hosting-deploy@v0
+      - name: Deploy
+        uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_TARZALT_26568 }}
