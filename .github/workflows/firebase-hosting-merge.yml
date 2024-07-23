@@ -12,14 +12,11 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          submodules: recursive  # Ensure that all submodules are checked out
-
-      - name: Initialize Submodules
-        run: |
-          git submodule update --init --recursive
+          submodules: true  # Ensure that all submodules are checked out
+          fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
 
       - name: Setup Hugo
-        uses: peaceiris/actions-hugo@v2
+        uses: peaceiris/actions-hugo@v3
         with:
           hugo-version: 'latest'
           extended: true
