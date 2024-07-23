@@ -3,12 +3,12 @@ languageCode = "en-us"
 title = "Tarzalt Lyes - Portfolio"
 theme = "fixit"
 
-
 [module]
-  [[module.imports]]
-    path = "github.com/hugo-fixit/FixIt"
+[[module.imports]]
+  path = "github.com/hugo-fixit/FixIt"
 
 
+  
 [params]
 description = "Welcome to my professional portfolio site. Explore my projects, read my blog posts, and learn more about my work."
 keywords = ["portfolio", "blog", "projects", "Tarzalt Lyes"]
