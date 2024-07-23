@@ -3,13 +3,16 @@ languageCode = "en-us"
 title = "Tarzalt Lyes - Portfolio"
 theme = "fixit"
 
+
+[module]
+  [[module.imports]]
+    path = "github.com/hugo-fixit/FixIt"
+
+
 [params]
 description = "Welcome to my professional portfolio site. Explore my projects, read my blog posts, and learn more about my work."
 keywords = ["portfolio", "blog", "projects", "Tarzalt Lyes"]
 
-#[params.author]
-#name = "Tarzalt Lyes"
-#avatar = "https://avatars.githubusercontent.com/u/24894134?s=400&u=f2b942884829f239c8283549050b67e04e659232&v=4" # Ensure you have this avatar image in your static/images directory
 
 [params.header]
 desktopMode = "sticky" # Header remains at the top of the page as you scroll

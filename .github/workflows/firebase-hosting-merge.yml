@@ -11,13 +11,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: 'recursive' 
+          submodules: 'recursive'  # Ensure that all submodules are checked out
 
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v2
         with:
           hugo-version: 'latest'
           extended: true
+
+      - name: Initialize Hugo Modules
+        run: hugo mod init github.com/lyestarzalt/tarzalt.dev
 
       - name: Build
         run: hugo --minify
