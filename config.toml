@@ -1,0 +1,8 @@
+baseURL = "https://tarzalt.dev/"
+languageCode = "en-us"
+title = "Tarzalt Lyes - Portfolio"
+theme = "ananke" 
+
+[module]
+  [[module.imports]]
+    path = "github.com/theNewDynamic/gohugo-theme-ananke"
