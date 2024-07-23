@@ -19,14 +19,10 @@ jobs:
         run: git submodule update --init --recursive
 
       - name: List Themes Directory
-        run: |
-          echo "Listing themes directory"
-          ls -la themes
+        run: ls -la themes
 
       - name: List FixIt Directory
-        run: |
-          echo "Listing FixIt directory"
-          ls -la themes/FixIt
+        run: ls -la themes/FixIt
 
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
@@ -37,8 +33,7 @@ jobs:
       - name: Build
         run: hugo --minify
 
-      - name: Deploy
-        uses: FirebaseExtended/action-hosting-deploy@v0
+      - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_TARZALT_26568 }}
