@@ -1,13 +1,13 @@
 ---
-title: Welcome to My Blog
+title: Welcome to My Blog2
 subtitle:
 date: 2024-07-23T13:55:58+08:00
 slug: fb9c470
 draft: true
 author:
-  name:
+  name: Lyes Tarzalt
   link:
-  email:
+  email: lyes.trzlt@gmai.com
   avatar:
 description:
 keywords:
