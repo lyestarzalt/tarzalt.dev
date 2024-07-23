@@ -3,12 +3,6 @@ languageCode = "en-us"
 title = "Tarzalt Lyes - Portfolio"
 theme = "Fixit"
 
-[module]
-[[module.imports]]
-  path = "github.com/hugo-fixit/FixIt"
-
-
-  
 [params]
 description = "Welcome to my professional portfolio site. Explore my projects, read my blog posts, and learn more about my work."
 keywords = ["portfolio", "blog", "projects", "Tarzalt Lyes"]
@@ -18,7 +12,7 @@ keywords = ["portfolio", "blog", "projects", "Tarzalt Lyes"]
 desktopMode = "sticky" # Header remains at the top of the page as you scroll
 mobileMode = "auto"    # Automatically adjust header based on device type
 [params.header.title]
-logo = "https://avatars.githubusercontent.com/u/24894134?s=400&u=f2b942884829f239c8283549050b67e04e659232&v=4"         
+logo = "https://avatars.githubusercontent.com/u/24894134?s=400&u=f2b942884829f239c8283549050b67e04e659232&v=4"
 name = "Tarzalt Lyes - Portfolio"
 
 [params.footer]
@@ -56,7 +50,7 @@ enable = true
 avatarURL = "https://avatars.githubusercontent.com/u/24894134?s=400&u=f2b942884829f239c8283549050b67e04e659232&v=4"
 title = "Welcome to my portfolio!"
 subtitle = "I am Tarzalt Lyes, a dedicated software engineer and technology enthusiast. Here you can find my latest projects and blog posts about my journey in tech."
-typeit = false  
+typeit = false
 social = true
 
 [params.home.posts]
