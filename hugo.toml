@@ -1,0 +1,4 @@
+baseURL = "https://tarzalt.dev/"
+languageCode = "en-us"
+title = "Tarzalt Lyes - Portfolio"
+theme = "fixit"
