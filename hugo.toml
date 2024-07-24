@@ -1,7 +1,7 @@
 baseURL = "https://tarzalt.dev"
 languageCode = "en-us"
 title = "Tarzalt Lyes - Portfolio"
-theme = "Fixit"
+theme = "FixIt"
 
 [params]
 description = "Welcome to my professional portfolio site. Explore my projects, read my blog posts, and learn more about my work."
