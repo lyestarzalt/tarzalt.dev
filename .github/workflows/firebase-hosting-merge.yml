@@ -12,16 +12,8 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
-
-      - name: Initialize Submodules
-        run: git submodule update --init --recursive
-
-      - name: List Themes Directory
-        run: ls -la themes
-
-      - name: List FixIt Directory
-        run: ls -la themes/FixIt
+          submodules: true 
+          fetch-depth: 0    
 
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
