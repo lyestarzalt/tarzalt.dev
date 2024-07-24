@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+      
+permissions:
+  contents: write
 
 jobs:
   build_and_deploy:
@@ -18,8 +21,11 @@ jobs:
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
         with:
-          hugo-version: 'latest'
+          hugo-version: '0.129.0'
           extended: true
+          
+      - name: List themes directory
+        run: ls -l themes/
 
       - name: Build
         run: hugo --minify
