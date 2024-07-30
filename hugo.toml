@@ -7,7 +7,7 @@ theme = "FixIt"
 description = "Welcome to my professional portfolio site. Explore my projects, read my blog posts, and learn more about my work."
 keywords = ["portfolio", "blog", "projects", "Tarzalt Lyes"]
 [params.analytics]
-enable = false
+enable = true
 [params.analytics.google]
       id = "G-DSSGSXVXJE"
       anonymizeIP = true
