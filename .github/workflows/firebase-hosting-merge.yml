@@ -23,12 +23,9 @@ jobs:
         with:
           hugo-version: '0.129.0'
           extended: true
-          
-      - name: List themes directory
-        run: ls -l themes/
 
       - name: Build
-        run: hugo --minify
+        run: hugo --minify --environment production
 
       - name: Deploy
         uses: FirebaseExtended/action-hosting-deploy@v0

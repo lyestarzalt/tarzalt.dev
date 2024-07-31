@@ -1,0 +1,59 @@
+baseURL: "https://tarzalt.dev"
+languageCode: "en-us"
+title: "Tarzalt Lyes - Portfolio"
+theme: "FixIt"
+
+params:
+  description: "Welcome to my professional portfolio site. Explore my projects, read my blog posts, and learn more about my work."
+  keywords: ["portfolio", "blog", "projects", "Tarzalt Lyes"]
+  analytics:
+    enable: true
+    google:
+      id: "G-DSSGSXVXJE"
+      anonymizeIP: true
+  header:
+    desktopMode: "sticky"
+    mobileMode: "auto"
+    title:
+      logo: "https://avatars.githubusercontent.com/u/24894134?s=400&u=f2b942884829f239c8283549050b67e04e659232&v=4"
+      name: "Tarzalt Lyes - Portfolio"
+  footer:
+    enable: false
+    copyright: false
+    author: false
+    siteTime:
+      enable: true
+      icon: "fa-solid fa-heartbeat"
+  home:
+    paginate: 10
+    profile:
+      enable: true
+      avatarURL: "https://avatars.githubusercontent.com/u/24894134?s=400&u=f2b942884829f239c8283549050b67e04e659232&v=4"
+      title: "Welcome to my portfolio!"
+      subtitle: "I am Tarzalt Lyes, a dedicated software engineer and technology enthusiast. Here you can find my latest projects and blog posts about my journey in tech."
+      typeit: false
+      social: true
+    posts:
+      enable: true
+      paginate: 6
+
+menu:
+  main:
+    - identifier: "about"
+      name: "About"
+      url: "/"
+      weight: 1
+    - identifier: "blog"
+      name: "Blog"
+      url: "/posts/"
+      weight: 2
+    - identifier: "projects"
+      name: "Projects"
+      url: "/projects/"
+      weight: 3
+
+social:
+  GitHub: "lyestarzalt"
+  LinkedIn: "lyes-tarzalt"
+
+
