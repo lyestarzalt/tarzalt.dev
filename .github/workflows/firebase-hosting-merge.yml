@@ -23,10 +23,12 @@ jobs:
         with:
           hugo-version: '0.129.0'
           extended: true
+      - name: List root directory
+        run: ls -l
 
 
       - name: Build
-        run: hugo --minify
+        run: HUGO_ENVIRONMENT=production hugo --minify --config hugo.yaml
 
       - name: Deploy
         uses: FirebaseExtended/action-hosting-deploy@v0
