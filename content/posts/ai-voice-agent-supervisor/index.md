@@ -71,7 +71,7 @@ The platform already had everything we needed. We just had to use it differently
 ---
 ## What I Built
 
-I built two things over four days: a real-time supervisor dashboard where you can monitor and intervene in AI phone calls, and the backend infrastructure that makes it work.
+I built two things: a real-time supervisor dashboard where you can monitor and intervene in AI phone calls, and the backend infrastructure that makes it work.
 
 The dashboard is what supervisors actually see and use. The backend is what solves the hard problems - conversation history, ghost call prevention, and real-time synchronization.
 I built two different views because, honestly, I wasn't sure which one would actually be useful in practice.
@@ -89,7 +89,7 @@ Here's the clever bit: negative sentiment calls automatically drift toward the c
 
 {{< image src="animation_bubble.gif" caption="Bubble view in action. Red = angry customer, green = happy customer. The pulsing means someone's talking right now." width="100%" >}}
 
-I had few days, a motion animation library, and free will. This is what happened.
+I had time, a motion animation library, and free will. This is what happened.
 
 **How it actually works:**
 
