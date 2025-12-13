@@ -495,17 +495,22 @@ The middleware subscribes to `__keyspace@0__:call:*` which means "tell me every 
 When someone's speaking, updates fire constantly. Every transcription chunk triggers a notification. That's too much, so I added debouncing - updates get batched, multiple changes within 50ms get collapsed into one broadcast. The dashboard sees smooth updates without getting hammered.
 
 ---
-
 ## Real-Time Debug & Metrics
 
 One of the most valuable features: **live instrumentation** from the agent.
 
-The Python agent streams debug events directly to the dashboard using LiveKit's data channel:
+The Python agent streams debug events directly to the dashboard using LiveKit's text messaging with a dedicated topic channel. This is invaluable for QA and testers - they can watch exactly what the agent is doing in real-time, see which tools fire, angent handoff, state change, system prompts, track LLM response times, and debug issues without digging through logs.
 
 ```python
 class DebugSender:
     @staticmethod
-    def send_debug_event(event_type: str, data: dict):
+    def send_debug_event(event_type: str, data: dict[str, Any]):
+        asyncio.create_task(
+            DebugSender._send_debug_event(event_type, data)
+        )
+
+    @staticmethod
+    async def _send_debug_event(event_type: str, data: dict[str, Any]):
         job_ctx = get_job_context()
         
         debug_payload = {
@@ -515,12 +520,14 @@ class DebugSender:
             "timestamp": time.time()
         }
         
-        asyncio.create_task(
-            job_ctx.room.local_participant.publish_data(
-                json.dumps(debug_payload)
-            )
+        await job_ctx.room.local_participant.send_text(
+            json.dumps(debug_payload),
+            topic="agent-debug"
         )
 ```
+
+The dashboard subscribes to the `agent-debug` topic and receives these events in real-time without polling. Events are sent asynchronously (fire-and-forget) so they never block the agent's STT → LLM → TTS pipeline.
+
 
 What gets streamed:
 - Agent state transitions (initializing → listening → thinking → speaking)
@@ -535,18 +542,11 @@ What gets streamed:
 The agent subscribes to LiveKit's metrics hooks and forwards everything to the dashboard:
 
 ```python
-@self.agent_session.on("metrics_collected")
-def on_metrics_collected(ev: MetricsCollectedEvent):
-    metrics = ev.metrics
-    
-    DebugSender.send_metrics_event({
-        "type": type(metrics).__name__,
-        "duration": metrics.duration,
-        "ttft": getattr(metrics, 'ttft', None),
-        "ttfb": getattr(metrics, 'ttfb', None),
-        "tokens": getattr(metrics, 'total_tokens', None)
-    })
+@session.on("metrics_collected")
+def on_metrics_collected(ev) -> None:
+    DebugSender.send_metrics_event(ev)
 ```
+
 ---
 {{< image src="metrics.png" caption="Debug panel with live events" width="100%" >}}
 
