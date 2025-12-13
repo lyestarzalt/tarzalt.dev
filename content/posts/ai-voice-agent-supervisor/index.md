@@ -40,58 +40,55 @@ comment:
 > [!ABSTRACT] TL;DR
 > Built a real-time monitoring dashboard for AI voice agents using LiveKit's participant model. Supervisors join calls as regular participants, middleware handles state sync via Redis, and webhook fallbacks prevent ghost calls. Four days from concept to production.
 
-I had a voice agent working in production. Nothing fancy - the usual STT → LLM → TTS pipeline that everyone's building these days. (I'll write about that setup in a separate post, but honestly, if you've seen one voice agent architecture, you've seen them all.)
+I had a voice agent working in production. Nothing fancy - the usual STT → LLM → TTS pipeline that everyone's building these days. (I'll write about that setup in a separate post, but if you've seen one voice agent architecture, you've seen them all.)
 
-The agent was handling calls just fine. Natural-sounding voice, could hold a conversation, didn't embarrass itself too often. We had the whole testing setup too - datasets covering different scenarios, LLM-as-judge evals in Langfuse, post-call transcript analysis, the works.
+The agent handled calls fine. Natural-sounding voice, could hold a conversation, didn't embarrass itself too often. We had the testing setup - datasets covering different scenarios, LLM-as-judge evals in [Langfuse][langfuse], post-call transcript analysis, the works.
 
-But here's the thing: all of that happens after the call.
+But all of that happens after the call.
 
-What if the AI completely misunderstands someone right now? What if a customer is getting frustrated this second? What if they need a human and we're making them sit through three more minutes of the AI trying to help?
+The AI might completely misunderstand someone right now. A customer might be getting frustrated this second, needing a human while we make them sit through three more minutes of AI troubleshooting. We'd see it in the post-call analytics. We'd adjust our prompts, add it to the test suite, prevent it from happening to the next customer. 
 
-Sure, we'd see it in the post-call analytics. We'd adjust our prompts, add it to the test suite, prevent it from happening to the next customer. Great for iteration. Terrible for the person on the phone right now who's about to hang up and never call back.
+Great for iteration. Terrible for the person on the phone right now.
 
-That seemed bad.
+I started digging through [LiveKit's documentation][livekit-docs] looking for some monitoring API, maybe a way to tap into calls and observe them live. I was mentally preparing to build some complex system that hooks into media streams from the outside when I noticed something about LiveKit's architecture.
 
-So I started digging through LiveKit's documentation looking for some monitoring API, maybe a way to tap into calls and observe them live. I was mentally preparing to build some complex system that hooks into media streams from the outside when I realized something.
+LiveKit works through [rooms][livekit-rooms] - realtime sessions where [participants][livekit-participants] connect. A participant can be a user, an agent, or anything that needs to send or receive audio/video/data. Each participant publishes tracks (audio, video) and subscribes to tracks from other participants.
 
-I stared at the LiveKit architecture. Here's how LiveKit actually works: there are "rooms" - realtime sessions where participants connect. A participant can be a user, an agent, or basically anything that needs to send or receive audio/video/data. Each participant can publish tracks (audio, video) and subscribe to tracks from other participants.
-
-When a call happens in our system:
-
-- Customer joins the room as a participant, publishes their audio
+When a call happens:
+- Customer joins the room as a participant (via [WebRTC][webrtc] or [SIP][livekit-sip] if calling from a phone), publishes their audio
 - AI agent joins the room as a participant, subscribes to customer audio, publishes its own audio back
-- They talk via WebRTC
+- They communicate through LiveKit's media server
 
-What if supervisors could just... join the room too? As another participant?
+What if supervisors could join the room too?
 
-Not as some special observer with a complicated monitoring system watching from outside. Just join. Like the third person on a conference call. They could subscribe to both the customer's and agent's audio tracks to listen. They could publish their own audio track to speak. They could mute the agent's track entirely to take over.
+Not as some special observer with a monitoring system watching from outside. Just join as another participant. Subscribe to both the customer's and agent's audio tracks to listen. Publish their own audio track to speak. Mute the agent's track to take over.
 
-The platform already had everything we needed. We just had to use it differently.
+The platform had everything we needed.
 
 ---
 ## What I Built
 
 I built two things: a real-time supervisor dashboard where you can monitor and intervene in AI phone calls, and the backend infrastructure that makes it work.
 
-The dashboard is what supervisors actually see and use. The backend is what solves the hard problems - conversation history, ghost call prevention, and real-time synchronization.
-I built two different views because, honestly, I wasn't sure which one would actually be useful in practice.
+The dashboard is what supervisors see and use. The backend is what solves the hard problems - conversation history, ghost call prevention, and real-time synchronization.
+I built two different views because I wasn't sure which one would be useful in practice.
 
 > [!TIP]
 > I used [LiveKit's Next.js starter](https://github.com/livekit-examples/agent-starter-react) as the foundation.
 
 **Bubble View**
 
-This one looks a bit ridiculous but I think it's cool. Calls appear as glowing bubbles floating in a hexagonal grid. When someone's speaking, their bubble pulses. Happy customers are green, frustrated ones are red.
+This one looks ridiculous. I like it. Calls appear as glowing bubbles floating in a hexagonal grid. When someone's speaking, their bubble pulses. Happy customers are green, frustrated ones are red.
 
 The inspiration came from the Apple Watch - how do you pack maximum information into minimal space? I thought: why not apply that to call monitoring? Instead of boring rows of data, make each call a living, breathing bubble that tells you everything at a glance.
 
-Here's the clever bit: negative sentiment calls automatically drift toward the center of the screen. So when you've got 10+ calls happening at once, the ones that need attention are literally harder to miss.
+Negative sentiment calls automatically drift toward the center of the screen. So when you've got 10+ calls happening at once, the ones that need attention are literally harder to miss.
 
 {{< image src="animation_bubble.gif" caption="Bubble view in action. Red = angry customer, green = happy customer. The pulsing means someone's talking right now." width="100%" >}}
 
 I had time, a motion animation library, and free will. This is what happened.
 
-**How it actually works:**
+**How it works:**
 
 The bubble positioning isn't random - it uses a hexagonal packing algorithm. Think honeycomb. I wrote a function that calculates positions in concentric rings:
 - Center position (layer 0): 1 bubble
@@ -120,29 +117,30 @@ function getHexagonalRingPositions(layer, radius, centerX, centerY) {
 
 Priority placement happens before positioning. Calls get sorted by sentiment - negative sentiment gets priority 0 (highest), neutral gets 1, positive gets 2 (lowest). Then they fill positions from center outward. So when someone's frustrated, their bubble ends up in the inner rings automatically. No manual intervention needed.
 
-The bubbles themselves are built with Framer Motion for the animations and a custom particle system (tsparticles) for the sparkle effects. Each bubble's particle density and speed changes based on the agent's state - more particles when thinking, faster when speaking. It's completely unnecessary but it makes the state visible at a glance.
+The bubbles themselves are built with Framer Motion for the animations and a custom particle system (tsparticles) for the sparkle effects. Each bubble's particle density and speed changes based on the agent's state - more particles when thinking, faster when speaking.
 
 **Card View**
 
-Sometimes you just want a normal grid. This shows all the important details at a glance - who's on the call, how long they've been talking, current sentiment, that sort of thing.
+Sometimes you want a normal grid. This shows all the important details at a glance - who's on the call, how long they've been talking, current sentiment, that sort of thing.
 
 {{< image src="card_view.png" caption="Traditional card grid view for when you want details without the fancy graphics." width="100%" >}}
 
 **Room View**
 
-Click any call and you're in. This is where the magic happens.
+Click any call to enter the monitoring interface.
+
 
 {{< image src="room_view.png" caption="Inside a call. Live transcript on the left, audio controls on the right, debug panel at the bottom." width="100%" >}}
 
 You get:
-- Live transcript of everything being said (this updates as people speak, it's surprisingly satisfying to watch)
+- Live transcript of everything being said (updates as people speak)
 - Audio controls to listen, speak, or take over
-- Debug panel showing what the AI is actually doing under the hood
+- Debug panel showing what the AI is doing under the hood
 - Connection stats because sometimes you need to know if the lag is your problem or theirs
 
 **The Control Bar**
 
-This is where you actually intervene:
+This is where you intervene:
 
 {{< image src="control_bar.png" caption="The 'oh shit' buttons. Mute the AI, take over, or transfer to a human agent." width="100%" >}}
 
@@ -161,11 +159,12 @@ Beyond live monitoring, there's a separate analytics view for the business side 
 
 {{< image src="post_call.png" caption="Post-call analytics dashboard" width="100%" >}}
 
-This wasn't the interesting part to build - just queries on archived call data. But it's what management actually looks at.
+This wasn't interesting to build - just queries on archived call data. But it's what operational people looks at.
+
 
 ---
 
-### What You Can Actually Do
+### What You Can Do
 
 Once you're in a call, you've got five options:
 
@@ -175,7 +174,7 @@ Join any call and just listen. The customer has no idea you're there. The AI kee
 
 **2. Guide the AI via Text**
 
-This one's weird but surprisingly effective. You can type messages to the AI, and it'll speak your instructions to the customer. 
+This one's unusual but effective. You can type messages to the AI, and it'll speak your instructions to the customer. 
 
 Type: "Tell them we're closed today"
 
@@ -205,11 +204,11 @@ The LLM has instructions in its system prompt to handle supervisor messages spec
 
 **3. Take Over**
 
-Hit the "Take Over" button. AI goes silent (but keeps listening). Now it's just you and the customer. You handle the call like a normal human agent would.
+Hit the "Take Over" button. AI goes silent (but keeps listening). Now it's you and the customer. You handle the call like a normal human agent would.
 
 This uses LiveKit's `RoomServiceClient.mutePublishedTrack()` API. The frontend makes a POST to `/api/mute-agent` which calls:
 
-```typescript
+```typescript {title="mute_agent.ts"}
 await roomService.mutePublishedTrack(
   roomName, 
   agentIdentity, 
@@ -239,13 +238,6 @@ Sometimes you just need to route them to a real human agent. Click transfer, pic
 
 The customer's experience is just like any other call transfer. They hear a brief message, maybe some hold music, then they're connected to the call center queue.
 
----
-
-The whole supervisor intervention system relies on LiveKit's participant model. Everyone - customer, AI, supervisors - they're all just participants in the same room. The magic is in the permission handling and track management, not some complex middleware layer.
-
-
-The whole supervisor intervention flow uses LiveKit's track muting API. When you take over, the frontend makes a POST request to `/api/mute-agent` which calls `RoomServiceClient.mutePublishedTrack()`. When you hand back, it unmutes. Simple, but it works.
-Let me revise the entire second half to match the tone and style of the first part:
 
 
 ---
@@ -255,6 +247,8 @@ Let me revise the entire second half to match the tone and style of the first pa
 Remember how I said supervisors just join the room as another participant? That's true for audio. But there's a problem: **LiveKit is stateless by design.**
 
 Join a room mid-call and you see... nothing. No message history, no conversation context, no idea what's been happening for the last five minutes. Great for privacy, terrible for supervisors trying to help.
+
+First time a supervisor joined a live call, they asked: "Is the agent even talking? What's the customer's problem?" The audio worked fine. Everything else was blank.
 
 I needed to solve three things:
 1. Store conversation history somewhere
@@ -271,7 +265,7 @@ I kept it simple: three pieces that talk to each other in specific ways.
 graph TB
     Customer[Customer Phone] -->|PSTN/SIP| LK[LiveKit Server]
     Agent[Python Agent] -->|WebRTC Audio| LK
-    Agent -->|HTTP Events| MW[NestJS Middleware]
+    Agent -->|POST /call-event| MW[NestJS Middleware]
     LK -->|Webhooks Backup| MW
     
     MongoDB[(MongoDB)] <--> |Historical Data| MW
@@ -301,7 +295,7 @@ It's fast.
 
 ### 2. The State Layer (NestJS + Redis)
 
-This is where it gets interesting. The middleware serves **two critical purposes**, and understanding why requires knowing what can go wrong.
+The middleware serves **two critical purposes**, and understanding why requires knowing what can go wrong.
 
 ---
 
@@ -333,7 +327,7 @@ sequenceDiagram
 
 Every time something happens - customer speaks, AI responds, sentiment changes - the agent sends an HTTP event to the middleware:
 
-```python
+```python {title="call_event_store.py"}
 class CallEventStore:
     def __init__(self):
         self.webhook_url = os.getenv("CALL_SUPERVISOR_URL")
@@ -364,7 +358,9 @@ The middleware stores everything in Redis and broadcasts updates via WebSocket t
 
 ## The Disaster Scenario (Why We Need Livekit Server Webhooks)
 
-But what happens when things go wrong? Here's the nightmare scenario:
+Two days after launch, the dashboard showed 23 active calls. Only 3 were real. The rest were ghosts - calls that ended hours ago but never disappeared. Supervisors were clicking into dead rooms, confused why nobody was talking.
+
+Here's what was happening:
 
 ```mermaid
 sequenceDiagram
@@ -394,7 +390,7 @@ sequenceDiagram
 
 **Secondary: Webhook Fallback (The Safety Net)**
 
-Here's the problem: **what if the agent crashes before sending the "call ended" event?**
+**The problem: what if the agent crashes before sending the "call ended" event?**
 
 You end up with ghost calls. Dashboard shows them as active forever. Redis has stale data. MongoDB never gets the final record. Supervisors can't tell if it's a real call or a zombie.
 
@@ -429,7 +425,7 @@ No more ghost calls.
 
 ## The Late-Join Problem
 
-Now here's the thing that makes this whole architecture necessary. When a supervisor joins mid-call:
+This is why the architecture is necessary. When a supervisor joins mid-call:
 
 ```mermaid
 sequenceDiagram
@@ -557,8 +553,6 @@ def on_metrics_collected(ev: MetricsCollectedEvent):
 > [!TIP]
 > Debug events aren't persisted - they're real-time only. The metrics get saved to Langfuse for historical analysis, but the debug stream is ephemeral. It exists for live monitoring.
 
-This is how we found performance bottlenecks. Watching the debug stream during actual calls revealed issues that logs never showed. You see the time-to-first-token spike, you immediately know the LLM is slow. You see the sentiment flip negative, you know something went wrong.
-
 ---
 
 ## The Tricky Parts
@@ -571,93 +565,79 @@ The frontend uses this to color-code messages and position bubbles in the hexago
 
 Could swap this for a small LLM like Llama 3.2 8B with structured output. Probably more accurate, definitely more expensive to run.
 
-### Edge Case: Stale Rooms
+---
 
-When a call ends, there's a delay before the room disappears from the dashboard. If the agent fails to send the end-call event and a supervisor clicks the stale room before the webhook arrives, it creates a NEW room instance. The webhook comes in but can't find the room because it was recreated.
+## What I'd Do Differently
+
+This is an MVP built in four days. Here are the known issues and how I'd fix them:
+
+### Agent Muting Implementation
+
+Currently, muting the agent only silences their audio track. The agent's state machine keeps running: listening → thinking → speaking. It generates LLM responses and synthesizes speech that nobody hears.
+
+### Chat History Synchronization
+
+The agent pushes the entire conversation history to the middleware on every message. Middleware broadcasts this to all connected frontends, which then diff the arrays to animate only new messages. Wasteful. Should switch to event-based updates - send only deltas, not full state snapshots.
+
+### Room Lifecycle Management
+
+There's a race condition: if a call ends and the room closes, but the frontend hasn't updated yet, supervisors can click the stale room entry and accidentally create a new empty room with the same name. If the agent fails to send the end-call event and a supervisor clicks the stale room before the webhook arrives, it creates a new room instance.
 
 Current mitigation: webhook fallback catches most cases, rooms auto-expire after timeout. Proper fix needs idempotent room handling and better state reconciliation between agent events and webhooks.
 
----
-## What I'd Do Differently
+### Horizontal Scaling
 
-This is an MVP built in four days. There are clear problems and clear solutions to each, but the main goal was to keep it simple and get something working.
-
-**Chat History Architecture**
-
-Right now, when you join a room, the middleware dumps chat history via WebSocket. Better approach: pull chat messages from persistent storage (MongoDB) on join, then rely purely on LiveKit's data channel for new messages. Simpler, more reliable, one less thing for the middleware to handle.
-
-**Move Control Logic to Middleware**
-
-All the control actions - muting, SIP transfers, taking over - currently happen from the dashboard directly to LiveKit. Should move these to middleware endpoints. Better auth control, easier logging, and you can add validation logic without touching the frontend.
-
-**Proper Authentication**
-
-The `supervisor_` identity prefix is embarrassingly simple. Need actual JWT tokens with role validation. Both supervisors and the AI agent should authenticate properly before joining rooms.
-
-**Smarter Intervention Triggers**
-
-Currently using a sentiment analysis model to detect when calls go bad. Should add text-based trigger rules alongside it - keywords, phrases, specific patterns that always need human attention. ML for general sentiment, rules for known edge cases.
-
-**Supervisor Room Permissions**
-
-Supervisors can technically create new rooms right now. They shouldn't. Add a check in room creation - only the agent service can spawn new rooms. Supervisors can only join existing ones. Fixes the stale room edge case entirely.
-
-**Performance Alerts**
-
-We capture TTFT and TTFB metrics but don't do anything with them in real-time. Should add alerts when these spike - if time-to-first-token hits 3+ seconds, something's wrong and supervisors should know immediately.
-
-**Scalability**
-
-Single Redis instance, single middleware instance, no load balancing. Works fine for current call volume but would need rethinking for production scale. Redis clustering, horizontal middleware scaling, proper session affinity - all solvable problems, just not priorities for the MVP.
+Single Redis instance, single middleware instance. On paper, everything can scale horizontally - Redis clustering, multiple middleware nodes with session affinity. In practice, untested beyond current load.
 
 ---
 ## The Tech Stack
 
 **Voice Agent**
-- Python + LiveKit Agents SDK (multi-agent workflow)
-- Whisper V3 (speech-to-text)
-- Qwen 2.5 32B, self-hosted (conversation LLM)
+- Python + [LiveKit Agents SDK][livekit-agents] (multi-agent workflow)
+- [Whisper V3][whisper] (speech-to-text)
+- [Qwen 2.5 32B][qwen], self-hosted (conversation LLM)
 - Custom TTS, self-hosted (voice synthesis)
 
 **Middleware**
-- NestJS (event processing & WebSocket gateway)
-- Redis (active call state, message buffering)
-- MongoDB (call archives, historical data)
+- [NestJS][nestjs] (event processing & WebSocket gateway)
+- [Redis][redis] (active call state, message buffering)
+- [MongoDB][mongodb] (call archives, historical data)
 
-I picked NestJS because it had WebSocket support, Redis integration, and decent architectural patterns built in. Also wanted to work more with TypeScript beyond just React.
+I picked NestJS because it had WebSocket support, Redis integration, and decent architectural patterns built in. Also wanted to work more with TypeScript beyond React.
 
 **Dashboard**
-- Next.js (supervisor interface)
-- LiveKit Components React (voice integration)
-- Framer Motion (animations)
-- tsparticles (particle effects)
+- [Next.js][nextjs] (supervisor interface)
+- [LiveKit Components React][livekit-components] (voice integration)
+- [Framer Motion][framer-motion] (animations)
+- [tsparticles][tsparticles] (particle effects)
 
 **Observability**
-- Langfuse (LLM metrics, traces, performance monitoring)
-
----
-
-## Key Takeaways
-
-**Leverage your platform's design** - LiveKit's room model made this possible. Embrace platform patterns instead of fighting them.
-
-**Separate concerns by performance requirements** - Audio needs low latency (direct WebRTC). State needs persistence (through middleware). Control needs reliability (direct API calls).
-
-**Build redundancy for critical paths** - Agent events primary, webhooks fallback. Never trust single points of failure. Ghost calls are worse than no monitoring.
-
-**Real-time instrumentation is invaluable** - Debug events and metrics exposed optimization opportunities we wouldn't have found in post-call analysis.
-
-**Start simple, add complexity when needed** - Basic monitoring first, advanced features based on actual usage patterns.
-
----
-
-## Closing Thoughts
-
-Building this took about a week from concept to working prototype. The hardest part wasn't the tech - it was figuring out the right UX for human-AI collaboration and understanding which events matter in real-time versus which can wait for post-call analysis.
+- [Langfuse][langfuse] (LLM metrics, traces, performance monitoring)
 
 
 ---
 
 ## Questions?
 
-Building something similar? Have questions about the architecture? Found a better way to solve the ghost call problem? Reach out on [LinkedIn](https://linkedin.com/in/lyes-tarzalt)
+Building something similar? Have questions about the architecture? Found a better way to solve the ghost call problem? Reach out on [LinkedIn][linkedin].
+
+<!-- Link references -->
+[langfuse]: https://langfuse.com/
+[livekit-docs]: https://docs.livekit.io/
+[livekit-rooms]: https://docs.livekit.io/home/get-started/api-primitives/#room
+[livekit-participants]: https://docs.livekit.io/home/get-started/api-primitives/#participant
+[livekit-tracks]: https://docs.livekit.io/home/get-started/api-primitives/#track
+[livekit-subscription]: https://docs.livekit.io/home/get-started/api-primitives/#track-subscription
+[livekit-sip]: https://docs.livekit.io/sip/
+[livekit-agents]: https://docs.livekit.io/agents/
+[livekit-components]: https://docs.livekit.io/reference/components/react/
+[webrtc]: https://webrtc.org/
+[whisper]: https://github.com/openai/whisper
+[qwen]: https://huggingface.co/Qwen
+[nestjs]: https://nestjs.com/
+[redis]: https://redis.io/
+[mongodb]: https://www.mongodb.com/
+[nextjs]: https://nextjs.org/
+[framer-motion]: https://www.framer.com/motion/
+[tsparticles]: https://particles.js.org/
+[linkedin]: https://linkedin.com/in/lyes-tarzalt
