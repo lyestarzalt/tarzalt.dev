@@ -569,8 +569,6 @@ Could swap this for a small LLM like Llama 3.2 8B with structured output. Probab
 
 ## What I'd Do Differently
 
-This is an MVP built in four days. Here are the known issues and how I'd fix them:
-
 ### Agent Muting Implementation
 
 Currently, muting the agent only silences their audio track. The agent's state machine keeps running: listening → thinking → speaking. It generates LLM responses and synthesizes speech that nobody hears.
