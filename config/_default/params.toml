@@ -178,7 +178,7 @@ disableThemeInject = false
     avatarURL = "https://avatars.githubusercontent.com/u/24894134?s=400&u=1e46b372934da8aa1e45434fb4ec2929b5352142&v=4"
     avatarMenu = ""
     title = "Hi, I'm Lyes 👋"
-    subtitle = "Building software. Writing about the messy parts - the architecture, the bugs, and the solutions that actually ship to production."  
+    subtitle = "Software engineer. I build things and sometimes write about them."  
     typeit = true
     social = true
   [home.posts]

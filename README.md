@@ -1,6 +1,6 @@
 # tarzalt.dev
 
-My personal blog and portfolio. Writing about software engineering, architecture decisions, and the messy parts of building software.
+Source code for my personal blog.
 
 **Live site:** [tarzalt.dev](https://tarzalt.dev)
 
