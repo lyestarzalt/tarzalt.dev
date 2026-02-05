@@ -1,0 +1,27 @@
+<svg viewBox="0 0 400 160" xmlns="http://www.w3.org/2000/svg">
+  <style>text { font-family: system-ui, sans-serif; font-size: 11px; }</style>
+
+  <defs>
+    <marker id="arrowGreen" markerWidth="4" markerHeight="4" refX="2" refY="2" orient="auto-start-reverse">
+      <path d="M 0 0 L 4 2 L 0 4 z" fill="#16a34a"/>
+    </marker>
+    <marker id="arrowRed" markerWidth="4" markerHeight="4" refX="2" refY="2" orient="auto-start-reverse">
+      <path d="M 0 0 L 4 2 L 0 4 z" fill="#e11d48"/>
+    </marker>
+  </defs>
+
+  <!-- Counter-clockwise (outer) -->
+  <rect x="30" y="30" width="120" height="90" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <!-- CCW arrow curving around -->
+  <path d="M 70 100 A 32 32 0 1 0 70 50" fill="none" stroke="#16a34a" stroke-width="2" marker-end="url(#arrowGreen)"/>
+  <text x="90" y="145" text-anchor="middle" fill="#16a34a" font-weight="600">Counter-clockwise</text>
+  <text x="90" y="158" text-anchor="middle">= Outer boundary (fill)</text>
+
+  <!-- Clockwise (hole) -->
+  <rect x="220" y="30" width="120" height="90" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <rect x="255" y="55" width="50" height="40" fill="white" stroke="#e11d48" stroke-width="2"/>
+  <!-- CW arrow curving inside the hole -->
+  <path d="M 272 68 A 10 10 0 1 1 272 82" fill="none" stroke="#e11d48" stroke-width="2" marker-end="url(#arrowRed)"/>
+  <text x="280" y="145" text-anchor="middle" fill="#e11d48" font-weight="600">Clockwise</text>
+  <text x="280" y="158" text-anchor="middle">= Hole (cutout)</text>
+</svg>

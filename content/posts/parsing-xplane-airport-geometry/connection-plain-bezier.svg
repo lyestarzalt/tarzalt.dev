@@ -1,0 +1,14 @@
+<svg viewBox="0 0 400 160" xmlns="http://www.w3.org/2000/svg">
+  <style>text { font-family: system-ui, sans-serif; font-size: 12px; }</style>
+  <line x1="300" y1="110" x2="360" y2="140" stroke="#e11d48" stroke-width="2" stroke-dasharray="5,4"/>
+  <line x1="300" y1="110" x2="240" y2="50" stroke="#16a34a" stroke-width="2" stroke-dasharray="5,4"/>
+  <path d="M 80 110 Q 240 50 300 110" fill="none" stroke="#2563eb" stroke-width="4"/>
+  <circle cx="80" cy="110" r="8" fill="#2563eb"/>
+  <circle cx="300" cy="110" r="8" fill="#2563eb"/>
+  <circle cx="360" cy="140" r="5" fill="#e11d48"/>
+  <circle cx="240" cy="50" r="5" fill="#16a34a"/>
+  <text x="80" y="135" text-anchor="middle">111</text>
+  <text x="300" y="135" text-anchor="middle">112</text>
+  <text x="365" y="155" fill="#e11d48" font-size="10">stored</text>
+  <text x="240" y="40" text-anchor="middle" fill="#16a34a" font-size="10">mirrored</text>
+</svg>
