@@ -6,9 +6,9 @@
 # FixIt 0.2.15 | CHANGED FixIt theme version
 version = "0.3.X"
 # site description
-description = "Personal blog about software engineering, and technology. Sharing insights, projects, and opinions on modern tech."
+description = "Lyes Tarzalt - Software engineer writing about parsing, flight simulation tools, and building practical software."
 # site keywords
-keywords = ["Lyes Tarzalt", "Software Engineer", "AI", "Voice Agents", "Full Stack", "Technology", "Blog", "Programming"]
+keywords = ["Lyes Tarzalt", "Software Engineer", "apt.dat", "X-Plane", "Parsing", "Bezier Curves", "Flight Simulation", "Full Stack", "Technology", "Blog"]
 # site default theme ["light", "dark", "auto"]
 defaultTheme = "auto"
 # which hash function used for SRI, when empty, no SRI is used

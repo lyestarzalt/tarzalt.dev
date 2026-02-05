@@ -1,8 +1,8 @@
 ---
-title: "X-Plane Linear Features"
-subtitle: "Painted lines, bezier curves, and the type propagation bug"
-date: 2024-12-15T10:00:00+00:00
-lastmod: 2024-12-15T10:00:00+00:00
+title: "apt.dat Linear Features: Parsing Taxiway Markings"
+subtitle: "Type propagation and the split bezier bug"
+date: 2026-02-05T10:00:00+00:00
+lastmod: 2026-02-05T10:00:00+00:00
 draft: false
 
 description: "How X-Plane encodes taxiway markings using linear features, why they're simpler than pavements but have their own gotchas, and the bug that made lines disappear at corners."
@@ -11,6 +11,8 @@ summary: "X-Plane linear features (row code 120) are painted taxiway markings. T
 
 tags: ["X-Plane", "Bezier Curves", "Parsing", "Geometry", "Flight Simulation"]
 categories: ["Engineering"]
+featuredImage: "runway-airfield-marking-taxiway-heading-to-31456452.webp"
+featuredImagePreview: "runway-airfield-marking-taxiway-heading-to-31456452.webp"
 
 lightgallery: true
 pageStyle: "wide"
@@ -37,20 +39,20 @@ comment:
 ---
 
 > [!ABSTRACT] TL;DR
-> X-Plane linear features (row code 120) are painted taxiway markings - centerlines, hold bars, edge lines. They use the same bezier system as pavements but are stroked paths instead of filled polygons. Each node has a line type that defines the segment's appearance. The catch: when bezier curves meet at sharp corners (split beziers), you can lose type information if you're not careful. The fix: always add coordinates even when skipping degenerate curves.
+> X-Plane linear features (row code 120) are painted taxiway markings: centerlines, hold bars, edge lines. They use the same bezier system as pavements but are stroked paths instead of filled polygons. Each node has a line type that defines the segment's appearance. The catch: when bezier curves meet at sharp corners (split beziers), you can lose type information if you're not careful. The fix: always add coordinates even when skipping degenerate curves.
 
 ## What Are Linear Features?
 
-In my previous post, I covered how X-Plane defines airport geometry - taxiways, aprons, runways. Those are all **filled polygons**. You trace a boundary, close the shape, fill it with asphalt or concrete texture.
+X-Plane airports have two kinds of geometry: **filled polygons** (taxiways, aprons, runways) and **stroked paths** (painted markings). I covered polygons in my [previous post on parsing X-Plane airport geometry]({{< relref "/posts/parsing-xplane-airport-geometry" >}}). This post focuses on the second type.
 
-But airports have more than just pavement. They have **painted markings**:
+Airports have **painted markings** everywhere:
 
 - Yellow centerlines guiding aircraft along taxiways
 - Hold short bars telling pilots where to stop
 - ILS critical area boundaries
 - Edge lines, direction arrows, runway numbers
 
-These aren't filled shapes - they're **stroked paths**. Lines painted on the surface.
+These aren't filled shapes, they're **stroked paths**. Lines painted on the surface.
 
 X-Plane calls these **linear features** (row code 120).
 
@@ -62,13 +64,18 @@ X-Plane calls these **linear features** (row code 120).
 115 47.467 -122.309 4 102
 ```
 
-The format looks similar to pavements - a header line, then nodes defining the path. But instead of closing into a polygon, it ends with `115` or `116` (open path terminator). And each node has extra data: the **line type** and **light type**.
+The format looks similar to pavements: a header line, then nodes defining the path. But instead of closing into a polygon, it ends with `115` or `116` (open path terminator). And each node has extra data: the **line type** and **light type**.
 
 ## Linear Features vs Pavements
 
-If you've read my post on parsing X-Plane airport geometry, you know the bezier system: 111 for plain nodes, 112 for bezier nodes, control points that need mirroring, split beziers for sharp corners.
+Linear features use the same bezier system as pavements:
 
-Linear features use **the exact same node system**. Same row codes, same bezier math, same control point rules.
+- **111/115**: Plain nodes (straight lines)
+- **112/116**: Bezier nodes (curves with control points)
+- Control points define the **outgoing** direction, so incoming curves need the control mirrored
+- Multiple nodes at the same position create sharp corners (split beziers)
+
+If you want the full deep-dive on bezier math and control point mirroring, see my [post on parsing X-Plane airport geometry]({{< relref "/posts/parsing-xplane-airport-geometry" >}}).
 
 The differences:
 
@@ -123,8 +130,10 @@ Embedded taxiway lights:
 | 102 | Blue edge (omnidirectional) |
 | 103 | Amber hold (unidirectional) |
 | 104 | Amber pulsating |
-| 105 | Alternating amber/green |
+| 105 | Alternating amber/green (bidirectional) |
 | 106 | Red stop bar |
+| 107 | Green centerline (unidirectional) |
+| 108 | Alternating amber/green (unidirectional) |
 
 ### How Types Flow
 
@@ -136,7 +145,7 @@ Node 0 (type 1)  ───segment 0→1 (type 1)───>  Node 1 (type 4)  ─
 
 The type on Node 0 applies to the line FROM Node 0 TO Node 1. The type on Node 1 applies to the line from Node 1 to Node 2. And so on.
 
-If a node doesn't specify a type, it defaults to **0** (transparent/nothing). This is intentional - some linear features have gaps.
+If a node doesn't specify a type, it defaults to **0** (transparent/nothing). This is intentional. Some linear features have gaps.
 
 ## Segment Splitting
 
@@ -196,7 +205,7 @@ Linear features use bezier curves just like pavements. The rules are identical:
 - **112 → 111**: Quadratic bezier, use control directly
 - **112 → 112**: Cubic bezier, first direct + second mirrored
 
-If you need a refresher on control point mirroring, check my previous post. The short version: the control point stored at a 112 node points in the **outgoing** direction. To draw a curve arriving at that node, flip the control to the opposite side.
+Quick refresher on control point mirroring: the control point stored at a 112 node points in the **outgoing** direction. To draw a curve arriving at that node, flip the control to the opposite side. See the [bezier mirroring section]({{< relref "/posts/parsing-xplane-airport-geometry#the-mirroring-trick" >}}) in my previous post for the full explanation.
 
 ### Type Inheritance in Beziers
 
@@ -223,7 +232,7 @@ Now we get to the bug that cost me hours of debugging.
 
 Bezier curves are inherently smooth. The incoming and outgoing curves at a node share a tangent direction. Great for rounded corners.
 
-But sometimes you need a **sharp corner** - a 90-degree turn, an abrupt direction change.
+But sometimes you need a **sharp corner**, a 90-degree turn, an abrupt direction change.
 
 X-Plane's solution: place **multiple nodes at the exact same position** with different control points.
 
@@ -289,7 +298,7 @@ The coordinate exists. Its type matters. Even if there's no curve to draw, the t
 
 ### 1. Type 0 is Intentional, Not Missing
 
-When a node has no type specified, it defaults to 0. But type 0 isn't an error - it means "don't paint anything here."
+When a node has no type specified, it defaults to 0. But type 0 isn't an error. It means "don't paint anything here."
 
 ```
 120 Line with gap
@@ -310,7 +319,7 @@ If a linear feature starts with a 112 (bezier) node:
 112 ... ctrl 0  0      ← Second node
 ```
 
-There's no curve TO the first node - it's the starting point. Just record its position and control. The curve will be drawn when processing the second node.
+There's no curve TO the first node. It's the starting point. Just record its position and control. The curve will be drawn when processing the second node.
 
 ### 3. Types Can Change Mid-Curve
 
@@ -325,7 +334,7 @@ The curve from Node 0 to Node 1 is drawn. But what type is it?
 
 Per the rule: intermediate points get the starting node's type (1), the endpoint gets the ending node's type (4).
 
-When you split by type, the curve ends up in the type-1 segment, and the endpoint becomes the start of the type-4 segment. The visual result is correct - the style changes at the node position.
+When you split by type, the curve ends up in the type-1 segment, and the endpoint becomes the start of the type-4 segment. The visual result is correct. The style changes at the node position.
 
 ### 4. Lights and Paint Are Independent
 
@@ -352,7 +361,29 @@ Each node contributes something:
 - Second: starts outgoing curve with different control
 - Third: may redefine type for next segment
 
-Don't deduplicate coordinates blindly - you'll lose type information.
+Don't deduplicate coordinates blindly. You'll lose type information.
+
+### 6. Single Value Ambiguity
+
+Sometimes a node has only one value after coordinates:
+
+```
+111 47.464 -122.311 102     ← Is this line type 102 or light type 102?
+```
+
+The trick: **line types max out at 92, light types start at 101**.
+
+If the single value is ≥100, it's a light type. Otherwise, it's a line type.
+
+```python
+def parse_type_value(value):
+    if value >= 100:
+        return (0, value)      # (line_type=0, light_type=value)
+    else:
+        return (value, 0)      # (line_type=value, light_type=0)
+```
+
+This disambiguation is necessary because some apt.dat files omit the second value when it's zero.
 
 ## The Complete Pipeline
 
@@ -366,7 +397,7 @@ Don't deduplicate coordinates blindly - you'll lose type information.
 
 ## Summary
 
-Linear features reuse the bezier system from pavements - same node codes, same control point math. The added complexity is per-segment styling through line types.
+Linear features reuse the bezier system from pavements. Same node codes, same control point math. The added complexity is per-segment styling through line types.
 
 The key insights:
 - Type on a node = style for segment **starting** at that node
@@ -374,6 +405,13 @@ The key insights:
 - Split beziers need coordinates added even when curves are skipped
 - Type 0 is intentional transparency, not missing data
 
-Get these right, and your taxiway markings will render correctly - including at those tricky sharp corners where bezier curves meet.
+Get these right, and your taxiway markings will render correctly, including at those tricky sharp corners where bezier curves meet.
 
 *The split bezier bug was three lines to fix. Finding it took considerably longer. Such is debugging.*
+
+## Resources
+
+- [Parsing X-Plane Airport Geometry]({{< relref "/posts/parsing-xplane-airport-geometry" >}}) - Companion post on pavements and bezier math
+- [apt.dat specification](https://developer.x-plane.com/article/airport-data-apt-dat-file-format-specification/) - Official format documentation
+- [xplane_apt_convert](https://github.com/CarlosBergillos/xplane_apt_convert) - Python library for apt.dat conversion
+- [X-Plane Scenery Gateway](https://gateway.x-plane.com/) - Community airport data repository
