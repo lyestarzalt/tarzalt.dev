@@ -1,0 +1,9 @@
+<svg viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
+  <style>text { font-family: system-ui, sans-serif; font-size: 11px; }</style>
+  <!-- Jagged version -->
+  <path d="M 30 90 L 80 90 L 80 40 L 130 40" fill="none" stroke="#94a3b8" stroke-width="8" stroke-linejoin="miter"/>
+  <text x="80" y="110" text-anchor="middle" fill="#64748b">Without curves</text>
+  <!-- Smooth version -->
+  <path d="M 230 90 L 270 90 Q 310 90 310 50 L 310 40 L 350 40" fill="none" stroke="#2563eb" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="290" y="110" text-anchor="middle" fill="#2563eb">With bezier curves</text>
+</svg>

@@ -1,0 +1,62 @@
+<svg viewBox="0 0 550 280" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: system-ui, sans-serif; font-size: 11px; }
+    .mono { font-family: ui-monospace, monospace; font-size: 10px; }
+  </style>
+
+  <!-- LEFT: Normal Bezier (smooth) -->
+  <rect x="15" y="15" width="250" height="170" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+  <text x="140" y="38" text-anchor="middle" fill="#92400e" font-weight="600" font-size="12">Normal Bezier</text>
+  <text x="140" y="52" text-anchor="middle" fill="#92400e" font-size="10">One node = smooth curve</text>
+
+  <!-- Smooth S-curve through single node -->
+  <path d="M 50 130 Q 140 70 230 130" stroke="#f59e0b" stroke-width="3" fill="none"/>
+
+  <!-- Single node -->
+  <circle cx="140" cy="100" r="8" fill="#f59e0b"/>
+
+  <!-- Single control point -->
+  <circle cx="140" cy="65" r="4" fill="#b45309"/>
+  <line x1="140" y1="100" x2="140" y2="65" stroke="#b45309" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="152" y="62" fill="#b45309" font-size="9">ctrl</text>
+
+  <text x="140" y="160" text-anchor="middle" fill="#78350f" font-size="10">Control defines both</text>
+  <text x="140" y="172" text-anchor="middle" fill="#78350f" font-size="10">in and out direction</text>
+
+  <!-- RIGHT: Split Bezier (corner) -->
+  <rect x="285" y="15" width="250" height="170" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="410" y="38" text-anchor="middle" fill="#166534" font-weight="600" font-size="12">Split Bezier</text>
+  <text x="410" y="52" text-anchor="middle" fill="#166534" font-size="10">Two nodes same spot = corner</text>
+
+  <!-- Corner: two curves meeting at sharp angle -->
+  <path d="M 320 140 Q 370 140 410 100" stroke="#16a34a" stroke-width="3" fill="none"/>
+  <path d="M 410 100 Q 450 60 500 60" stroke="#16a34a" stroke-width="3" fill="none"/>
+
+  <!-- Split node (two circles to show two nodes) -->
+  <circle cx="410" cy="100" r="10" fill="#16a34a" stroke="white" stroke-width="2"/>
+  <circle cx="410" cy="100" r="6" fill="#166534"/>
+
+  <!-- Control point 1 (incoming) -->
+  <circle cx="370" cy="140" r="4" fill="#16a34a"/>
+  <line x1="410" y1="100" x2="370" y2="140" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="352" y="152" fill="#16a34a" font-size="9">ctrl 1</text>
+
+  <!-- Control point 2 (outgoing) -->
+  <circle cx="450" cy="60" r="4" fill="#166534"/>
+  <line x1="410" y1="100" x2="450" y2="60" stroke="#166534" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="456" y="55" fill="#166534" font-size="9">ctrl 2</text>
+
+  <text x="410" y="160" text-anchor="middle" fill="#14532d" font-size="10">Independent controls</text>
+  <text x="410" y="172" text-anchor="middle" fill="#14532d" font-size="10">= sharp corner</text>
+
+  <!-- Bottom: Data examples -->
+  <rect x="15" y="200" width="250" height="65" rx="6" fill="#fefce8" stroke="#eab308"/>
+  <text x="25" y="218" class="mono" fill="#713f12">112 47.465 -122.311 ctrl ctrl</text>
+  <text x="25" y="232" fill="#92400e" font-size="9">One node with one control</text>
+  <text x="25" y="255" fill="#78350f" font-size="10" font-weight="600">Smooth transition</text>
+
+  <rect x="285" y="200" width="250" height="65" rx="6" fill="#f0fdf4" stroke="#22c55e"/>
+  <text x="295" y="218" class="mono" fill="#166534">112 47.465 -122.311 ctrl1 ctrl1</text>
+  <text x="295" y="232" class="mono" fill="#166534">112 47.465 -122.311 ctrl2 ctrl2</text>
+  <text x="295" y="255" fill="#14532d" font-size="10" font-weight="600">Same position = corner</text>
+</svg>
