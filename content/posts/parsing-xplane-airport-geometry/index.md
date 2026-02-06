@@ -58,7 +58,7 @@ Left: connecting coordinates with straight lines. Right: what it should look lik
 
 The format uses **bezier curves**. The problem: storing smooth curves as coordinate lists requires hundreds of points. A bezier curve solves this by defining the curve mathematically with just 3-4 points (start, end, and 1-2 control points). You then sample the curve at whatever resolution you need. Store 4 points, generate 128 when rendering. The curve stays smooth at any zoom level because it's computed, not approximated.
 
-I knew bezier curves from graphics programming. What I didn't know was how X-Plane encoded them in a way that would confuse me for weeks.
+I knew bezier curves from graphics programming. What I didn't know was how X-Plane encoded them.
 
 ## The apt.dat File
 
@@ -140,7 +140,7 @@ Odd numbers are plain, even numbers have bezier control points.
 
 When you connect a plain node to another plain node, you draw a straight line. When bezier nodes are involved, you draw curves. The control point tells the curve how to bend.
 
-Sounds simple enough. Here's where I got stuck.
+Sounds simple enough. But there's a catch.
 
 ## How Bezier Curves Work
 
@@ -212,11 +212,11 @@ The curve bent the wrong way.
 
 ![Wrong vs right curve direction](why-mirror-needed.svg)
 
-I stared at this for hours. The control point was clearly pointing to the left in the data. But to get the curve to bend correctly around that corner, I needed it pointing to the right.
+The control point was clearly pointing to the left in the data. But to get the curve to bend correctly around that corner, I needed it pointing to the right.
 
 ## The Insight
 
-After much frustration and reading forum posts from other developers who'd been through this, I found the answer.
+The answer is in how X-Plane defines control point direction.
 
 **The control point stored at a bezier node defines where the path goes AFTER leaving that node. It's the outgoing direction.**
 
@@ -450,7 +450,7 @@ This does three things:
 
 ### Step 4: Check for Holes
 
-Here's what surprised me: **parsing doesn't stop at 113/114**.
+Note: **parsing doesn't stop at 113/114**.
 
 After closing a ring, the parser keeps reading. If more nodes follow, they define another ring, usually a hole:
 
@@ -483,15 +483,15 @@ Parsing stops when the parser encounters:
 
 The parser returns all collected rings, tagged as outer boundary or hole.
 
-## Bezier Issues We Hit
+## Common Bezier Issues
 
-Building this parser wasn't smooth sailing. Here are the bugs we encountered.
+Here are bugs you'll likely encounter.
 
 ### The Missing Cubic Bezier
 
 **Symptom:** Some curved taxiways looked almost right, but had subtle kinks.
 
-**Cause:** We only implemented quadratic bezier curves. But when two bezier nodes are consecutive (112 → 112), you need a **cubic** bezier with four control points.
+**Cause:** Only implementing quadratic bezier curves. When two bezier nodes are consecutive (112 → 112), you need a **cubic** bezier with four control points.
 
 **Fix:** Detect 112 → 112 sequences and use cubic bezier with:
 - P0: first node position
@@ -503,7 +503,7 @@ Building this parser wasn't smooth sailing. Here are the bugs we encountered.
 
 **Symptom:** Random sharp spikes appearing at certain corners.
 
-**Cause:** Split beziers. When X-Plane wants a sharp corner, it places **two nodes at the exact same position** with different control points. Our parser tried to draw a curve from A to B, but they're the same point. A bezier from a point to itself creates a spike.
+**Cause:** Split beziers. When X-Plane wants a sharp corner, it places **two nodes at the exact same position** with different control points. The parser tries to draw a curve from A to B, but they're the same point. A bezier from a point to itself creates a spike.
 
 **Fix:** Before drawing any curve, check if start and end positions are identical. If so, skip the curve but still record the coordinate.
 
@@ -511,7 +511,7 @@ Building this parser wasn't smooth sailing. Here are the bugs we encountered.
 
 **Symptom:** Tiny rendering artifacts and bloated coordinate arrays.
 
-**Cause:** When adding bezier curve points, we'd sometimes add the same point twice: once as the end of one segment, once as the start of the next.
+**Cause:** Adding the same point twice: once as the end of one segment, once as the start of the next.
 
 **Fix:** Check if the new point matches the last added point before appending.
 
@@ -519,7 +519,7 @@ Building this parser wasn't smooth sailing. Here are the bugs we encountered.
 
 **Symptom:** All curves bent the wrong direction. Every single one.
 
-**Cause:** We assumed the control point stored at a bezier node was for the **incoming** curve. It's not. It's for the **outgoing** curve.
+**Cause:** Assuming the control point stored at a bezier node is for the **incoming** curve. It's not. It's for the **outgoing** curve.
 
 **Fix:** When drawing a curve **to** a bezier node, mirror the control point to the opposite side.
 
@@ -527,11 +527,11 @@ Building this parser wasn't smooth sailing. Here are the bugs we encountered.
 
 **Symptom:** Curves looked faceted, like low-poly models.
 
-**Cause:** Initially used 16 sample points per bezier curve. Fine for small curves, but longer curves looked chunky.
+**Cause:** Using too few sample points (e.g., 16) per bezier curve. Fine for small curves, but longer curves look chunky.
 
 **Fix:** Increase resolution to 128 points. The performance cost is negligible since we generate coordinates once, not every frame.
 
-## Gotchas I Hit
+## Gotchas
 
 A few things that will trip you up:
 
@@ -571,7 +571,7 @@ A single pavement (one 110 header) can contain multiple closed rings. After a 11
 
 ## Pavement Edge Markings: The Hidden Feature
 
-Here's something that surprised me late in development: pavements aren't just filled shapes. They can have **painted edge lines and embedded lights** around their boundaries.
+Pavements aren't just filled shapes. They can have **painted edge lines and embedded lights** around their boundaries.
 
 ### Edge Markings on Pavement Nodes
 
