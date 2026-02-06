@@ -12,7 +12,7 @@ keywords = ["Lyes Tarzalt", "Software Engineer", "apt.dat", "X-Plane", "Parsing"
 # site default theme ["light", "dark", "auto"]
 defaultTheme = "auto"
 # which hash function used for SRI, when empty, no SRI is used
-fingerprint = ""
+fingerprint = "sha256"
 # date format
 dateFormat = "2006-01-02"
 # website images for Open Graph and Twitter Cards
@@ -402,18 +402,20 @@ disableThemeInject = false
   
   [page.math]
     enable = true
-    inlineLeftDelimiter = ""
-    inlineRightDelimiter = ""
-    blockLeftDelimiter = ""
-    blockRightDelimiter = ""
-    copyTex = true
-    mhchem = true
+    type = "katex"
+    [page.math.katex]
+      copyTex = true
+      throwOnError = false
+      errorColor = "#ff4949"
   
-  [page.code]
-    enable = true
-    copy = true
-    edit = true
-    maxShownLines = 50
+[codeblock]
+  wrapper = true
+  mode = "classic"
+  maxShownLines = 50
+  copyable = true
+  lineNosToggler = true
+  lineWrapToggler = true
+  editable = false
   
   [page.mapbox]
     accessToken = ""

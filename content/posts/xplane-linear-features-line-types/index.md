@@ -225,8 +225,7 @@ Types:            [53, 53, 53, 53, 53, 0]
 This makes sense: Node A's type applies to the segment starting at A (the curve). Node B's type will apply to whatever comes after B.
 
 ## The Split Bezier Problem
-
-Now we get to the bug that cost me hours of debugging.
+.
 
 ### What's a Split Bezier?
 
@@ -234,7 +233,7 @@ Bezier curves are inherently smooth. The incoming and outgoing curves at a node 
 
 But sometimes you need a **sharp corner**, a 90-degree turn, an abrupt direction change.
 
-X-Plane's solution: place **multiple nodes at the exact same position** with different control points.
+
 
 ![Split bezier](split-bezier.svg)
 
@@ -407,7 +406,6 @@ The key insights:
 
 Get these right, and your taxiway markings will render correctly, including at those tricky sharp corners where bezier curves meet.
 
-*The split bezier bug was three lines to fix. Finding it took considerably longer. Such is debugging.*
 
 ## Resources
 
