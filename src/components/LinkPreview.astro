@@ -1,0 +1,64 @@
+---
+interface Props {
+  url: string;
+}
+
+const { url } = Astro.props;
+
+// Fetch OG data at build time
+let title = '';
+let description = '';
+let image = '';
+let siteName = '';
+
+try {
+  const res = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+  const html = await res.text();
+
+  const getMetaContent = (property: string) => {
+    const match = html.match(new RegExp(`<meta[^>]*(?:property|name)=["']${property}["'][^>]*content=["']([^"']*)["']`, 'i'))
+      || html.match(new RegExp(`<meta[^>]*content=["']([^"']*?)["'][^>]*(?:property|name)=["']${property}["']`, 'i'));
+    return match?.[1] || '';
+  };
+
+  title = getMetaContent('og:title') || getMetaContent('twitter:title') || '';
+  description = getMetaContent('og:description') || getMetaContent('twitter:description') || getMetaContent('description') || '';
+  image = getMetaContent('og:image') || getMetaContent('twitter:image') || '';
+  siteName = getMetaContent('og:site_name') || new URL(url).hostname;
+
+  // Make relative images absolute
+  if (image && !image.startsWith('http')) {
+    const base = new URL(url);
+    image = new URL(image, base.origin).toString();
+  }
+} catch (e) {
+  siteName = new URL(url).hostname;
+}
+---
+
+<a
+  href={url}
+  target="_blank"
+  rel="noopener"
+  class="group mt-6 block overflow-hidden rounded-lg border border-border bg-card no-underline transition-colors hover:border-primary/30"
+>
+  {image && (
+    <div class="overflow-hidden border-b border-border">
+      <img
+        src={image}
+        alt={title}
+        class="!m-0 aspect-[1.91/1] w-full !rounded-none object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+        loading="lazy"
+      />
+    </div>
+  )}
+  <div class="p-4">
+    {title && (
+      <p class="text-sm font-medium text-foreground transition-colors group-hover:text-primary">{title}</p>
+    )}
+    {description && (
+      <p class="mt-1 line-clamp-2 text-xs leading-relaxed text-muted-foreground">{description}</p>
+    )}
+    <p class="mt-2 font-mono text-[0.625rem] text-muted-foreground/40">{siteName}</p>
+  </div>
+</a>
