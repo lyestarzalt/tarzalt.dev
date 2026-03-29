@@ -1,17 +1,15 @@
-name: Hugo build and deploy to Firebase
+name: Astro build and deploy to Firebase
 
 on:
   push:
     branches: [ main ]
     paths:
       - '.github/workflows/deploy.yml'
-      - 'assets/**'
-      - 'config/**'
-      - 'content/**'
-      - 'data/**'
-      - 'static/**'
-      - 'go.mod'
-      - 'go.sum'
+      - 'src/**'
+      - 'public/**'
+      - 'astro.config.mjs'
+      - 'package.json'
+      - 'package-lock.json'
   workflow_dispatch:
 
 jobs:
@@ -20,31 +18,18 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v5
-        with:
-          submodules: true
-          fetch-depth: 0
 
-      - name: Cache Hugo resources
-        uses: actions/cache@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          path: resources
-          key: cache-hugo-resources
+          node-version: '22'
+          cache: 'npm'
 
-      - name: Setup Go
-        uses: actions/setup-go@v6
-        with:
-          go-version: "^1.19.0"
+      - name: Install Dependencies
+        run: npm ci
 
-      - name: Setup Hugo
-        uses: peaceiris/actions-hugo@v3
-        with:
-          hugo-version: 'latest'
-          extended: true
-
-      - name: Hugo Build
-        run: hugo --gc --minify --logLevel info
-        env:
-          HUGO_ENVIRONMENT: production
+      - name: Astro Build
+        run: npx astro build
 
       - name: Deploy to Firebase
         uses: FirebaseExtended/action-hosting-deploy@v0
