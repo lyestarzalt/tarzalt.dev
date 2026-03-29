@@ -1,6 +1,11 @@
 ---
-import Base from '../layouts/Base.astro';
+import Base from '@/layouts/Base.astro';
 import { getCollection } from 'astro:content';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { Card, CardContent } from '@/components/ui/card';
+import { ProfileAvatar } from '@/components/ProfileAvatar';
+import { SocialLinks } from '@/components/SocialLinks';
 
 const posts = (await getCollection('blog', ({ data }) => !data.draft))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
@@ -11,218 +16,55 @@ function formatDate(d: Date) {
 ---
 
 <Base title="Lyes Tarzalt">
-  <section class="hero">
-    <div class="hero-label">Software Engineer</div>
-    <h1>Lyes<br/>Tarzalt</h1>
-    <p class="hero-bio">
+  <section class="py-12">
+    <div class="mb-6 flex items-center gap-4">
+      <ProfileAvatar src="https://avatars.githubusercontent.com/u/24894134?s=400&u=6c28a615dd7dc368f8e0f3085e2ef038df70b238&v=4" alt="Lyes Tarzalt" fallback="LT" className="size-14" />
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight">Lyes Tarzalt</h1>
+        <p class="text-sm text-muted-foreground">Software Engineer</p>
+      </div>
+    </div>
+    <p class="max-w-lg text-base leading-relaxed text-muted-foreground">
       I build things that work. Based in Malaysia, originally from Algeria.
       I write about parsing, flight simulation tools, and the engineering behind real-time systems.
     </p>
-    <div class="hero-links">
-      <a href="https://github.com/lyestarzalt" target="_blank" rel="noopener">GitHub</a>
-      <a href="https://linkedin.com/in/lyes-tarzalt" target="_blank" rel="noopener">LinkedIn</a>
-      <a href="mailto:lyes.trzlt@gmail.com">Email</a>
+    <div class="mt-6">
+      <SocialLinks client:load />
     </div>
   </section>
 
-  <section class="posts">
-    <div class="section-header">
-      <h2>Writing</h2>
-      <a href="/blog/" class="view-all">View all</a>
+  <Separator />
+
+  <section class="py-8">
+    <div class="mb-6 flex items-baseline justify-between">
+      <h2 class="text-sm font-medium text-foreground">Recent Writing</h2>
+      <a href="/blog/" class="text-sm text-muted-foreground no-underline transition-colors hover:text-foreground">View all</a>
     </div>
-    <ul class="post-list">
-      {posts.map((post, i) => (
-        <li>
-          <a href={`/blog/${post.id}/`} class="post-item">
-            <div class="post-number">{String(i + 1).padStart(2, '0')}</div>
-            <div class="post-content">
-              <span class="post-title">{post.data.title}</span>
+    <div class="space-y-3">
+      {posts.map((post) => (
+        <a href={`/blog/${post.id}/`} class="group block no-underline">
+          <Card className="transition-colors hover:bg-accent/50">
+            <CardContent className="p-4">
+              <div class="flex items-start justify-between gap-4">
+                <p class="text-sm font-medium text-foreground transition-colors group-hover:text-primary">{post.data.title}</p>
+                <time class="shrink-0 text-xs text-muted-foreground" datetime={post.data.date.toISOString()}>
+                  {formatDate(post.data.date)}
+                </time>
+              </div>
               {post.data.summary && (
-                <p class="post-summary">{post.data.summary}</p>
+                <p class="mt-1.5 line-clamp-2 text-sm text-muted-foreground">{post.data.summary}</p>
               )}
-            </div>
-            <time class="post-date" datetime={post.data.date.toISOString()}>
-              {formatDate(post.data.date)}
-            </time>
-          </a>
-        </li>
+              {post.data.tags && post.data.tags.length > 0 && (
+                <div class="mt-3 flex flex-wrap gap-1.5">
+                  {post.data.tags.slice(0, 3).map((tag) => (
+                    <Badge variant="secondary" className="text-[0.625rem] font-normal">{tag}</Badge>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </a>
       ))}
-    </ul>
+    </div>
   </section>
 </Base>
-
-<style>
-  /* ── Hero ── */
-  .hero {
-    padding: 3rem 0 4rem;
-  }
-
-  .hero-label {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    color: var(--accent);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 1rem;
-  }
-
-  .hero h1 {
-    font-family: var(--font-heading);
-    font-size: 3.5rem;
-    font-weight: 700;
-    letter-spacing: -0.05em;
-    line-height: 1;
-    margin-bottom: 1.5rem;
-  }
-
-  .hero-bio {
-    font-size: 1.0625rem;
-    color: var(--text-secondary);
-    max-width: 32rem;
-    line-height: 1.7;
-    margin-bottom: 1.5rem;
-  }
-
-  .hero-links {
-    display: flex;
-    gap: 1.5rem;
-  }
-
-  .hero-links a {
-    font-family: var(--font-mono);
-    font-size: 0.8125rem;
-    color: var(--text-tertiary);
-    text-decoration: none;
-    transition: color var(--transition);
-    position: relative;
-  }
-
-  .hero-links a::before {
-    content: '~';
-    margin-right: 0.25rem;
-    color: var(--text-tertiary);
-    opacity: 0.4;
-  }
-
-  .hero-links a:hover {
-    color: var(--accent);
-  }
-
-  /* ── Posts section ── */
-  .posts {
-    padding: 2rem 0;
-    border-top: 1px solid var(--border-subtle);
-  }
-
-  .section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 2rem;
-  }
-
-  .section-header h2 {
-    font-family: var(--font-heading);
-    font-size: 0.875rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--text-tertiary);
-  }
-
-  .view-all {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    color: var(--text-tertiary);
-    text-decoration: none;
-    transition: color var(--transition);
-  }
-
-  .view-all:hover {
-    color: var(--accent);
-  }
-
-  .post-list {
-    list-style: none;
-    padding: 0;
-  }
-
-  .post-list li {
-    border-top: 1px solid var(--border-subtle);
-  }
-
-  .post-list li:last-child {
-    border-bottom: 1px solid var(--border-subtle);
-  }
-
-  .post-item {
-    display: grid;
-    grid-template-columns: 2rem 1fr auto;
-    gap: 1.25rem;
-    align-items: start;
-    padding: 1.25rem 0;
-    text-decoration: none;
-    transition: background var(--transition);
-    border-radius: 0;
-    margin: 0 -0.75rem;
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
-  }
-
-  .post-item:hover {
-    background: var(--bg-elevated);
-  }
-
-  .post-number {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    color: var(--text-tertiary);
-    padding-top: 0.1875rem;
-  }
-
-  .post-content {
-    min-width: 0;
-  }
-
-  .post-title {
-    font-family: var(--font-heading);
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--text);
-    letter-spacing: -0.01em;
-    line-height: 1.4;
-    display: block;
-    transition: color var(--transition);
-  }
-
-  .post-item:hover .post-title {
-    color: var(--accent);
-  }
-
-  .post-summary {
-    font-size: 0.875rem;
-    color: var(--text-tertiary);
-    margin-top: 0.375rem;
-    line-height: 1.5;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .post-date {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    color: var(--text-tertiary);
-    white-space: nowrap;
-    padding-top: 0.1875rem;
-  }
-
-  @media (max-width: 640px) {
-    .hero h1 { font-size: 2.5rem; }
-    .hero { padding: 2rem 0 3rem; }
-    .post-item { grid-template-columns: 1fr auto; }
-    .post-number { display: none; }
-    .post-summary { display: none; }
-  }
-</style>

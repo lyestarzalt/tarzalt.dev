@@ -1,18 +1,22 @@
 ---
-import Base from '../layouts/Base.astro';
+import Base from '@/layouts/Base.astro';
+import { ProfileAvatar } from '@/components/ProfileAvatar';
+import { Separator } from '@/components/ui/separator';
+import { SocialLinks } from '@/components/SocialLinks';
 ---
 
 <Base title="About - Lyes Tarzalt" description="Lyes Tarzalt - Software engineer based in Malaysia, originally from Algeria.">
-  <section class="about">
-    <div class="about-header">
-      <div class="about-label">About</div>
-      <h1>Lyes Tarzalt</h1>
+  <section class="max-w-lg">
+    <div class="mb-8 flex items-center gap-4">
+      <ProfileAvatar src="https://avatars.githubusercontent.com/u/24894134?s=400&u=6c28a615dd7dc368f8e0f3085e2ef038df70b238&v=4" alt="Lyes Tarzalt" fallback="LT" className="size-16" />
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight">Lyes Tarzalt</h1>
+        <p class="text-sm text-muted-foreground">Software Engineer</p>
+      </div>
     </div>
 
-    <div class="about-body">
-      <p>
-        I'm a software engineer based in Malaysia, originally from Algeria.
-      </p>
+    <div class="space-y-4 text-base leading-relaxed text-muted-foreground">
+      <p>I'm a software engineer based in Malaysia, originally from Algeria.</p>
       <p>
         I like problems that make people say "that's too complicated" or "nobody's going to fix that."
         The kind where the real answer isn't writing more code, it's asking why the problem exists in the first place.
@@ -23,118 +27,9 @@ import Base from '../layouts/Base.astro';
       </p>
     </div>
 
-    <div class="connect">
-      <h2>Elsewhere</h2>
-      <div class="link-grid">
-        <a href="https://github.com/lyestarzalt" target="_blank" rel="noopener" class="connect-link">
-          <span class="link-label">GitHub</span>
-          <span class="link-handle">lyestarzalt</span>
-        </a>
-        <a href="https://linkedin.com/in/lyes-tarzalt" target="_blank" rel="noopener" class="connect-link">
-          <span class="link-label">LinkedIn</span>
-          <span class="link-handle">lyes-tarzalt</span>
-        </a>
-        <a href="mailto:lyes.trzlt@gmail.com" class="connect-link">
-          <span class="link-label">Email</span>
-          <span class="link-handle">lyes.trzlt@gmail.com</span>
-        </a>
-      </div>
-    </div>
+    <Separator className="my-10" />
+
+    <h2 class="mb-4 text-sm font-medium text-foreground">Connect</h2>
+    <SocialLinks client:load />
   </section>
 </Base>
-
-<style>
-  .about {
-    max-width: 36rem;
-  }
-
-  .about-header {
-    margin-bottom: 2.5rem;
-  }
-
-  .about-label {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    color: var(--accent);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 0.75rem;
-  }
-
-  .about-header h1 {
-    font-size: 2.5rem;
-    letter-spacing: -0.04em;
-  }
-
-  .about-body {
-    margin-bottom: 3rem;
-  }
-
-  .about-body p {
-    color: var(--text-secondary);
-    margin-bottom: 1rem;
-    line-height: 1.8;
-    font-size: 1.0625rem;
-  }
-
-  .connect {
-    padding-top: 2rem;
-    border-top: 1px solid var(--border-subtle);
-  }
-
-  .connect h2 {
-    font-family: var(--font-heading);
-    font-size: 0.875rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--text-tertiary);
-    margin-bottom: 1.25rem;
-  }
-
-  .link-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
-
-  .connect-link {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.875rem 0;
-    border-bottom: 1px solid var(--border-subtle);
-    text-decoration: none;
-    transition: all var(--transition);
-    margin: 0 -0.75rem;
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
-    border-radius: 4px;
-  }
-
-  .connect-link:hover {
-    background: var(--bg-elevated);
-  }
-
-  .link-label {
-    font-family: var(--font-heading);
-    font-size: 0.9375rem;
-    font-weight: 600;
-    color: var(--text);
-    transition: color var(--transition);
-  }
-
-  .connect-link:hover .link-label {
-    color: var(--accent);
-  }
-
-  .link-handle {
-    font-family: var(--font-mono);
-    font-size: 0.8125rem;
-    color: var(--text-tertiary);
-  }
-
-  @media (max-width: 640px) {
-    .about-header h1 { font-size: 2rem; }
-  }
-</style>
