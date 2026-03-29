@@ -1,13 +1,13 @@
 ---
-title: "Parsing apt.dat: X-Plane Airport Bezier Curves"
-subtitle: "Control point mirroring and why your curves bend wrong"
+title: "Parsing X-Plane Airport Layout Geometry from apt.dat"
+subtitle: "From row codes to rendered polygons"
 date: 2026-02-05T10:00:00+00:00
-lastmod: 2026-02-05T10:00:00+00:00
+lastmod: 2026-03-29T10:00:00+00:00
 draft: false
 
-description: "How X-Plane's apt.dat format defines airport geometry using paths with bezier curves, and the control point mirroring trick that makes it all work."
+description: "A guide to parsing airport geometry from X-Plane's apt.dat format — bezier curves, control point mirroring, winding order for holes, split beziers for sharp corners, and the gotchas that break your parser."
 
-summary: "X-Plane's apt.dat format defines airport geometry using paths with bezier curves. Each bezier node stores only one control point that defines the outgoing direction. To draw a curve arriving at that node, you mirror the control point to the opposite side."
+summary: "A practical guide to parsing airport geometry from X-Plane's apt.dat format. Covers bezier curve encoding, control point mirroring, winding order for holes, split beziers for sharp corners, and common mistakes."
 
 tags: ["X-Plane", "Bezier Curves", "Parsing", "Geometry", "Flight Simulation"]
 categories: ["Engineering"]
@@ -42,41 +42,22 @@ comment:
 ---
 
 > [!ABSTRACT] TL;DR
-> X-Plane's apt.dat format defines airport geometry using paths with bezier curves. The clever part: each bezier node stores only ONE control point that defines the outgoing direction. To draw a curve arriving at that node, you mirror the control point to the opposite side. Once you understand this, parsing becomes straightforward. Miss it, and you get spaghetti geometry.
+> X-Plane's apt.dat stores airport geometry as paths with bezier curves. Each bezier node stores one control point for the outgoing direction. For incoming curves, mirror it. This post covers the format, the four curve connection types, holes via winding order, and sharp corner edge cases.
 
-I was building a tool to visualize X-Plane airports on a web map. Load an airport file, render it on MapLibre, see the taxiways and runways. Should be simple, right?
+I built [X-Dispatch](https://github.com/tarzalt/X-Dispatch) to visualize X-Plane airports on a web map. Parsing the airport data meant figuring out how apt.dat encodes bezier curves. This is what I learned.
 
-The apt.dat format looked approachable. Text-based, line by line, each line starting with a row code that tells you what kind of data follows. Runways, taxiways, boundaries, markings. I started parsing.
+## The apt.dat file
 
-Runways were easy: coordinates and dimensions. Taxiways seemed straightforward too. A header line, then coordinate pairs defining the boundary. Connect the dots, fill the polygon.
+X-Plane stores **all** airport data in a single file called `apt.dat`. Every airport in the world — over 38,000 of them — in one text file.
 
-Then I rendered my first curved taxiway:
+Why text?
 
-![Why bezier curves matter](why-bezier.svg)
+- Human readable. Open it in any editor and see what you're looking at.
+- Diffable. Scenery developers can version control their changes.
+- Portable. No endianness issues, no binary format versioning.
+- Extensible. New features are new row codes.
 
-Left: connecting coordinates with straight lines. Right: what it should look like.
-
-The format uses **bezier curves**. The problem: storing smooth curves as coordinate lists requires hundreds of points. A bezier curve solves this by defining the curve mathematically with just 3-4 points (start, end, and 1-2 control points). You then sample the curve at whatever resolution you need. Store 4 points, generate 128 when rendering. The curve stays smooth at any zoom level because it's computed, not approximated.
-
-I knew bezier curves from graphics programming. What I didn't know was how X-Plane encoded them.
-
-## The apt.dat File
-
-Before diving into geometry, let's understand what we're working with.
-
-X-Plane stores **all** airport data in a single file called `apt.dat`. Every airport in the world, from major international hubs to tiny grass strips, packed into one text file.
-
-### Why Text?
-
-It seems inefficient, but text has advantages:
-- **Human readable**: you can open it in any editor and understand what you're looking at
-- **Version control friendly**: scenery developers can diff and merge changes
-- **Portable**: no endianness issues, no binary format versioning
-- **Extensible**: new features are just new row codes
-
-### The Structure
-
-The file is line-based. Each line starts with a **row code**, a number that tells you what kind of data follows:
+The file is line-based. Each line starts with a **row code** — a number that identifies the data that follows.
 
 ```
 1      ← Airport header (starts a new airport)
@@ -88,7 +69,7 @@ The file is line-based. Each line starts with a **row code**, a number that tell
 ...
 ```
 
-### An Airport in apt.dat
+## How to read an airport entry
 
 Here's a simplified view of how one airport looks:
 
@@ -115,207 +96,168 @@ Here's a simplified view of how one airport looks:
 | 9 | `120` | Start of a painted line (Centerline A) |
 | 10-11 | `111-115` | Nodes defining the line path |
 
-### The Parsing Challenge
+Context matters. Code `111` after a `110` is a pavement boundary node. The same `111` after a `120` is a painted line node.
 
-The tricky part: **context matters**. Code `111` after a `110` is a pavement boundary node. Code `111` after a `120` is a painted line node.
+Three header codes produce geometry:
 
-And geometry doesn't just end. You need to know when one feature stops and another begins. That's where the closing codes (113/114) and ending codes (115/116) come in.
+| Header | Name | Shape | Closed by |
+|--------|------|-------|-----------|
+| 110 | Pavement | Filled polygon | 113/114 (ring close) |
+| 120 | Linear feature | Stroked path | 115/116 (path end) |
+| 130 | Boundary | Filled polygon | 113/114 (ring close) |
 
-## The Format
+## The node system
 
-Every airport shape in apt.dat is built from **nodes**. Each node is either plain or bezier:
+All geometry in apt.dat is built from six node types:
 
-```
-111 47.464000 -122.312000                           ← Plain node
-112 47.465000 -122.311500 47.465500 -122.312000     ← Bezier node
-```
+| Code | Type | Role |
+|------|------|------|
+| 111 | Plain | Interior node |
+| 112 | Bezier | Interior node with control point |
+| 113 | Plain | Ring close (connects back to first node) |
+| 114 | Bezier | Ring close with control point |
+| 115 | Plain | End of open path |
+| 116 | Bezier | End of open path with control point |
 
-The pattern is simple:
-- **111** = plain node (just lat/lon)
-- **112** = bezier node (lat/lon + control point lat/lon)
-- **113/114** = close the shape (plain/bezier)
-- **115/116** = end an open path (plain/bezier)
+Odd codes are plain, even codes carry a bezier control point.
 
-Odd numbers are plain, even numbers have bezier control points.
+The closing codes (113/114) connect back to the first node and seal a polygon. Ending codes (115/116) terminate an open path without closing it. Pavements and boundaries use closing codes. Linear features use ending codes.
 
-When you connect a plain node to another plain node, you draw a straight line. When bezier nodes are involved, you draw curves. The control point tells the curve how to bend.
+## Why bezier curves?
 
-Sounds simple enough. But there's a catch.
+![Why bezier curves matter](why-bezier.svg "Left: straight lines between nodes. Right: bezier curves.")
 
-## How Bezier Curves Work
+The left image connects node coordinates with straight lines. The right is what the taxiway actually looks like.
 
-A bezier curve is defined by control points. The curve starts at the first point, ends at the last point, and bends toward the middle control points without passing through them.
+Storing smooth curves as dense coordinate lists is wasteful. A bezier curve defines the shape with 3 or 4 points, and you sample it at whatever resolution you want. Store 4 points in the file, generate 60 when rendering. The curve is smooth at any zoom level because it's computed, not approximated by a fixed number of vertices.
 
-### Quadratic Bezier (One Control Point)
+### Quadratic bezier (one control point)
 
 Three points: **P0** (start), **P1** (control), **P2** (end). The curve at parameter t (from 0 to 1):
 
 $ B(t) = (1-t)^2 P_0 + 2(1-t)t \cdot P_1 + t^2 P_2 $
 
-In X-Plane, this is a **111 → 112** or **112 → 111** connection:
+This is what you get with a **111 → 112** or **112 → 111** connection.
 
-```
-111 47.464 -122.312                       ← P0 (start)
-112 47.466 -122.310  47.465 -122.311      ← P2 (end) + control point
-```
+### Cubic bezier (two control points)
 
-The curve bends toward the control point as it travels from P0 to P2.
-
-### Cubic Bezier (Two Control Points)
-
-Four points: **P0**, **P1** (control 1), **P2** (control 2), **P3**:
+Four points: **P0**, **P1** (control 1), **P2** (control 2), **P3** (end):
 
 $ B(t) = (1-t)^3 P_0 + 3(1-t)^2 t \cdot P_1 + 3(1-t)t^2 P_2 + t^3 P_3 $
 
-This happens with **112 → 112** connections. Each bezier node contributes one control point:
+This happens with **112 → 112** connections. Two control points let you make S-curves.
 
-```
-112 47.464 -122.312  47.464 -122.311      ← P0 + outgoing control (P1)
-112 47.466 -122.310  47.466 -122.311      ← P3 + outgoing control (→ mirror for P2)
-```
+### Sampling the curve
 
-Cubic beziers can make S-curves. Two control points means more flexibility.
+To draw a bezier, evaluate the formula at many values of t:
 
-### Implementation
+```typescript
+type Point = [number, number]; // [lon, lat]
 
-To draw a curve, sample the formula at many t values (we use 128 steps):
-
-```python
-# Quadratic: B(t) = (1-t)²P0 + 2(1-t)t·P1 + t²P2
-for t in [i/128 for i in range(129)]:
-    mt = 1 - t
-    point = mt*mt*P0 + 2*mt*t*P1 + t*t*P2
-```
-
-The control points pull the curve toward them without the curve passing through them.
-
-## The Problem
-
-I was parsing this taxiway corner:
-
-```
-110 1 0.25 0.00 Taxiway A
-111 47.464000 -122.312000       ← Node 1 (plain)
-111 47.465000 -122.312000       ← Node 2 (plain)
-112 47.465500 -122.311500 47.465500 -122.312000   ← Node 3 (bezier)
-111 47.465500 -122.310000       ← Node 4 (plain)
-113 47.464000 -122.310000       ← Node 5 (closes shape)
+function sampleQuadraticBezier(
+  p0: Point, p1: Point, p2: Point,
+  steps = 60
+): Point[] {
+  const points: Point[] = [];
+  for (let i = 0; i <= steps; i++) {
+    const t = i / steps;
+    const mt = 1 - t;
+    points.push([
+      mt * mt * p0[0] + 2 * mt * t * p1[0] + t * t * p2[0],
+      mt * mt * p0[1] + 2 * mt * t * p1[1] + t * t * p2[1],
+    ]);
+  }
+  return points;
+}
 ```
 
-Node 3 is a bezier node with a control point. I needed to draw a curve from Node 2 to Node 3.
+60 points per curve segment is a good default. You generate coordinates once and render from the result, so the cost is negligible.
 
-A bezier curve needs control points to define its shape. For a quadratic bezier (the kind with one control point), you need: start point, control point, end point.
+## The mirroring rule
 
-I had the start (Node 2) and end (Node 3). The control point was stored at Node 3. I plugged it into my bezier function.
+The control point at a bezier node defines where the path goes **after** leaving that node. It is the outgoing direction.
 
-The curve bent the wrong way.
+To draw a curve **arriving** at that node, you need the incoming direction. That's the opposite side.
 
-![Wrong vs right curve direction](why-mirror-needed.svg)
+**Mirror the control point.** Flip it across the node, same distance:
 
-The control point was clearly pointing to the left in the data. But to get the curve to bend correctly around that corner, I needed it pointing to the right.
-
-## The Insight
-
-The answer is in how X-Plane defines control point direction.
-
-**The control point stored at a bezier node defines where the path goes AFTER leaving that node. It's the outgoing direction.**
-
-Think about it from X-Plane's perspective. When you're placing nodes in their editor, you're thinking about the flow of the path. At each bezier node, you define which way the path curves as it leaves.
-
-But when you're drawing a curve TO that node, you need the incoming direction, which is the opposite.
-
-**The solution: mirror the control point.**
-
+```typescript
+function mirrorControl(node: Point, control: Point): Point {
+  return [2 * node[0] - control[0], 2 * node[1] - control[1]];
+}
 ```
-mirrored_control = (2 × node_position) - stored_control
-```
-
-Or in plain terms: flip it to the opposite side of the node, same distance away.
 
 ![The mirroring concept](mirroring-concept.svg)
 
 The stored control point is like an arrow pointing where you're going next. To find where you came from, point the arrow the other way.
 
-## The Four Connection Types
+> **Gotcha:** If you use the stored control directly for incoming curves, every curve bends the wrong way.
 
-Once I understood mirroring, the rules became clear. There are four ways nodes can connect:
+![Wrong vs right curve direction](why-mirror-needed.svg)
 
-### Plain → Plain (111 → 111)
+## The four connection types
 
-No curves. Just a straight line. Easy.
+There are four ways nodes can connect, depending on whether each node is plain or bezier.
+
+### Plain to plain (111 → 111)
+
+Straight line. No curves involved.
 
 ![Straight line between plain nodes](connection-plain-plain.svg)
 
-### Plain → Bezier (111 → 112)
+### Plain to bezier (111 → 112)
 
-You're arriving at a bezier node. The stored control points outward (for the next segment). Mirror it to get the incoming curve direction.
+Quadratic bezier. You're arriving at a bezier node, so mirror its stored control to get the incoming tangent.
 
 ![Quadratic curve from plain to bezier](connection-plain-bezier.svg)
 
-```python
-def draw_plain_to_bezier(start, end_node):
-    end = end_node.position
-    stored_control = end_node.control_point
-
-    # Mirror: flip to opposite side
-    mirrored = (2 * end[0] - stored_control[0],
-                2 * end[1] - stored_control[1])
-
-    return quadratic_bezier(start, mirrored, end)
+```typescript
+function plainToBezier(start: Point, endNode: { pos: Point; control: Point }): Point[] {
+  const mirrored = mirrorControl(endNode.pos, endNode.control);
+  return sampleQuadraticBezier(start, mirrored, endNode.pos);
+}
 ```
 
-### Bezier → Plain (112 → 111)
+### Bezier to plain (112 → 111)
 
-You're leaving a bezier node heading to a plain node. Use the stored control directly since it's already pointing in the direction you're going.
+Quadratic bezier. You're leaving a bezier node, so use its stored control directly. No mirroring needed — the control already points in the direction you're going.
 
 ![Quadratic curve from bezier to plain](connection-bezier-plain.svg)
 
-```python
-def draw_bezier_to_plain(start_node, end):
-    start = start_node.position
-    control = start_node.control_point  # Use directly, no mirroring
-
-    return quadratic_bezier(start, control, end)
+```typescript
+function bezierToPlain(startNode: { pos: Point; control: Point }, end: Point): Point[] {
+  return sampleQuadraticBezier(startNode.pos, startNode.control, end);
+}
 ```
 
-### Bezier → Bezier (112 → 112)
+### Bezier to bezier (112 → 112)
 
-The interesting case. You need a cubic bezier with two control points:
-- First control: the outgoing control from the start node (use directly)
-- Second control: the incoming control for the end node (mirror it)
+Cubic bezier with four control points. The first node's control is used directly (outgoing). The second node's control is mirrored (incoming).
 
 ![Cubic curve between bezier nodes](connection-bezier-bezier.svg)
 
-```python
-def draw_bezier_to_bezier(start_node, end_node):
-    p0 = start_node.position
-    p1 = start_node.control_point  # Outgoing, use directly
-
-    p3 = end_node.position
-    stored_p2 = end_node.control_point
-    p2 = (2 * p3[0] - stored_p2[0],  # Incoming, mirror it
-          2 * p3[1] - stored_p2[1])
-
-    return cubic_bezier(p0, p1, p2, p3)
+```typescript
+function bezierToBezier(
+  startNode: { pos: Point; control: Point },
+  endNode: { pos: Point; control: Point }
+): Point[] {
+  const p0 = startNode.pos;
+  const p1 = startNode.control;           // outgoing: use directly
+  const p2 = mirrorControl(endNode.pos, endNode.control); // incoming: mirror
+  const p3 = endNode.pos;
+  return sampleCubicBezier(p0, p1, p2, p3);
+}
 ```
 
-This creates smooth S-curves. Getting the controls backwards gives you spaghetti.
+Getting the controls backwards gives you spaghetti. The starting node's control always goes direct, the ending node's always gets mirrored.
 
-## Sharp Corners: The Split Bezier
+## Sharp corners — split beziers
 
-Bezier curves are smooth by nature. The control point at each node ensures the path flows continuously. The incoming curve and outgoing curve share a tangent direction.
+Bezier curves are smooth by nature. The control point at a node ensures the incoming and outgoing tangents are aligned, so the path flows through without breaking.
 
-But what if you actually want a sharp corner?
+But sometimes you need an actual sharp corner. A taxiway that turns 90 degrees, a pavement edge with a crisp angle.
 
-### The Problem with Smooth Curves
-
-Imagine a taxiway that turns 90 degrees. With normal bezier curves, you'd get a smooth, rounded corner. Sometimes that's fine. But sometimes you need an actual corner, a sharp change in direction.
-
-If you use a single bezier node at the corner, the curve flows smoothly through it. The control point defines both the incoming and outgoing direction (via mirroring), so they're always aligned.
-
-### The Solution: Split the Node
-
-X-Plane's trick is to place **two nodes at the exact same position** with different control points:
+X-Plane's trick: place **two nodes at the exact same position** with different control points.
 
 ![Split bezier](split-bezier.svg)
 
@@ -324,355 +266,205 @@ X-Plane's trick is to place **two nodes at the exact same position** with differ
 112 47.465 -122.311 47.466 -122.311    ← Second node, same position, control pointing right
 ```
 
-Both nodes occupy the same coordinates (47.465, -122.311). But their control points aim different directions.
+Both nodes sit at the same coordinates. But their control points aim in different directions. The first node handles the incoming curve. The second handles the outgoing curve. Because they're independent, the tangents don't have to line up. You get a corner.
 
 ![Split node creating a sharp corner](split-node.svg)
 
-### Why This Works
+### The spike trap
 
-The first node's control point handles the **incoming** curve (via mirroring). The second node's control point handles the **outgoing** curve (used directly).
-
-Because they're separate nodes with independent control points, the incoming and outgoing directions don't have to align. You get a corner.
-
-Think of it like this: normally, a bezier node is a smooth joint where the path bends but doesn't break. A split bezier is like cutting the path at that point and starting fresh. Same position, new direction.
-
-### When You'll See Split Beziers
-
-- Sharp turns in taxiways
-- Corners of buildings or structures
-- Any place where smooth flow would look wrong
-- Transitions between different curve directions
-
-Here's the trap: when you see two consecutive nodes at the same position, your bezier code might try to draw a curve from a point to itself. This creates a spike artifact:
+Here's the problem: when your parser sees two consecutive nodes at the same position, it tries to draw a curve from a point to itself. A bezier from a point to itself creates a spike artifact.
 
 ![The spike trap](spike-trap.svg)
 
-**The fix:** Before drawing any curve, check if start and end positions are identical. If so, skip the curve. It's a split node.
+Before drawing any curve, check if start and end are the same point. If they are, skip the curve — but still add the coordinate. (The coordinate matters for type tracking; see [the linear features post]({{< relref "/posts/xplane-linear-features-line-types" >}}).)
 
-```python
-def should_draw_curve(start_pos, end_pos):
-    # Skip degenerate curves (split nodes)
-    if start_pos[0] == end_pos[0] and start_pos[1] == end_pos[1]:
-        return False
-    return True
+```typescript
+// From pathParser.ts — epsilon comparison, not exact equality
+const COORD_EPSILON = 1e-9;
+
+function coordsEqual(a: Point, b: Point): boolean {
+  return Math.abs(a[0] - b[0]) < COORD_EPSILON
+      && Math.abs(a[1] - b[1]) < COORD_EPSILON;
+}
+
+// When processing a node:
+if (coordsEqual(previousPos, currentPos)) {
+  // Split bezier — skip the curve, but still add the coordinate.
+  // The coordinate matters for type tracking (see the linear features post).
+  addCoordinate(currentPos);
+} else {
+  // Normal curve
+  const points = sampleQuadraticBezier(previousPos, control, currentPos);
+  addPoints(points);
+}
 ```
 
-## Winding Order: Holes and Fills
+Note the epsilon comparison. Floating point equality is unreliable, so the real parser uses `1e-9` as a threshold.
 
-A taxiway shape might have holes in it: cutouts for buildings, equipment, whatever. How does X-Plane distinguish the outer boundary from the holes?
+## Winding order — holes and fills
 
-**Winding order.** The direction you trace the points:
+A taxiway shape might have holes cut out of it: buildings, equipment pads, whatever the scenery developer wanted to exclude from the pavement surface.
 
-- Counter-clockwise = outer boundary (fill this)
-- Clockwise = hole (cut this out)
+How does the format distinguish the outer boundary from the holes? Winding order. The direction you trace the points matters.
+
+- **Counter-clockwise** = outer boundary (fill this)
+- **Clockwise** = hole (cut this out)
 
 ![Winding order for outer boundary vs holes](winding-order.svg)
 
-To detect winding order programmatically, calculate the signed area of the polygon:
+To detect winding order, calculate the signed area:
 
-```python
-def signed_area(coords):
-    area = 0
-    for i in range(len(coords) - 1):
-        x1, y1 = coords[i]
-        x2, y2 = coords[i + 1]
-        area += (x2 - x1) * (y2 + y1)
-    return area / 2
+```typescript
+function getSignedArea(coords: Point[]): number {
+  let area = 0;
+  for (let i = 0; i < coords.length - 1; i++) {
+    const [x1, y1] = coords[i];
+    const [x2, y2] = coords[i + 1];
+    area += (x2 - x1) * (y2 + y1);
+  }
+  return area / 2;
+}
 
-def is_clockwise(coords):
-    return signed_area(coords) < 0
+function isHole(coords: Point[]): boolean {
+  return getSignedArea(coords) < 0; // negative = clockwise = hole
+}
 ```
 
-Negative area = clockwise = hole. Positive = counter-clockwise = fill.
-
-## The Complete Picture
-
-Here's the full flow for parsing an airport shape:
-
-1. **Read the header** (row code 110 for pavements) to get surface type, smoothness
-2. **Process nodes** in order:
-   - Track whether you're in a bezier sequence
-   - For each node, determine the connection type to the previous node
-   - Draw the appropriate line or curve
-3. **Handle ring closures** (113/114) by connecting back to the first node
-4. **After closure**, more nodes can follow. These are holes
-5. **Detect winding** to distinguish outer boundary from holes
-6. **Assemble the polygon** with proper hole handling
-
-The result: accurate airport geometry from a compact text format.
-
-## How Pavement Parsing Actually Works
-
-Let's trace through parsing a complete pavement from start to finish.
-
-### Step 1: Detect the Header
-
-When the parser sees row code `110`, it knows a pavement is starting:
-
-```
-110 1 0.25 0.00 Taxiway A
-    │  │    │    └── Name (can have spaces)
-    │  │    └── Texture heading (degrees)
-    │  └── Smoothness (0.0 to 1.0)
-    └── Surface type (1=asphalt, 2=concrete, etc.)
-```
-
-The parser saves these properties and prepares to collect nodes.
-
-### Step 2: Collect Boundary Nodes
-
-After the header, the parser reads nodes line by line:
-
-```
-111 47.464000 -122.312000       ← First node
-111 47.465000 -122.312000       ← Second node
-112 47.465500 -122.311500 ...   ← Third node (bezier)
-111 47.465500 -122.310000       ← Fourth node
-```
-
-Each node is processed immediately:
-- Calculate any curves from the previous node
-- Add the resulting points to the coordinate array
-- Track line types and light types if present
-
-### Step 3: Close the Ring
-
-When the parser hits `113` or `114`, the shape closes:
-
-```
-113 47.464000 -122.310000       ← Closing node
-```
-
-This does three things:
-1. Process this final node (drawing curve/line from previous)
-2. Connect back to the **first** node (completing the loop)
-3. Finalize this ring as a closed polygon
-
-### Step 4: Check for Holes
-
-Note: **parsing doesn't stop at 113/114**.
-
-After closing a ring, the parser keeps reading. If more nodes follow, they define another ring, usually a hole:
+A single pavement can contain multiple closed rings. After a 113/114 closes a ring, more nodes can follow to define additional rings:
 
 ```
 110 1 0.25 0.00 Apron with building cutout
-111 47.464 -122.312              ← Outer ring starts
-111 47.465 -122.312                (counter-clockwise)
+111 47.464 -122.312              ← Outer ring (counter-clockwise)
+111 47.465 -122.312
 111 47.465 -122.311
-113 47.464 -122.311              ← Outer ring closes
-111 47.4643 -122.3117            ← Hole starts (new ring!)
-111 47.4647 -122.3117              (clockwise = cut out)
+113 47.464 -122.311              ← Ring closes
+111 47.4643 -122.3117            ← Hole starts (clockwise)
+111 47.4647 -122.3117
 111 47.4647 -122.3113
 113 47.4643 -122.3113            ← Hole closes
 ```
 
-One `110` header, two closed rings. The first is the pavement boundary, the second is a hole cut out of it.
+One `110` header, two closed rings. First ring is the pavement surface. Second is a hole punched through it.
 
-### Step 5: Determine Winding Order
+## The parsing pipeline
 
-How does the parser know which ring is the outer boundary vs a hole?
+Putting it all together, here's how to parse a pavement from start to finish:
 
-**Winding order**, the direction points are traced. Positive signed area (counter-clockwise) means outer boundary. Negative (clockwise) means hole.
+1. **Read the header.** Row code 110 gives you surface type, smoothness, texture heading, and name.
+2. **Process nodes as a state machine.** Track whether you're in a bezier sequence. For each new node, determine which of the four connection types applies, and generate the appropriate line or curve.
+3. **Handle ring closure.** When you hit 113/114, process the closing node, then re-process the first node to complete the loop. If the first node was a 112, its control point defines the tangent for the final curve segment.
+4. **Detect holes.** Check winding order on each ring. Counter-clockwise is the fill, clockwise rings are holes.
+5. **Emit GeoJSON** (or whatever format you need). The outer ring is the polygon exterior, holes go in the `coordinates` array as inner rings.
 
-### Step 6: Stop Parsing
+> **Gotcha: coordinate swap.** apt.dat uses `latitude longitude`. GeoJSON and most map libraries expect `[longitude, latitude]`. Swap them.
 
-Parsing stops when the parser encounters:
-- A new feature header (110, 120, 130, 100, etc.)
-- End of file
-- Row codes 115/116 (for open paths like painted lines)
-
-The parser returns all collected rings, tagged as outer boundary or hole.
-
-## Common Bezier Issues
-
-Here are bugs you'll likely encounter.
-
-### The Missing Cubic Bezier
-
-**Symptom:** Some curved taxiways looked almost right, but had subtle kinks.
-
-**Cause:** Only implementing quadratic bezier curves. When two bezier nodes are consecutive (112 → 112), you need a **cubic** bezier with four control points.
-
-**Fix:** Detect 112 → 112 sequences and use cubic bezier with:
-- P0: first node position
-- P1: first node's control (use directly)
-- P2: second node's control (**mirror it**)
-- P3: second node position
-
-### The Spike Artifact
-
-**Symptom:** Random sharp spikes appearing at certain corners.
-
-**Cause:** Split beziers. When X-Plane wants a sharp corner, it places **two nodes at the exact same position** with different control points. The parser tries to draw a curve from A to B, but they're the same point. A bezier from a point to itself creates a spike.
-
-**Fix:** Before drawing any curve, check if start and end positions are identical. If so, skip the curve but still record the coordinate.
-
-### Duplicate Points at Segment Boundaries
-
-**Symptom:** Tiny rendering artifacts and bloated coordinate arrays.
-
-**Cause:** Adding the same point twice: once as the end of one segment, once as the start of the next.
-
-**Fix:** Check if the new point matches the last added point before appending.
-
-### The Mirroring Discovery
-
-**Symptom:** All curves bent the wrong direction. Every single one.
-
-**Cause:** Assuming the control point stored at a bezier node is for the **incoming** curve. It's not. It's for the **outgoing** curve.
-
-**Fix:** When drawing a curve **to** a bezier node, mirror the control point to the opposite side.
-
-### Low Resolution Curves
-
-**Symptom:** Curves looked faceted, like low-poly models.
-
-**Cause:** Using too few sample points (e.g., 16) per bezier curve. Fine for small curves, but longer curves look chunky.
-
-**Fix:** Increase resolution to 128 points. The performance cost is negligible since we generate coordinates once, not every frame.
-
-## Gotchas
-
-A few things that will trip you up:
-
-### Coordinate Order
-
-apt.dat uses latitude, longitude. Most mapping libraries expect longitude, latitude. You'll need to swap them.
-
-```python
-# apt.dat gives you:
-lat, lon = 47.464, -122.312
-
-# MapLibre/GeoJSON wants:
-geojson_coord = [lon, lat]  # Swap!
+```typescript
+// apt.dat line: 111 47.464000 -122.312000
+const lat = parseFloat(tokens[1]); // 47.464
+const lon = parseFloat(tokens[2]); // -122.312
+const coord: Point = [lon, lat];   // GeoJSON order: [lon, lat]
 ```
 
-### Control Points Can Be Anywhere
+> **Gotcha: ring closure re-processes the first node.** When 113/114 closes a ring, process the closing node, then re-process the first node. If the first node is a 112, its control point defines the tangent for the closing curve. Skip this and the closure segment is a straight line where there should be a curve.
 
-The control point doesn't have to be near the node. It can be very close (gentle curve), very far (sharp bend), or even at the same position as the node (effectively making it a plain node).
+Here's the ring closure logic from the real parser:
 
-### The First Node Problem
-
-If the first node of a shape is a bezier node, there's no previous node to draw a curve FROM. Just record its position and control. They'll be used when processing the second node.
-
-### Multiple Rings
-
-A single pavement (one 110 header) can contain multiple closed rings. After a 113/114 closes a ring, more nodes can follow to define additional rings (holes).
-
-```
-110 1 0.25 0.00 Apron
-111 ...    ← Outer ring starts
-111 ...
-113 ...    ← Outer ring closes
-111 ...    ← Hole starts
-111 ...
-113 ...    ← Hole closes
-```
-
-## Pavement Edge Markings: The Hidden Feature
-
-Pavements aren't just filled shapes. They can have **painted edge lines and embedded lights** around their boundaries.
-
-### Edge Markings on Pavement Nodes
-
-Remember the node format for pavements? I showed you the basic version:
-
-```
-111 latitude longitude                           ← Plain node
-112 latitude longitude ctrl_lat ctrl_lon         ← Bezier node
+```typescript
+// From pathParser.ts — ring closure logic
+case RowCode.RING_SEGMENT:  // 113
+case RowCode.RING_CURVE:    // 114
+  // Process the closing node
+  processRow(rowCode === RowCode.RING_CURVE, tokens);
+  // Re-process first node to close the loop with correct bezier tangent
+  if (firstRow) processRow(firstRowIsBezier, firstRow);
+  // Finalize this ring
+  finalizePath(coordinates, properties, lineTypes);
+  // Reset state for next ring (potential hole)
+  coordinates = [];
+  inBezier = false;
+  tempBezierNodes = [];
+  firstRow = null;
+  continue;
 ```
 
-But the full format has optional fields at the end:
+## Pavement edge markings
+
+Pavements aren't just filled shapes. Their boundary nodes can carry painted edge lines and embedded lights.
+
+The full node format has optional trailing fields:
 
 ```
 111 latitude longitude [line_type] [light_type]
 112 latitude longitude ctrl_lat ctrl_lon [line_type] [light_type]
 ```
 
-Wait, those look exactly like linear feature nodes! And they work the same way:
-
-- `line_type`: Painted marking style (0=none, 1=solid yellow, 4=hold bars, etc.)
-- `light_type`: Embedded lights (0=none, 102=blue edge, etc.)
-
-### Real Example
-
-Here's an actual pavement from an airport file:
+Real example:
 
 ```
 110 1 0.25 0.00 Apron B
 111 47.464 -122.311 0 0
 111 47.465 -122.311 0 0
-112 47.466 -122.310 47.465 -122.310 30 102   ← SOLID_RED edge + blue lights!
-114 47.464 -122.310 30 102                    ← Closing node also has markings
+112 47.466 -122.310 47.465 -122.310 30 102
+114 47.464 -122.310 30 102
 ```
 
-The `30 102` means: paint a solid red line along this edge, and embed blue edge lights.
+The `30 102` means: paint a solid red line along this edge and embed blue omnidirectional lights. The pavement boundary doubles as a linear feature. Instead of tracing two separate features — a pavement and a painted line on top of it — you define both at once.
 
-### Why This Makes Sense
+For the full line type and light type reference, see [the linear features post]({{< relref "/posts/xplane-linear-features-line-types" >}}).
 
-Think about real airport aprons. The pavement itself has a shape, that's the filled polygon. But around the edge, there might be:
+## Worked example
 
-- Red boundary lines marking restricted areas
-- Blue edge lights for night operations
-- Yellow hold lines at taxiway entrances
+Let's trace through parsing this pavement:
 
-Instead of requiring scenery designers to trace two separate features (a pavement AND a linear feature on top of it), X-Plane lets you define both at once. The pavement boundary doubles as a linear feature.
-
-### Extracting Edge Markings
-
-When parsing pavements, you need to check if any boundary nodes have non-zero line or light types:
-
-```python
-def extract_edge_markings(pavement_paths):
-    """Extract linear features from pavement edge markings."""
-    edge_features = []
-
-    for path in pavement_paths:
-        # Check if this path has any edge markings
-        has_markings = any(
-            lt.line_type > 0 or lt.light_type > 0
-            for lt in path.line_types
-        )
-
-        if not has_markings:
-            continue
-
-        # Treat the boundary coordinates as a linear feature
-        # Split by type changes, just like standalone linear features
-        features = split_by_type(path.coordinates, path.line_types)
-        edge_features.extend(features)
-
-    return edge_features
+```
+110 1 0.25 0.00 Taxiway A
+111 47.464000 -122.312000
+111 47.465000 -122.312000
+112 47.465500 -122.311500 47.465500 -122.312000
+111 47.465500 -122.310000
+113 47.464000 -122.310000
 ```
 
-The edge markings use the same type system and segment splitting logic as standalone linear features (row code 120). You can reuse all that parsing code.
+| Step | Code | Action | Result |
+|------|------|--------|--------|
+| 1 | 111 | First node. Record position. | `[-122.312, 47.464]` |
+| 2 | 111 | 111→111: straight line | Add `[-122.312, 47.465]` |
+| 3 | 112 | 111→112: quadratic bezier (mirror control) | ~60 curve points |
+| 4 | 111 | 112→111: quadratic bezier (control direct) | ~60 curve points |
+| 5 | 113 | Ring close: process node, then re-process first node | Close polygon |
 
-### The Gotcha
+Winding order check: counter-clockwise. This is an outer boundary, not a hole.
 
-Edge markings on pavement boundaries are **closed loops**. The last point connects back to the first. But when you split by type, you might create segments that span the closure point.
+The result as GeoJSON:
 
-Handle this the same way you handle any polygon closure: when processing the segment from the last node back to the first, use the last node's type.
+```json
+{
+  "type": "Feature",
+  "geometry": {
+    "type": "Polygon",
+    "coordinates": [[ [-122.312, 47.464], [-122.312, 47.465], ... ]]
+  },
+  "properties": { "name": "Taxiway A", "surface": 1, "smoothness": 0.25 }
+}
+```
 
-## Why Parse apt.dat?
+## Reference — common mistakes
 
-The apt.dat format is publicly documented and used by multiple flight simulators. [X-Plane](https://www.x-plane.com/) uses it natively. [FlightGear](https://www.flightgear.org/) uses the same format.
+1. Only implementing quadratic beziers. When two 112 nodes are consecutive, you need a cubic bezier with four control points. Quadratics will look close but you'll get kinks on S-curves.
 
-The [X-Plane Scenery Gateway](https://gateway.x-plane.com/) hosts community-contributed airport data. You can download apt.dat files for over 38,000 airports, modify them, and submit improvements back.
+2. Low resolution curves. Too few sample points (8 or 16) makes curves faceted at close zoom. 60 per segment is a good default.
 
-If you're building:
-- Visualization tools for airport layouts
-- Converters to GeoJSON, Shapefile, or other GIS formats
-- Validation scripts for scenery submissions
-- Procedural generation pipelines
+3. Duplicate points at segment boundaries. The end of one bezier is the start of the next. Check if the new point matches the last point before appending, or you'll get tiny rendering artifacts and bloated arrays.
 
-You'll need to understand the bezier encoding. The mirroring rule: stored control points define the outgoing direction, so flip them for incoming curves.
+4. The first node has no incoming curve. If a path starts with 112, just record its position and control. The curve gets drawn when the second node is processed.
+
+5. Control points can be anywhere. Very close to the node means a gentle curve. Very far means a sharp bend. At the same position as the node is effectively a plain node.
 
 ## Resources
 
-References and useful tools:
-
-- [Understanding the Logic of Bezier Control Points in apt.dat](https://forums.x-plane.org/forums/topic/66713-understanding-the-logic-of-bezier-control-points-in-aptdat/) - Forum thread explaining the mirroring logic
-- [Carlos Bergillos' blog post on apt.dat](https://cbergillos.com/blog/2022-07-11-xplane-aptdat/) - Format structure walkthrough
-- [xplane_apt_convert](https://github.com/CarlosBergillos/xplane_apt_convert) - Python library for converting apt.dat to GeoJSON and other formats
-- [X-Plane Scenery Gateway](https://gateway.x-plane.com/) - Community airport data repository
-- [apt.dat specification](https://developer.x-plane.com/article/airport-data-apt-dat-file-format-specification/) - The official format documentation
+- [Understanding the Logic of Bezier Control Points in apt.dat](https://forums.x-plane.org/forums/topic/66713-understanding-the-logic-of-bezier-control-points-in-aptdat/) — Forum thread explaining the mirroring logic
+- [Carlos Bergillos' blog post on apt.dat](https://cbergillos.com/blog/2022-07-11-xplane-aptdat/) — Format structure walkthrough
+- [xplane_apt_convert](https://github.com/CarlosBergillos/xplane_apt_convert) — Python library for converting apt.dat to GeoJSON and other formats
+- [X-Plane Scenery Gateway](https://gateway.x-plane.com/) — Community airport data repository
+- [apt.dat specification](https://developer.x-plane.com/article/airport-data-apt-dat-file-format-specification/) — The official format documentation
+- [Parsing painted lines and taxiway lights from apt.dat]({{< relref "/posts/xplane-linear-features-line-types" >}}) — The companion post covering linear features, line types, and segment splitting
