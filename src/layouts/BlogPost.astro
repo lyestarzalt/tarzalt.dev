@@ -68,7 +68,7 @@ function formatDate(d: Date) {
 
     {featuredImage && (
       <div class="mb-10 overflow-hidden rounded-xl border border-border">
-        <Image src={featuredImage} alt={title} width={960} densities={[1, 2]} class="!m-0 block w-full !rounded-none" />
+        <Image src={featuredImage} alt={title} width={960} densities={[1, 2]} loading="eager" class="!m-0 block w-full !rounded-none" />
       </div>
     )}
 

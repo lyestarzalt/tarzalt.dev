@@ -1,4 +1,7 @@
 ---
+import { Image } from 'astro:assets';
+import profileImg from '@/assets/profile.png';
+
 interface Props {
   class?: string;
 }
@@ -7,10 +10,12 @@ const { class: className = '' } = Astro.props;
 ---
 
 <div class={`relative shrink-0 overflow-hidden rounded-full ${className}`}>
-  <img
-    src="/images/profile.png"
+  <Image
+    src={profileImg}
     alt="Lyes Tarzalt"
-    class="aspect-square size-full object-cover"
+    width={96}
+    height={96}
     loading="eager"
+    class="aspect-square size-full object-cover"
   />
 </div>

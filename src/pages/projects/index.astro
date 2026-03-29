@@ -1,0 +1,62 @@
+---
+import { Image } from 'astro:assets';
+import Base from '@/layouts/Base.astro';
+import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
+import xDispatchIcon from '@/assets/projects/x-dispatch/icon.png';
+---
+
+<Base title="Projects - Lyes Tarzalt">
+  <section class="pt-8">
+    <h1 class="font-heading text-3xl font-bold italic tracking-tight">Projects</h1>
+    <p class="mt-2 text-sm text-muted-foreground">Things I built because they needed to exist.</p>
+  </section>
+
+  <Separator className="my-8" />
+
+  <div class="space-y-4">
+    <!-- X-Dispatch -->
+    <a href="/projects/x-dispatch/" class="group block no-underline">
+      <Card className="transition-colors hover:border-primary/30">
+        <CardContent className="flex items-start gap-4 p-5">
+          <Image src={xDispatchIcon} alt="X-Dispatch" width={48} height={48} loading="eager" class="!m-0 size-12 shrink-0 rounded-xl" />
+          <div>
+            <div class="flex items-center gap-2">
+              <p class="font-heading text-base font-semibold text-foreground transition-colors group-hover:text-primary">X-Dispatch</p>
+              <Badge variant="outline" className="text-[0.6rem]">Open Source</Badge>
+            </div>
+            <p class="mt-1 text-sm text-muted-foreground">Flight dispatch, airport visualization, and addon management for X-Plane 12.</p>
+            <div class="mt-2 flex gap-3 font-mono text-xs text-muted-foreground/50">
+              <span>2,800+ downloads</span>
+              <span>19 reviews</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </a>
+
+    <!-- Voice Agent -->
+    <a href="/blog/ai-voice-agent-supervisor/" class="group block no-underline">
+      <Card className="transition-colors hover:border-primary/30">
+        <CardContent className="p-5">
+          <p class="font-heading text-base font-semibold text-foreground transition-colors group-hover:text-primary">AI Voice Agent Dashboard</p>
+          <p class="mt-1 text-sm text-muted-foreground">Real-time supervisor dashboard for AI phone calls. Sentiment analysis, live intervention, zero ghost calls.</p>
+        </CardContent>
+      </Card>
+    </a>
+
+    <!-- Dinar Échange -->
+    <a href="https://play.google.com/store/apps/details?id=com.dinarexchange.app" target="_blank" rel="noopener" class="group block no-underline">
+      <Card className="transition-colors hover:border-primary/30">
+        <CardContent className="p-5">
+          <div class="flex items-center gap-2">
+            <p class="font-heading text-base font-semibold text-foreground transition-colors group-hover:text-primary">Dinar Échange</p>
+            <Badge variant="outline" className="text-[0.6rem]">Play Store</Badge>
+          </div>
+          <p class="mt-1 text-sm text-muted-foreground">Algerian dinar exchange rates. Because a friend wanted it simple.</p>
+        </CardContent>
+      </Card>
+    </a>
+  </div>
+</Base>

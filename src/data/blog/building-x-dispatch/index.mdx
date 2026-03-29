@@ -9,6 +9,11 @@ categories: ["Projects"]
 featuredImage: "./cover.png"
 ---
 
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+
 In September 2021, Laminar Research had just announced X-Plane 12. I asked them if they'd consider adding a global map to the main menu.
 
 ![The forum exchange that started it all](./origin-story.png)
@@ -24,6 +29,12 @@ Here, there were two hard things. First, parsing `apt.dat`. X-Plane stores all a
 Second, getting X-Plane to actually start with the user's choices. I knew the sim kept its last flight configuration in a text file called `Freeflight.prf`. My thinking was: modify that file before launch, and X-Plane reads it and sets everything up. But there were zero docs about how this worked.
 
 ## The first attempt
+
+<div className="flex flex-wrap gap-1.5 mb-4">
+  <Badge variant="secondary">Flutter</Badge>
+  <Badge variant="secondary">Dart</Badge>
+  <Badge variant="secondary">flutter_map</Badge>
+</div>
 
 I tried building it in Flutter because that's what I was comfortable with. My approach back then was different from what X-Dispatch ended up being. I wanted to show the airports on a map, sure, but the actual airport detail view would be a separate canvas where I'd draw the layout myself, converting the coordinates to X,Y screen positions. On top of that, rendering each airport's data points on the Flutter map was painfully slow. There was clustering, but it felt like I was fighting the framework the whole time. It defeated the vision I had for the app. I parked it.
 
@@ -47,7 +58,24 @@ Still in the back of my head. Always scratching.
 
 I got a job, got more engineering experience, built other things. Decided to pick this up again, but differently.
 
-The framework decision came first. MapLibre GL JS ticked every box: polygons, GeoJSON shapes, extensible, stable, and it handles coordinate projections for me. That last part was the big one. All the projection math I was doing by hand before? MapLibre just does it. I could even add 3D terrain if I wanted. Basically I could do anything, limited only by the user's machine.
+<Card className="my-6">
+  <CardContent className="p-5">
+    <p className="text-sm font-medium text-foreground mb-3">The stack I landed on</p>
+    <div className="flex flex-wrap gap-1.5">
+      <Badge>Electron</Badge>
+      <Badge>React 18</Badge>
+      <Badge>TypeScript</Badge>
+      <Badge>MapLibre GL JS</Badge>
+      <Badge>Tailwind CSS</Badge>
+      <Badge>shadcn/ui</Badge>
+      <Badge>Zustand</Badge>
+      <Badge>TanStack Query</Badge>
+      <Badge>SQLite</Badge>
+    </div>
+  </CardContent>
+</Card>
+
+MapLibre GL JS ticked every box: polygons, GeoJSON shapes, extensible, stable, and it handles coordinate projections for me. That last part was the big one. All the projection math I was doing by hand before? MapLibre just does it. I could even add 3D terrain if I wanted. Basically I could do anything, limited only by the user's machine.
 
 But MapLibre is a web thing, and this needed to be a desktop app. Two options: Electron or Tauri. Tauri is actually the better fit on paper. Less memory, lighter, more modern. But it's built on Rust. I know nothing about Rust. The last thing I wanted while building something this complex was to also be learning a new language. Even with Claude and other AI tools helping, I didn't want code in my app that I couldn't reason about when something breaks. So Electron it was. My users run flight simulators, they have plenty of RAM, the overhead wasn't going to matter.
 
@@ -57,7 +85,16 @@ This time I went straight for the bezier rendering. Heart of the app. If this do
 
 The thing that actually made it click: I opened WED, which is X-Plane's airport editor tool, and started drawing shapes. Then I'd look at the `apt.dat` file WED produced and compare. Drawing a shape visually and then reading the output it generated made the control point mirroring logic obvious in a way that reading the spec alone never did. It was a lot of back and forth with Claude and various documentation sources I found online, but WED was the breakthrough.
 
-I wrote the full technical breakdown: [Parsing X-Plane airport geometry from apt.dat](/blog/parsing-xplane-airport-geometry/). Then I tackled [linear features, the painted lines and taxiway lights](/blog/xplane-linear-features-line-types/).
+I wrote the full technical breakdown. Then I tackled linear features, the painted lines and taxiway lights.
+
+<div className="flex flex-wrap gap-2 my-4">
+  <Button variant="outline" size="sm" asChild>
+    <a href="/blog/parsing-xplane-airport-geometry/">Parsing apt.dat geometry</a>
+  </Button>
+  <Button variant="outline" size="sm" asChild>
+    <a href="/blog/xplane-linear-features-line-types/">Linear features & painted lines</a>
+  </Button>
+</div>
 
 This is what the final airport rendering looks like. Taxiways, pavement, painted lines, edge lights, gates, runways. All parsed from that one text file.
 
@@ -109,3 +146,17 @@ Most of the features that came after were from users. One person in particular g
 FSElite [covered the app](https://fselite.net/content/x-dispatch-adds-world-map-flight-launcher-and-add-on-manager-to-x-plane-12/). 19 reviews on X-Plane.Org, all five stars. Someone wrote that Laminar should recruit me.
 
 I don't know about that. I just wanted a map.
+
+<Separator className="my-8" />
+
+<div className="flex flex-wrap gap-2">
+  <Button asChild>
+    <a href="https://github.com/lyestarzalt/x-dispatch/releases/latest" target="_blank" rel="noopener">Download X-Dispatch</a>
+  </Button>
+  <Button variant="outline" asChild>
+    <a href="/projects/x-dispatch/">Project page</a>
+  </Button>
+  <Button variant="outline" asChild>
+    <a href="https://github.com/lyestarzalt/x-dispatch" target="_blank" rel="noopener">GitHub</a>
+  </Button>
+</div>

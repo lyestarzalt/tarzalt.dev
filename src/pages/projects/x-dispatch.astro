@@ -1,10 +1,13 @@
 ---
+import { Image } from 'astro:assets';
 import Base from '@/layouts/Base.astro';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { Card, CardContent } from '@/components/ui/card';
 import { ScreenshotGallery } from '@/components/ScreenshotGallery';
 import LinkPreview from '@/components/LinkPreview.astro';
+import xDispatchIcon from '@/assets/projects/x-dispatch/icon.png';
 ---
 
 <Base
@@ -14,11 +17,11 @@ import LinkPreview from '@/components/LinkPreview.astro';
   <!-- Hero -->
   <section class="py-12">
     <div class="flex items-start gap-5">
-      <img src="/images/projects/x-dispatch/icon.png" alt="X-Dispatch" class="!m-0 size-16 shrink-0 rounded-2xl sm:size-20" />
+      <Image src={xDispatchIcon} alt="X-Dispatch icon" width={80} height={80} loading="eager" class="!m-0 size-16 shrink-0 rounded-2xl sm:size-20" />
       <div>
         <h1 class="font-heading text-3xl font-bold italic tracking-tight sm:text-4xl">X-Dispatch</h1>
         <p class="mt-1 text-sm text-muted-foreground">
-          Flight dispatch, airport visualization, and addon management for X-Plane 12.
+          A free companion app for X-Plane 12. Browse airports on a 3D globe, set up your flight, and launch directly.
         </p>
         <div class="mt-3 flex flex-wrap gap-1.5">
           {["Electron", "React", "TypeScript", "MapLibre", "Tailwind", "SQLite"].map(t => (
@@ -49,85 +52,148 @@ import LinkPreview from '@/components/LinkPreview.astro';
 
   <Separator className="my-12" />
 
-  <!-- Origin story -->
-  <section>
-    <h2 class="mb-4 font-heading text-xl font-semibold italic">The story</h2>
+  <!-- About the app -->
+  <section class="space-y-5">
     <p class="text-sm leading-relaxed text-muted-foreground">
-      In 2021, I asked Laminar Research if they'd build a global map. They weren't sold on it. So I built it myself.
+      Back in 2021, I asked Laminar Research if they had plans for a global airport map in X-Plane. They weren't interested. The idea stuck with me for years. I kept brainstorming how it would work, what it would look like, which problems I'd need to solve first.
     </p>
-    <div class="mt-4 flex flex-wrap gap-3">
+    <p class="text-sm leading-relaxed text-muted-foreground">
+      The two hard parts were parsing X-Plane's airport data file (every smooth curve you see is a bezier encoded in a way that took me months to get right) and figuring out how to actually launch X-Plane with the user's choices (through an undocumented config file, and later an undocumented command line flag). I failed the first attempt with Flutter, shelved it, came back years later with MapLibre and Electron, and got it working.
+    </p>
+    <p class="text-sm leading-relaxed text-muted-foreground">
+      X-Dispatch gives you a 3D globe with 35,000+ airports. Click any airport to see the full layout: runways, taxiways, gates, markings, all rendered from X-Plane's own data. Pick a starting position, choose your aircraft and livery, configure fuel and weather, hit launch. Or relocate mid-flight if the sim is already running.
+    </p>
+    <p class="text-sm leading-relaxed text-muted-foreground">
+      Free and open source. Windows, macOS, Linux.
+    </p>
+    <div>
       <Button variant="outline" size="sm" asChild>
         <a href="/blog/building-x-dispatch/">Read the full story</a>
       </Button>
     </div>
-
-    <LinkPreview url="https://fselite.net/content/x-dispatch-adds-world-map-flight-launcher-and-add-on-manager-to-x-plane-12/" />
   </section>
 
   <Separator className="my-12" />
 
-  <!-- What it does — prose, not cards -->
-  <section class="space-y-8">
-    <h2 class="font-heading text-xl font-semibold italic">What it does</h2>
+  <!-- Features -->
+  <section>
+    <h2 class="mb-6 font-heading text-xl font-semibold italic">Features</h2>
+    <div class="space-y-6">
+      <div>
+        <h3 class="text-sm font-medium text-foreground">Map & airports</h3>
+        <p class="mt-1 text-sm leading-relaxed text-muted-foreground">
+          3D globe with terrain elevation, hillshade, contour lines. 6 basemap styles. 35,000+ airports with custom scenery detection. Day/night terminator. Weather radar overlay with playback. Range rings by aircraft category.
+        </p>
+      </div>
+      <div>
+        <h3 class="text-sm font-medium text-foreground">Airport detail</h3>
+        <p class="mt-1 text-sm leading-relaxed text-muted-foreground">
+          Runways with surface types, dimensions, lighting, markings. Taxiways, aprons, pavement areas with signs. Gates and parking with heading indicators. Helipads, windsocks, beacons. All parsed from apt.dat.
+        </p>
+      </div>
+      <div>
+        <h3 class="text-sm font-medium text-foreground">Navigation</h3>
+        <p class="mt-1 text-sm leading-relaxed text-muted-foreground">
+          VOR, NDB, DME, TACAN, ILS/LOC with course visualization. High and low altitude airways. Airspace boundaries and FIR regions. SID, STAR, approach procedures overlaid on the map. X-Plane native data or Navigraph with AIRAC detection.
+        </p>
+      </div>
+      <div>
+        <h3 class="text-sm font-medium text-foreground">Flight setup & launch</h3>
+        <p class="mt-1 text-sm leading-relaxed text-muted-foreground">
+          Aircraft browser with search, filters, favorites. Livery selection remembered per aircraft. Fuel, payload, weight & balance. Start from any gate, runway, helipad, or custom pin drop. Air start, carrier catapult, frigate deck, glider tow. Weather presets or full custom. Direct X-Plane launch or mid-flight relocation via REST API.
+        </p>
+      </div>
+      <div>
+        <h3 class="text-sm font-medium text-foreground">SimBrief & live traffic</h3>
+        <p class="mt-1 text-sm leading-relaxed text-muted-foreground">
+          One-click OFP import with route visualization. Fuel breakdown, weight summary, nav log. VATSIM and IVAO overlays with pilot callsigns. Live METAR with flight category display.
+        </p>
+      </div>
+      <div>
+        <h3 class="text-sm font-medium text-foreground">Addon manager & tracking</h3>
+        <p class="mt-1 text-sm leading-relaxed text-muted-foreground">
+          Browse installed aircraft, plugins, liveries, Lua scripts. Drag-and-drop install from ZIP, RAR, 7z. Scenery priority management. Real-time flight tracking via WebSocket. Multiple X-Plane installations with quick switching.
+        </p>
+      </div>
+    </div>
+  </section>
 
-    <p class="text-sm leading-relaxed text-muted-foreground">
-      X-Plane stores all airport data in a single text file called <code>apt.dat</code>. Every airport in the world, 35,000+ of them, with runways, taxiways, gates, markings, lights. X-Dispatch parses that file and renders it all on a 3D globe you can explore.
-    </p>
+  <Separator className="my-12" />
 
-    <p class="text-sm leading-relaxed text-muted-foreground">
-      Click any airport. See the full layout: runways with surface types, taxiways with painted markings, gates with heading indicators. Browse SID/STAR/approach procedures overlaid on the map. Check VOR, NDB, ILS with course visualization. See airspace boundaries and FIR regions. Works with X-Plane's native nav data or Navigraph with AIRAC detection.
-    </p>
-
-    <p class="text-sm leading-relaxed text-muted-foreground">
-      Import your flight plan from SimBrief with one click. Pick an aircraft (with search, filters, favorites). Choose a livery — remembered per aircraft. Set fuel, payload, weight & balance. Pick a starting position: any gate, runway, helipad, or drop a pin wherever you want. Configure weather and time. Hit launch. X-Plane opens with everything configured. Or if it's already running, relocate mid-flight via the REST API.
-    </p>
-
-    <p class="text-sm leading-relaxed text-muted-foreground">
-      There's also VATSIM and IVAO live traffic overlays, real-time flight tracking via WebSocket, a weather radar with playback, an addon manager that handles ZIP/RAR/7z drag-and-drop installs, and scenery priority management. Available in 10 languages. Works on Windows, macOS, and Linux.
-    </p>
+  <!-- Press -->
+  <section>
+    <h2 class="mb-4 font-heading text-xl font-semibold italic">Press</h2>
+    <LinkPreview url="https://fselite.net/content/x-dispatch-adds-world-map-flight-launcher-and-add-on-manager-to-x-plane-12/" />
   </section>
 
   <Separator className="my-12" />
 
   <!-- Reviews -->
   <section>
-    <blockquote class="!my-0 !border-l-0 !bg-transparent !px-0 !py-0 !text-foreground not-italic">
-      <p class="font-heading text-2xl font-semibold italic leading-snug text-foreground sm:text-3xl">
-        "Hands down the best add-on for X-Plane. Period."
-      </p>
-      <footer class="mt-3 font-mono text-xs text-muted-foreground/50">— Haui, X-Plane.Org</footer>
-    </blockquote>
+    <h2 class="mb-2 font-heading text-xl font-semibold italic">Community</h2>
+    <p class="mb-8 text-sm text-muted-foreground">
+      This is genuinely heartwarming. I'm glad people find it useful.
+    </p>
 
-    <div class="mt-10 space-y-6">
-      <div>
-        <p class="text-sm leading-relaxed text-muted-foreground">
-          "I honestly thought Laminar would one day come up with something like this, but instead, you have taken the lead. I think Austin Meyer owes you a great one on this release."
-        </p>
-        <p class="mt-1 font-mono text-xs text-muted-foreground/40">— DZ-Aviation</p>
+    <div class="space-y-5">
+      <div class="border-l-2 border-primary/20 pl-4">
+        <p class="text-sm leading-relaxed text-muted-foreground">"Hands down the best add-on for X-Plane! Period! I absolutely love the design and how fluid and quick to react this tool is. Oh boy, are the MSFS guys & gals gonna be jealous of this one."</p>
+        <p class="mt-1.5 font-mono text-xs text-muted-foreground/40">Haui</p>
       </div>
-      <div>
-        <p class="text-sm leading-relaxed text-muted-foreground">
-          "WOW. You should contact Laminar so they recruit you."
-        </p>
-        <p class="mt-1 font-mono text-xs text-muted-foreground/40">— Encounia</p>
+      <div class="border-l-2 border-primary/20 pl-4">
+        <p class="text-sm leading-relaxed text-muted-foreground">"X-Dispatch is the one stop tool that every simmer needs. I honestly thought Laminar would one day come up with something like this, but instead, you have taken the lead. I think Austin Meyer owes you a great one on this release."</p>
+        <p class="mt-1.5 font-mono text-xs text-muted-foreground/40">DZ-Aviation</p>
       </div>
-      <div>
-        <p class="text-sm leading-relaxed text-muted-foreground">
-          "Amazing utility app for X-Plane, I'm really enjoying the features, especially the 3D terrain viewer."
-        </p>
-        <p class="mt-1 font-mono text-xs text-muted-foreground/40">— Sean McLeod</p>
+      <div class="border-l-2 border-primary/20 pl-4">
+        <p class="text-sm leading-relaxed text-muted-foreground">"WOW. You should contact Laminar so they recruit you."</p>
+        <p class="mt-1.5 font-mono text-xs text-muted-foreground/40">Encounia</p>
       </div>
-      <div>
-        <p class="text-sm leading-relaxed text-muted-foreground">
-          "This is a very sleek UI. Well done."
-        </p>
-        <p class="mt-1 font-mono text-xs text-muted-foreground/40">— ColinM9991</p>
+      <div class="border-l-2 border-primary/20 pl-4">
+        <p class="text-sm leading-relaxed text-muted-foreground">"Amazing utility app for X-Plane, I'm really enjoying the features, especially the 3D terrain viewer."</p>
+        <p class="mt-1.5 font-mono text-xs text-muted-foreground/40">Sean McLeod</p>
+      </div>
+      <div class="border-l-2 border-primary/20 pl-4">
+        <p class="text-sm leading-relaxed text-muted-foreground">"This is essential, thank you!"</p>
+        <p class="mt-1.5 font-mono text-xs text-muted-foreground/40">Tenebrae Aeternae</p>
+      </div>
+      <div class="border-l-2 border-primary/20 pl-4">
+        <p class="text-sm leading-relaxed text-muted-foreground">"Awesome application! Free and open source. Can't thank the creator enough."</p>
+        <p class="mt-1.5 font-mono text-xs text-muted-foreground/40">Suh</p>
+      </div>
+      <div class="border-l-2 border-primary/20 pl-4">
+        <p class="text-sm leading-relaxed text-muted-foreground">"This is a very sleek UI. Well done."</p>
+        <p class="mt-1.5 font-mono text-xs text-muted-foreground/40">ColinM9991</p>
+      </div>
+      <div class="border-l-2 border-primary/20 pl-4">
+        <p class="text-sm leading-relaxed text-muted-foreground">"Already shows great promise. The dev is very open to new ideas and looking for help to work out bugs. A big thank you for sharing this with the community."</p>
+        <p class="mt-1.5 font-mono text-xs text-muted-foreground/40">kemosabe</p>
       </div>
     </div>
 
     <p class="mt-6 text-xs text-muted-foreground/50">
       <a href="https://forums.x-plane.org/files/file/98500-x-dispatch/" target="_blank" rel="noopener" class="text-primary underline underline-offset-2 decoration-primary/30 hover:decoration-primary">All 19 reviews on X-Plane.Org</a>
     </p>
+  </section>
+
+  <Separator className="my-12" />
+
+  <!-- Read more -->
+  <section>
+    <h2 class="mb-4 font-heading text-xl font-semibold italic">Read more</h2>
+    <div class="space-y-2">
+      <a href="/blog/building-x-dispatch/" class="group -mx-3 flex items-center gap-3 rounded-lg px-3 py-3 no-underline transition-colors hover:bg-card">
+        <span class="text-sm font-medium text-foreground transition-colors group-hover:text-primary">Building X-Dispatch</span>
+        <span class="font-mono text-xs text-muted-foreground/40">the full story</span>
+      </a>
+      <a href="/blog/parsing-xplane-airport-geometry/" class="group -mx-3 flex items-center gap-3 rounded-lg px-3 py-3 no-underline transition-colors hover:bg-card">
+        <span class="text-sm font-medium text-foreground transition-colors group-hover:text-primary">Parsing apt.dat geometry</span>
+        <span class="font-mono text-xs text-muted-foreground/40">bezier curves</span>
+      </a>
+      <a href="/blog/xplane-linear-features-line-types/" class="group -mx-3 flex items-center gap-3 rounded-lg px-3 py-3 no-underline transition-colors hover:bg-card">
+        <span class="text-sm font-medium text-foreground transition-colors group-hover:text-primary">Painted lines and taxiway lights</span>
+        <span class="font-mono text-xs text-muted-foreground/40">linear features</span>
+      </a>
+    </div>
   </section>
 
   <Separator className="my-12" />
