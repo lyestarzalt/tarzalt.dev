@@ -5,13 +5,19 @@ import sitemap from '@astrojs/sitemap';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import remarkCallout from 'remark-github-blockquote-alert';
+import mermaid from 'astro-mermaid';
 
 import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   site: 'https://tarzalt.dev',
-  integrations: [mdx(), sitemap(), react()],
+  integrations: [
+    mermaid({ autoTheme: true }),
+    mdx(),
+    sitemap(),
+    react(),
+  ],
 
   markdown: {
     remarkPlugins: [remarkMath, remarkCallout],

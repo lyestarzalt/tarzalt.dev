@@ -2,6 +2,7 @@
 import { DesktopNav } from '@/components/DesktopNav';
 import { MobileNav } from '@/components/MobileNav';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { HeaderStatus } from '@/components/HeaderStatus';
 
 const navItems = [
   { label: 'Writing', href: '/blog/' },
@@ -11,9 +12,15 @@ const navItems = [
 
 <header class="py-6">
   <nav class="flex items-center justify-between">
-    <a href="/" class="flex size-8 items-center justify-center rounded-md border border-border text-sm font-bold text-foreground no-underline transition-colors hover:bg-accent hover:text-accent-foreground">
-      LT
-    </a>
+    <div class="flex items-center gap-3">
+      <a
+        href="/"
+        class="group flex size-8 items-center justify-center rounded-md border border-border font-heading text-sm font-bold text-foreground no-underline transition-all hover:border-primary hover:text-primary hover:shadow-[0_0_12px_-3px] hover:shadow-primary/30"
+      >
+        LT
+      </a>
+      <HeaderStatus client:idle />
+    </div>
     <div class="flex items-center gap-2">
       <DesktopNav items={navItems} client:load />
       <ThemeToggle client:load />

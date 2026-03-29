@@ -1,14 +1,26 @@
 ---
 import '@/styles/global.css';
 import Header from '@/components/Header.astro';
+import SEO from '@/components/SEO.astro';
 import { Separator } from '@/components/ui/separator';
 
 interface Props {
   title: string;
   description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+  publishedDate?: Date;
+  modifiedDate?: Date;
 }
 
-const { title, description = 'Lyes Tarzalt - Software engineer writing about parsing, flight simulation tools, and building practical software.' } = Astro.props;
+const {
+  title,
+  description = 'Lyes Tarzalt - Product engineer building software that solves real problems. Writing about parsing, real-time systems, and the engineering behind it.',
+  image,
+  type,
+  publishedDate,
+  modifiedDate,
+} = Astro.props;
 ---
 
 <!doctype html>
@@ -16,12 +28,12 @@ const { title, description = 'Lyes Tarzalt - Software engineer writing about par
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content={description} />
+    <SEO title={title} description={description} image={image} type={type} publishedDate={publishedDate} modifiedDate={modifiedDate} />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
     <link
@@ -30,35 +42,58 @@ const { title, description = 'Lyes Tarzalt - Software engineer writing about par
       crossorigin="anonymous"
     />
     <script is:inline>
+      // Theme: dark by default
       (function() {
-        var t = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        var t = localStorage.getItem('theme') || 'dark';
         if (t === 'dark') document.documentElement.classList.add('dark');
       })();
     </script>
     <title>{title}</title>
   </head>
-  <body class="min-h-screen bg-background text-foreground antialiased">
+  <body class="min-h-screen bg-background text-foreground">
+    <!-- Grain overlay -->
+    <div class="pointer-events-none fixed inset-0 z-[9999] opacity-[0.025] dark:opacity-[0.04]" style="background-image: url(&quot;data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E&quot;);"></div>
+
     <div class="mx-auto flex min-h-screen max-w-2xl flex-col px-6">
       <Header />
-      <main class="flex-1 py-4 pb-16">
+      <main class="flex-1 pb-16 pt-4">
         <slot />
       </main>
-      <footer class="py-6">
+      <footer class="pb-8 pt-6">
         <Separator className="mb-6" />
-        <div class="flex items-center gap-2 text-xs text-muted-foreground">
-          <span>Lyes Tarzalt</span>
-          <span class="opacity-30">/</span>
-          <span>{new Date().getFullYear()}</span>
+        <div class="flex items-center justify-between">
+          <span class="text-xs text-muted-foreground">
+            &copy; {new Date().getFullYear()} Lyes Tarzalt
+          </span>
+          <span class="font-mono text-[0.625rem] text-muted-foreground/40 select-none" title="You found one.">
+            42
+          </span>
         </div>
       </footer>
     </div>
+
+    <!-- Console easter egg -->
+    <script is:inline>
+      console.log(
+        '%c hey. %c\n\nYou\'re looking at the source. I respect that.\n\nIf you\'re here because something broke, sorry.\nIf you\'re here because you\'re curious, good.\n\nI built this with Astro, React, Tailwind, and too many opinions.\n\n— Lyes\n\nhttps://github.com/lyestarzalt',
+        'font-size: 24px; font-weight: bold; color: #d4a054;',
+        'font-size: 13px; color: #8a8a8a; line-height: 1.6;'
+      );
+      console.log('%c Try: document.body.style.fontFamily = "Comic Sans MS"', 'color: #555; font-style: italic;');
+    </script>
   </body>
 </html>
 
 <style is:global>
   @reference "@/styles/global.css";
 
-  /* Code blocks */
+  /* ── Heading font ── */
+  .font-heading, h1, h2, h3, h4 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-optical-sizing: auto;
+  }
+
+  /* ── Code blocks ── */
   pre {
     @apply !rounded-lg !border !border-border !bg-card !p-5 !text-[0.8125rem] !leading-relaxed;
     font-family: 'JetBrains Mono', var(--font-mono, monospace);
@@ -70,40 +105,55 @@ const { title, description = 'Lyes Tarzalt - Software engineer writing about par
     font-size: 0.875em;
   }
   :not(pre) > code {
-    @apply rounded-sm bg-muted px-1.5 py-0.5 text-[0.8125em] text-foreground;
+    @apply rounded-sm bg-primary/10 px-1.5 py-0.5 text-[0.8125em] text-primary;
   }
 
   /* Shiki dual theme */
   .dark pre code .line span { color: var(--shiki-dark, inherit) !important; }
   html:not(.dark) pre code .line span { color: var(--shiki-light, inherit) !important; }
 
-  /* Images */
+  /* ── Images ── */
   img { @apply max-w-full h-auto rounded-lg; }
 
-  /* Blockquotes */
-  blockquote { @apply border-l-2 border-border rounded-r-md bg-muted/50 px-5 py-3 my-6 text-muted-foreground; }
+  /* ── Blockquotes ── */
+  blockquote {
+    @apply border-l-2 border-primary/40 rounded-r-md bg-card px-5 py-3 my-6 text-muted-foreground italic;
+  }
   blockquote p { @apply m-0; }
 
-  /* GitHub callouts */
-  .markdown-alert { @apply border-l-2 border-primary rounded-r-md bg-muted/50 px-5 py-3 my-6; }
-  .markdown-alert-title { @apply text-xs font-medium uppercase tracking-wider text-primary mb-2; }
+  /* ── GitHub callouts ── */
+  .markdown-alert {
+    @apply border-l-2 border-primary/60 rounded-r-md bg-card px-5 py-3 my-6;
+  }
+  .markdown-alert-title {
+    @apply font-mono text-xs font-medium uppercase tracking-wider text-primary mb-2 not-italic;
+  }
 
-  /* Tables */
+  /* ── Tables ── */
   table { @apply w-full border-collapse my-6 text-sm; }
-  th { @apply text-xs font-medium uppercase tracking-wider text-muted-foreground text-left p-3 border-b border-border; }
-  td { @apply p-3 border-b border-border text-muted-foreground; }
-  tr:hover td { @apply bg-muted/50; }
+  th {
+    @apply font-mono text-[0.6875rem] font-medium uppercase tracking-wider text-muted-foreground text-left p-3 border-b border-border;
+  }
+  td { @apply p-3 border-b border-border/50 text-muted-foreground; }
+  tr:hover td { @apply bg-card/50; }
 
-  /* HR */
+  /* ── HR ── */
   hr { @apply border-none border-t border-border my-10; }
 
-  /* Lists */
+  /* ── Lists ── */
   ul, ol { @apply pl-5; }
   li { @apply mb-1 text-muted-foreground; }
+  li::marker { @apply text-primary/40; }
 
-  /* KaTeX */
+  /* ── KaTeX ── */
   .katex-display { @apply my-6 overflow-x-auto overflow-y-hidden; }
 
-  /* Selection */
-  ::selection { @apply bg-primary/15 text-primary; }
+  /* ── Selection — amber tint ── */
+  ::selection { @apply bg-primary/20 text-primary; }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { @apply bg-border rounded-full; }
+  ::-webkit-scrollbar-thumb:hover { @apply bg-muted-foreground/50; }
 </style>

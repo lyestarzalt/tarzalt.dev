@@ -1,0 +1,16 @@
+---
+interface Props {
+  class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+---
+
+<div class={`relative shrink-0 overflow-hidden rounded-full ${className}`}>
+  <img
+    src="/images/profile.png"
+    alt="Lyes Tarzalt"
+    class="aspect-square size-full object-cover"
+    loading="eager"
+  />
+</div>

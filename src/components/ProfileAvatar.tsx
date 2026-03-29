@@ -2,17 +2,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
 
 interface ProfileAvatarProps {
-  src: string
-  alt: string
-  fallback: string
   className?: string
 }
 
-export function ProfileAvatar({ src, alt, fallback, className }: ProfileAvatarProps) {
+export function ProfileAvatar({ className }: ProfileAvatarProps) {
   return (
     <Avatar className={cn(className)}>
-      <AvatarImage src={src} alt={alt} />
-      <AvatarFallback>{fallback}</AvatarFallback>
+      <AvatarImage src="/images/profile.png" alt="Lyes Tarzalt" />
+      <AvatarFallback>LT</AvatarFallback>
     </Avatar>
   )
 }
