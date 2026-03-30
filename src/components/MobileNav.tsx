@@ -13,6 +13,7 @@ import {
   FiMoon,
 } from 'react-icons/fi';
 import { useState } from 'react';
+import { socialLinks } from '@/config/social';
 
 interface NavItem {
   label: string;
@@ -26,6 +27,12 @@ interface MobileNavProps {
 const navIcons: Record<string, React.ReactNode> = {
   Writing: <FiEdit3 className="size-4" />,
   About: <FiUser className="size-4" />,
+};
+
+const socialIconMap: Record<string, React.ReactNode> = {
+  GitHub: <FiGithub className="size-4" />,
+  LinkedIn: <FiLinkedin className="size-4" />,
+  Email: <FiMail className="size-4" />,
 };
 
 export function MobileNav({ items }: MobileNavProps) {
@@ -76,34 +83,19 @@ export function MobileNav({ items }: MobileNavProps) {
 
         {/* Social */}
         <div className="flex flex-col gap-1">
-          <a
-            href="https://github.com/lyestarzalt"
-            target="_blank"
-            rel="noopener"
-            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-          >
-            <FiGithub className="size-4" />
-            <span className="flex-1">GitHub</span>
-            <span className="font-mono text-[0.625rem] opacity-40">lyestarzalt</span>
-          </a>
-          <a
-            href="https://linkedin.com/in/lyes-tarzalt"
-            target="_blank"
-            rel="noopener"
-            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-          >
-            <FiLinkedin className="size-4" />
-            <span className="flex-1">LinkedIn</span>
-            <span className="font-mono text-[0.625rem] opacity-40">lyes-tarzalt</span>
-          </a>
-          <a
-            href="mailto:lyes.trzlt@gmail.com"
-            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-          >
-            <FiMail className="size-4" />
-            <span className="flex-1">Email</span>
-            <span className="font-mono text-[0.625rem] opacity-40">lyes.trzlt</span>
-          </a>
+          {socialLinks.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              target={link.href.startsWith('mailto') ? undefined : '_blank'}
+              rel="noopener"
+              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+            >
+              {socialIconMap[link.label]}
+              <span className="flex-1">{link.label}</span>
+              <span className="font-mono text-[0.625rem] opacity-40">{link.username}</span>
+            </a>
+          ))}
         </div>
 
         <Separator className="my-4" />
