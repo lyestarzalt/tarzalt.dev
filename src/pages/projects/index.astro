@@ -1,98 +1,124 @@
 ---
 import { Image } from 'astro:assets';
 import Base from '@/layouts/Base.astro';
-import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
+import xDispatchMap from '@/assets/projects/x-dispatch/map.png';
 import xDispatchIcon from '@/assets/projects/x-dispatch/icon.png';
 ---
 
 <Base title="Projects - Lyes Tarzalt">
-  <section class="pt-8">
-    <h1 class="font-heading text-3xl font-bold tracking-tight">Projects</h1>
-    <p class="mt-2 text-sm text-muted-foreground">Things I built because they needed to exist.</p>
+  <section class="pt-12 sm:pt-16">
+    <h1 class="font-heading text-4xl font-normal tracking-tight sm:text-5xl">Projects</h1>
+    <p class="mt-3 text-sm text-muted-foreground">Things I built because they needed to exist.</p>
   </section>
 
-  <Separator className="my-8" />
+  <div class="mt-10 flex items-center gap-4">
+    <div class="h-px flex-1 bg-border"></div>
+    <span class="font-mono text-[0.5rem] uppercase tracking-[0.3em] text-muted-foreground/40">
+      3 projects
+    </span>
+    <div class="h-px flex-1 bg-border"></div>
+  </div>
 
-  <div class="space-y-6">
+  <div class="mt-10 space-y-6">
+    <!-- X-Dispatch -->
     <a href="/projects/x-dispatch/" class="group block no-underline">
-      <article>
-        <div class="flex items-baseline justify-between gap-4">
-          <h2
-            class="font-heading text-lg font-semibold text-foreground transition-colors group-hover:text-primary"
-          >
-            X-Dispatch
-          </h2>
-          <span class="shrink-0 font-mono text-[0.6875rem] text-muted-foreground/50"
-            >2,800+ downloads</span
-          >
-        </div>
-        <p class="mt-2 text-sm leading-relaxed text-muted-foreground">
-          Flight dispatch, airport visualization, and addon management for X-Plane 12. 3D globe with
-          35,000+ airports.
-        </p>
-        <div class="mt-3 flex flex-wrap gap-1.5">
-          {
-            ['Electron', 'React', 'TypeScript', 'MapLibre'].map((t) => (
-              <Badge
-                variant="secondary"
-                className="text-[0.625rem] font-normal opacity-60 group-hover:opacity-100 transition-opacity"
-              >
-                {t}
+      <div
+        class="overflow-hidden rounded-xl border border-border transition-colors group-hover:border-primary/30"
+      >
+        <div class="relative h-44 overflow-hidden sm:h-56">
+          <Image
+            src={xDispatchMap}
+            alt="X-Dispatch world map showing airports"
+            width={672}
+            loading="eager"
+            class="!m-0 size-full !rounded-none object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-card via-card/40 to-transparent"></div>
+          <div class="absolute bottom-4 left-5 right-5 flex items-end justify-between">
+            <div class="flex items-center gap-3">
+              <Image
+                src={xDispatchIcon}
+                alt="X-Dispatch icon"
+                width={40}
+                height={40}
+                loading="eager"
+                class="!m-0 size-10 rounded-xl"
+              />
+              <div>
+                <p
+                  class="font-heading text-xl font-normal text-foreground transition-colors group-hover:text-primary sm:text-2xl"
+                >
+                  X-Dispatch
+                </p>
+                <p class="text-xs text-muted-foreground/80">Flight dispatch for X-Plane 12</p>
+              </div>
+            </div>
+            <div class="hidden gap-2 sm:flex">
+              <Badge variant="secondary" className="text-[0.6rem] font-normal backdrop-blur-sm">
+                2,800+ downloads
               </Badge>
-            ))
-          }
+            </div>
+          </div>
         </div>
-      </article>
-      <Separator className="mt-6" />
+      </div>
     </a>
 
-    <a href="/blog/ai-voice-agent-supervisor/" class="group block no-underline">
-      <article>
-        <div class="flex items-baseline justify-between gap-4">
-          <h2
-            class="font-heading text-lg font-semibold text-foreground transition-colors group-hover:text-primary"
-          >
-            AI Voice Agent Dashboard
-          </h2>
+    <!-- AI Voice Agent + Dinar side by side -->
+    <div class="grid gap-6 sm:grid-cols-2">
+      <a href="/blog/ai-voice-agent-supervisor/" class="group block no-underline">
+        <div
+          class="overflow-hidden rounded-xl border border-border transition-colors group-hover:border-primary/30"
+        >
+          <div class="relative h-36 overflow-hidden sm:h-40">
+            <img
+              src="/images/ai-voice-agent-supervisor/room_view.png"
+              alt="AI Voice Agent supervisor dashboard"
+              class="!m-0 size-full !rounded-none object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]"
+              loading="lazy"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-card via-card/30 to-transparent">
+            </div>
+          </div>
+          <div class="p-4">
+            <p
+              class="font-heading text-base font-normal text-foreground transition-colors group-hover:text-primary sm:text-lg"
+            >
+              AI Voice Agent
+            </p>
+            <p class="mt-1 text-xs leading-relaxed text-muted-foreground">
+              Real-time supervisor dashboard for AI phone calls.
+            </p>
+          </div>
         </div>
-        <p class="mt-2 text-sm leading-relaxed text-muted-foreground">
-          Real-time supervisor dashboard for AI phone calls. Sentiment analysis, live intervention,
-          zero ghost calls.
-        </p>
-        <div class="mt-3 flex flex-wrap gap-1.5">
-          {
-            ['LiveKit', 'Next.js', 'NestJS', 'Redis'].map((t) => (
-              <Badge
-                variant="secondary"
-                className="text-[0.625rem] font-normal opacity-60 group-hover:opacity-100 transition-opacity"
-              >
-                {t}
-              </Badge>
-            ))
-          }
-        </div>
-      </article>
-      <Separator className="mt-6" />
-    </a>
+      </a>
 
-    <a href="/projects/dinar-echange/" class="group block no-underline">
-      <article>
-        <div class="flex items-baseline justify-between gap-4">
-          <h2
-            class="font-heading text-lg font-semibold text-foreground transition-colors group-hover:text-primary"
+      <a href="/projects/dinar-echange/" class="group block no-underline">
+        <div
+          class="overflow-hidden rounded-xl border border-border transition-colors group-hover:border-primary/30"
+        >
+          <div
+            class="relative flex h-36 items-center justify-center overflow-hidden bg-card sm:h-40"
           >
-            Dinar Échange
-          </h2>
-          <span class="shrink-0 font-mono text-[0.6875rem] text-muted-foreground/50"
-            >Play Store</span
-          >
+            <img
+              src="/images/projects/dinar-echange/screenshot-currencies.png"
+              alt="Dinar Échange currency rates screen"
+              class="!m-0 h-full !rounded-none object-contain transition-transform duration-500 group-hover:scale-[1.03]"
+              loading="lazy"
+            />
+          </div>
+          <div class="p-4">
+            <p
+              class="font-heading text-base font-normal text-foreground transition-colors group-hover:text-primary sm:text-lg"
+            >
+              Dinar Échange
+            </p>
+            <p class="mt-1 text-xs leading-relaxed text-muted-foreground">
+              Algerian dinar exchange rates. Because a friend asked.
+            </p>
+          </div>
         </div>
-        <p class="mt-2 text-sm leading-relaxed text-muted-foreground">
-          Algerian dinar exchange rates. Because a friend wanted it simple.
-        </p>
-      </article>
-      <Separator className="mt-6" />
-    </a>
+      </a>
+    </div>
   </div>
 </Base>

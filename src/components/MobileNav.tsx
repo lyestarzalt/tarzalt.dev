@@ -6,6 +6,7 @@ import {
   FiMenu,
   FiEdit3,
   FiUser,
+  FiBox,
   FiGithub,
   FiLinkedin,
   FiMail,
@@ -25,6 +26,7 @@ interface MobileNavProps {
 }
 
 const navIcons: Record<string, React.ReactNode> = {
+  Projects: <FiBox className="size-4" />,
   Writing: <FiEdit3 className="size-4" />,
   About: <FiUser className="size-4" />,
 };
@@ -32,8 +34,12 @@ const navIcons: Record<string, React.ReactNode> = {
 const socialIconMap: Record<string, React.ReactNode> = {
   GitHub: <FiGithub className="size-4" />,
   LinkedIn: <FiLinkedin className="size-4" />,
-  Email: <FiMail className="size-4" />,
 };
+
+function getSocialIcon(label: string): React.ReactNode {
+  if (label.includes('@')) return <FiMail className="size-4" />;
+  return socialIconMap[label] ?? null;
+}
 
 export function MobileNav({ items }: MobileNavProps) {
   const [open, setOpen] = useState(false);
@@ -58,7 +64,9 @@ export function MobileNav({ items }: MobileNavProps) {
           </Avatar>
           <div>
             <p className="text-sm font-medium text-foreground">Lyes Tarzalt</p>
-            <p className="font-mono text-[0.625rem] text-muted-foreground">Product Engineer</p>
+            <p className="font-mono text-[0.625rem] text-muted-foreground">
+              builds things, breaks things
+            </p>
           </div>
         </div>
 
@@ -91,7 +99,7 @@ export function MobileNav({ items }: MobileNavProps) {
               rel="noopener"
               className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
             >
-              {socialIconMap[link.label]}
+              {getSocialIcon(link.label)}
               <span className="flex-1">{link.label}</span>
               <span className="font-mono text-[0.625rem] opacity-40">{link.username}</span>
             </a>
