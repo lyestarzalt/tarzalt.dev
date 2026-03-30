@@ -3,12 +3,7 @@ import { DesktopNav } from '@/components/DesktopNav';
 import { MobileNav } from '@/components/MobileNav';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { HeaderStatus } from '@/components/HeaderStatus';
-
-const navItems = [
-  { label: 'Projects', href: '/projects/' },
-  { label: 'Writing', href: '/blog/' },
-  { label: 'About', href: '/about/' },
-];
+import { navigationItems } from '@/config/navigation';
 ---
 
 <header class="py-6">
@@ -23,9 +18,9 @@ const navItems = [
       <HeaderStatus client:idle />
     </div>
     <div class="flex items-center gap-2">
-      <DesktopNav items={navItems} client:load />
+      <DesktopNav items={navigationItems} client:load />
       <ThemeToggle client:load />
-      <MobileNav items={navItems} client:load />
+      <MobileNav items={navigationItems} client:load />
     </div>
   </nav>
 </header>
