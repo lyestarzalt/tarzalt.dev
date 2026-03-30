@@ -2,8 +2,6 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
 } from '@/components/ui/carousel';
 import { useState, useEffect, useCallback } from 'react';
 import type { CarouselApi } from '@/components/ui/carousel';
