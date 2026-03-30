@@ -94,11 +94,36 @@ const {
     <!-- Console easter egg -->
     <script is:inline>
       document.addEventListener('DOMContentLoaded', function () {
-        console.log(
-          "%c hey. %c\n\nYou're either debugging my site or you're curious.\nEither way, I respect it.\n\n— Lyes\n\nhttps://github.com/lyestarzalt",
-          'font-size: 24px; font-weight: bold; color: #d4a054;',
-          'font-size: 13px; color: #8a8a8a; line-height: 1.6;',
-        );
+        // Track visits: increment once per session
+        if (!sessionStorage.getItem('lt-session')) {
+          var count = parseInt(localStorage.getItem('lt-visits') || '0', 10) + 1;
+          localStorage.setItem('lt-visits', String(count));
+          sessionStorage.setItem('lt-session', '1');
+        }
+        var visits = parseInt(localStorage.getItem('lt-visits') || '1', 10);
+
+        var heading, body;
+        if (visits === 1) {
+          heading = ' hey. ';
+          body =
+            "\n\nYou're either debugging my site or you're curious.\nEither way, I respect it.\n\n— Lyes\n\nhttps://github.com/lyestarzalt";
+        } else if (visits === 2) {
+          heading = " oh, you're back. ";
+          body = '';
+        } else {
+          heading = ' you keep coming back. I like that. ';
+          body = '';
+        }
+
+        if (body) {
+          console.log(
+            '%c' + heading + '%c' + body,
+            'font-size: 24px; font-weight: bold; color: #d4a054;',
+            'font-size: 13px; color: #8a8a8a; line-height: 1.6;',
+          );
+        } else {
+          console.log('%c' + heading, 'font-size: 24px; font-weight: bold; color: #d4a054;');
+        }
       });
     </script>
   </body>
