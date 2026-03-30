@@ -126,6 +126,65 @@ const {
         }
       });
     </script>
+
+    <!-- Flag flash easter egg -->
+    <script is:inline>
+      document.addEventListener('DOMContentLoaded', function () {
+        var logo = document.querySelector('[data-logo]');
+        if (!logo) return;
+
+        var clicks = [];
+        var flashing = false;
+
+        function flash() {
+          if (flashing) return;
+          flashing = true;
+
+          var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          var prop = reduced ? 'borderColor' : 'boxShadow';
+          var colors = reduced
+            ? ['#006233', '#ffffff', '#d21034']
+            : ['0 0 12px -3px #006233', '0 0 12px -3px #ffffff', '0 0 12px -3px #d21034'];
+
+          var i = 0;
+          function next() {
+            if (i < colors.length) {
+              logo.style[prop] = colors[i];
+              i++;
+              setTimeout(next, 200);
+            } else {
+              logo.style.removeProperty('box-shadow');
+              logo.style.removeProperty('border-color');
+              flashing = false;
+            }
+          }
+          next();
+        }
+
+        function onActivate(e) {
+          var now = Date.now();
+          clicks.push(now);
+          clicks = clicks.filter(function (t) {
+            return now - t < 1000;
+          });
+          if (clicks.length >= 5) {
+            e.preventDefault();
+            clicks = [];
+            flash();
+          }
+        }
+
+        logo.addEventListener('click', function (e) {
+          onActivate(e);
+        });
+
+        logo.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') {
+            onActivate(e);
+          }
+        });
+      });
+    </script>
   </body>
 </html>
 
