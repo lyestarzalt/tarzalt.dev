@@ -1,6 +1,6 @@
 ---
 import Base from '@/layouts/Base.astro';
-import { Button } from '@/components/ui/button';
+import LinkButton from '@/components/LinkButton.astro';
 ---
 
 <Base title="? - Lyes Tarzalt">
@@ -8,9 +8,7 @@ import { Button } from '@/components/ui/button';
     <p class="font-mono text-sm text-muted-foreground/40">you found this how?</p>
     <p class="mt-8 text-xs text-muted-foreground/30">there's nothing here. go build something.</p>
     <div class="mt-8">
-      <Button variant="outline" size="sm" asChild>
-        <a href="/">back to safety</a>
-      </Button>
+      <LinkButton variant="outline" size="sm" href="/">back to safety</LinkButton>
     </div>
   </section>
 </Base>

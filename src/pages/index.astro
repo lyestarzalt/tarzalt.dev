@@ -4,8 +4,8 @@ import Base from '@/layouts/Base.astro';
 import { getCollection } from 'astro:content';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import LinkButton from '@/components/LinkButton.astro';
 import ProfileAvatar from '@/components/ProfileAvatar.astro';
 import { SocialLinks } from '@/components/SocialLinks';
 import xDispatchMap from '@/assets/projects/x-dispatch/map.png';
@@ -105,7 +105,7 @@ function formatDate(d: Date) {
   <section class="py-10">
     <div class="mb-6 flex items-baseline justify-between">
       <h2 class="font-mono text-xs uppercase tracking-widest text-muted-foreground">Writing</h2>
-      <a href="/blog/" class="font-mono text-xs text-muted-foreground no-underline transition-colors hover:text-primary">all posts &rarr;</a>
+      <LinkButton variant="outline" size="xs" href="/blog/">All posts</LinkButton>
     </div>
 
     <div class="space-y-1">

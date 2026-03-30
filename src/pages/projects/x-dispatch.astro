@@ -2,8 +2,8 @@
 import { Image } from 'astro:assets';
 import Base from '@/layouts/Base.astro';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import LinkButton from '@/components/LinkButton.astro';
 import { Card, CardContent } from '@/components/ui/card';
 import { ScreenshotGallery } from '@/components/ScreenshotGallery';
 import LinkPreview from '@/components/LinkPreview.astro';
@@ -32,10 +32,10 @@ import xDispatchIcon from '@/assets/projects/x-dispatch/icon.png';
     </div>
 
     <div class="mt-6 flex flex-wrap items-center gap-3">
-      <Button asChild><a href="https://github.com/lyestarzalt/x-dispatch/releases/latest" target="_blank" rel="noopener">Download</a></Button>
-      <Button variant="outline" asChild><a href="https://github.com/lyestarzalt/x-dispatch" target="_blank" rel="noopener">GitHub</a></Button>
-      <Button variant="outline" asChild><a href="https://discord.gg/7QBCNv8B" target="_blank" rel="noopener">Discord</a></Button>
-      <Button variant="outline" asChild><a href="https://ko-fi.com/lyestarzalt" target="_blank" rel="noopener">Ko-fi</a></Button>
+      <LinkButton href="https://github.com/lyestarzalt/x-dispatch/releases/latest" target="_blank" rel="noopener">Download</LinkButton>
+      <LinkButton variant="outline" href="https://github.com/lyestarzalt/x-dispatch" target="_blank" rel="noopener">GitHub</LinkButton>
+      <LinkButton variant="outline" href="https://discord.gg/7QBCNv8B" target="_blank" rel="noopener">Discord</LinkButton>
+      <LinkButton variant="outline" href="https://ko-fi.com/lyestarzalt" target="_blank" rel="noopener">Ko-fi</LinkButton>
     </div>
 
     <div class="mt-5 flex gap-6 font-mono text-xs text-muted-foreground">
@@ -67,9 +67,7 @@ import xDispatchIcon from '@/assets/projects/x-dispatch/icon.png';
       Free and open source. Windows, macOS, Linux.
     </p>
     <div>
-      <Button variant="outline" size="sm" asChild>
-        <a href="/blog/building-x-dispatch/">Read the full story</a>
-      </Button>
+      <LinkButton size="sm" href="/blog/building-x-dispatch/">Read the full story</LinkButton>
     </div>
   </section>
 
@@ -177,22 +175,13 @@ import xDispatchIcon from '@/assets/projects/x-dispatch/icon.png';
 
   <Separator className="my-12" />
 
-  <!-- Read more -->
+  <!-- Related posts -->
   <section>
-    <h2 class="mb-4 font-heading text-xl font-semibold italic">Read more</h2>
-    <div class="space-y-2">
-      <a href="/blog/building-x-dispatch/" class="group -mx-3 flex items-center gap-3 rounded-lg px-3 py-3 no-underline transition-colors hover:bg-card">
-        <span class="text-sm font-medium text-foreground transition-colors group-hover:text-primary">Building X-Dispatch</span>
-        <span class="font-mono text-xs text-muted-foreground/40">the full story</span>
-      </a>
-      <a href="/blog/parsing-xplane-airport-geometry/" class="group -mx-3 flex items-center gap-3 rounded-lg px-3 py-3 no-underline transition-colors hover:bg-card">
-        <span class="text-sm font-medium text-foreground transition-colors group-hover:text-primary">Parsing apt.dat geometry</span>
-        <span class="font-mono text-xs text-muted-foreground/40">bezier curves</span>
-      </a>
-      <a href="/blog/xplane-linear-features-line-types/" class="group -mx-3 flex items-center gap-3 rounded-lg px-3 py-3 no-underline transition-colors hover:bg-card">
-        <span class="text-sm font-medium text-foreground transition-colors group-hover:text-primary">Painted lines and taxiway lights</span>
-        <span class="font-mono text-xs text-muted-foreground/40">linear features</span>
-      </a>
+    <h2 class="mb-4 font-heading text-xl font-semibold italic">Related posts</h2>
+    <div class="flex flex-wrap gap-2">
+      <LinkButton variant="outline" size="sm" href="/blog/building-x-dispatch/">Building X-Dispatch</LinkButton>
+      <LinkButton variant="outline" size="sm" href="/blog/parsing-xplane-airport-geometry/">Parsing apt.dat geometry</LinkButton>
+      <LinkButton variant="outline" size="sm" href="/blog/xplane-linear-features-line-types/">Painted lines & taxiway lights</LinkButton>
     </div>
   </section>
 
@@ -203,8 +192,8 @@ import xDispatchIcon from '@/assets/projects/x-dispatch/icon.png';
     <p class="font-heading text-lg font-semibold italic">Free and open source.</p>
     <p class="mt-1 text-sm text-muted-foreground">Windows, macOS, Linux. Requires X-Plane 12.4+.</p>
     <div class="mt-5 flex flex-wrap gap-3">
-      <Button asChild><a href="https://github.com/lyestarzalt/x-dispatch/releases/latest" target="_blank" rel="noopener">Download latest</a></Button>
-      <Button variant="outline" asChild><a href="https://ko-fi.com/lyestarzalt" target="_blank" rel="noopener">Support on Ko-fi</a></Button>
+      <LinkButton href="https://github.com/lyestarzalt/x-dispatch/releases/latest" target="_blank" rel="noopener">Download latest</LinkButton>
+      <LinkButton variant="outline" href="https://ko-fi.com/lyestarzalt" target="_blank" rel="noopener">Support on Ko-fi</LinkButton>
     </div>
   </section>
 </Base>

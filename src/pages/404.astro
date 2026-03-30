@@ -1,6 +1,6 @@
 ---
 import Base from '@/layouts/Base.astro';
-import { Button } from '@/components/ui/button';
+import LinkButton from '@/components/LinkButton.astro';
 ---
 
 <Base title="404 - Lyes Tarzalt">
@@ -9,12 +9,8 @@ import { Button } from '@/components/ui/button';
     <h1 class="mt-4 font-heading text-2xl font-semibold italic">Not here</h1>
     <p class="mt-2 text-sm text-muted-foreground">Whatever you were looking for, it's not at this URL.</p>
     <div class="mt-6 flex gap-3">
-      <Button variant="outline" size="sm" asChild>
-        <a href="/">Go home</a>
-      </Button>
-      <Button variant="outline" size="sm" asChild>
-        <a href="/blog/">Read something</a>
-      </Button>
+      <LinkButton variant="outline" size="sm" href="/">Go home</LinkButton>
+      <LinkButton variant="outline" size="sm" href="/blog/">Read something</LinkButton>
     </div>
   </section>
 </Base>

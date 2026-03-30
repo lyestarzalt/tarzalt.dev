@@ -2,8 +2,8 @@
 import { Image } from 'astro:assets';
 import Base from '@/layouts/Base.astro';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import LinkButton from '@/components/LinkButton.astro';
 import dinarIcon from '@/assets/projects/dinar-echange/icon.png';
 import { DinarScreenshotGallery } from '@/components/DinarScreenshotGallery';
 ---
@@ -30,9 +30,9 @@ import { DinarScreenshotGallery } from '@/components/DinarScreenshotGallery';
     </div>
 
     <div class="mt-6 flex flex-wrap items-center gap-3">
-      <Button asChild><a href="https://play.google.com/store/apps/details?id=com.dinarexchange.app" target="_blank" rel="noopener">Play Store</a></Button>
-      <Button variant="outline" asChild><a href="https://github.com/lyestarzalt/Dinar-Echange" target="_blank" rel="noopener">GitHub (app)</a></Button>
-      <Button variant="outline" asChild><a href="https://github.com/lyestarzalt/currencies_scraper" target="_blank" rel="noopener">GitHub (backend)</a></Button>
+      <LinkButton href="https://play.google.com/store/apps/details?id=com.dinarexchange.app" target="_blank" rel="noopener">Play Store</LinkButton>
+      <LinkButton variant="outline" href="https://github.com/lyestarzalt/Dinar-Echange" target="_blank" rel="noopener">GitHub (app)</LinkButton>
+      <LinkButton variant="outline" href="https://github.com/lyestarzalt/currencies_scraper" target="_blank" rel="noopener">GitHub (backend)</LinkButton>
     </div>
 
     <div class="mt-5 flex gap-6 font-mono text-xs text-muted-foreground">
@@ -64,9 +64,7 @@ import { DinarScreenshotGallery } from '@/components/DinarScreenshotGallery';
       The app shows both rates side by side. Pin your currencies, drag to reorder, see trends over time. Works in English, Arabic, and French. Caches everything locally so it works even with spotty internet, which matters in Algeria.
     </p>
     <div>
-      <Button variant="outline" size="sm" asChild>
-        <a href="/blog/building-dinar-echange/">Read the full story</a>
-      </Button>
+      <LinkButton size="sm" href="/blog/building-dinar-echange/">Read the full story</LinkButton>
     </div>
   </section>
 
@@ -99,13 +97,12 @@ import { DinarScreenshotGallery } from '@/components/DinarScreenshotGallery';
 
   <Separator className="my-10" />
 
-  <!-- Read more -->
+  <!-- Related posts -->
   <section>
-    <h2 class="mb-4 font-heading text-xl font-semibold italic">Read more</h2>
-    <a href="/blog/building-dinar-echange/" class="group -mx-3 flex items-center gap-3 rounded-lg px-3 py-3 no-underline transition-colors hover:bg-card">
-      <span class="text-sm font-medium text-foreground transition-colors group-hover:text-primary">Building Dinar Échange</span>
-      <span class="font-mono text-xs text-muted-foreground/40">the full story</span>
-    </a>
+    <h2 class="mb-4 font-heading text-xl font-semibold italic">Related posts</h2>
+    <div class="flex flex-wrap gap-2">
+      <LinkButton variant="outline" size="sm" href="/blog/building-dinar-echange/">Building Dinar Échange</LinkButton>
+    </div>
   </section>
 
   <Separator className="my-10" />
@@ -114,7 +111,7 @@ import { DinarScreenshotGallery } from '@/components/DinarScreenshotGallery';
   <section class="py-6">
     <p class="text-sm text-muted-foreground">Available on Android. Open source.</p>
     <div class="mt-4 flex flex-wrap gap-3">
-      <Button asChild><a href="https://play.google.com/store/apps/details?id=com.dinarexchange.app" target="_blank" rel="noopener">Get on Play Store</a></Button>
+      <LinkButton href="https://play.google.com/store/apps/details?id=com.dinarexchange.app" target="_blank" rel="noopener">Get on Play Store</LinkButton>
     </div>
   </section>
 </Base>
