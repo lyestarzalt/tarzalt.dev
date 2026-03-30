@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import LinkButton from '@/components/LinkButton.astro';
 import dinarIcon from '@/assets/projects/dinar-echange/icon.png';
-import { DinarScreenshotGallery } from '@/components/DinarScreenshotGallery';
+import { Gallery } from '@/components/Gallery';
 ---
 
 <Base
@@ -69,7 +69,19 @@ import { DinarScreenshotGallery } from '@/components/DinarScreenshotGallery';
 
   <!-- Screenshots -->
   <section class="py-8">
-    <DinarScreenshotGallery client:load />
+    <Gallery
+      client:load
+      maxWidth="mx-auto max-w-xs"
+      showNav={false}
+      screenshots={[
+        {
+          src: '/images/projects/dinar-echange/screenshot-currencies.png',
+          alt: 'Currency Rates',
+        },
+        { src: '/images/projects/dinar-echange/screenshot-converter.png', alt: 'Converter' },
+        { src: '/images/projects/dinar-echange/screenshot-trends.png', alt: 'Trends' },
+      ]}
+    />
   </section>
 
   <Separator className="my-10" />

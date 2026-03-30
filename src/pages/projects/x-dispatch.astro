@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import LinkButton from '@/components/LinkButton.astro';
 import { Card, CardContent } from '@/components/ui/card';
-import { ScreenshotGallery } from '@/components/ScreenshotGallery';
+import { Gallery } from '@/components/Gallery';
 import LinkPreview from '@/components/LinkPreview.astro';
 import xDispatchIcon from '@/assets/projects/x-dispatch/icon.png';
 ---
@@ -78,7 +78,22 @@ import xDispatchIcon from '@/assets/projects/x-dispatch/icon.png';
 
   <!-- Screenshots -->
   <section>
-    <ScreenshotGallery client:load />
+    <Gallery
+      client:load
+      screenshots={[
+        { src: '/images/projects/x-dispatch/x-dispatch-map.png', alt: 'World Map' },
+        { src: '/images/projects/x-dispatch/x-dispatch-airport.png', alt: 'Airport Detail' },
+        { src: '/images/projects/x-dispatch/x-dispatch-terrain.png', alt: '3D Terrain' },
+        { src: '/images/projects/x-dispatch/x-dispatch-flight-setup.png', alt: 'Flight Setup' },
+        { src: '/images/projects/x-dispatch/x-dispatch-procedures.png', alt: 'SID/STAR' },
+        { src: '/images/projects/x-dispatch/x-dispatch-simbrief1.png', alt: 'SimBrief' },
+        { src: '/images/projects/x-dispatch/x-dispatch-weather.png', alt: 'Weather' },
+        { src: '/images/projects/x-dispatch/x-dispatch-tracking.png', alt: 'Live Tracking' },
+        { src: '/images/projects/x-dispatch/x-dispatch-fuel.png', alt: 'Fuel & Payload' },
+        { src: '/images/projects/x-dispatch/x-dispatch-starting.png', alt: 'Start Position' },
+        { src: '/images/projects/x-dispatch/x-dispatch-addon1.png', alt: 'Addon Browser' },
+      ]}
+    />
   </section>
 
   <Separator className="my-12" />

@@ -2,17 +2,24 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
 } from '@/components/ui/carousel';
 import { useState, useEffect, useCallback } from 'react';
 import type { CarouselApi } from '@/components/ui/carousel';
 
-const screenshots = [
-  { src: '/images/projects/dinar-echange/screenshot-currencies.png', label: 'Currency Rates' },
-  { src: '/images/projects/dinar-echange/screenshot-converter.png', label: 'Converter' },
-  { src: '/images/projects/dinar-echange/screenshot-trends.png', label: 'Trends' },
-];
+export interface Screenshot {
+  src: string;
+  alt: string;
+}
 
-export function DinarScreenshotGallery() {
+interface GalleryProps {
+  screenshots: Screenshot[];
+  maxWidth?: string;
+  showNav?: boolean;
+}
+
+export function Gallery({ screenshots, maxWidth, showNav = true }: GalleryProps) {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
 
@@ -31,15 +38,15 @@ export function DinarScreenshotGallery() {
   }, [api, onSelect]);
 
   return (
-    <div className="mx-auto max-w-xs">
-      <Carousel setApi={setApi} opts={{ loop: true }}>
+    <div className={maxWidth ?? undefined}>
+      <Carousel setApi={setApi} opts={{ loop: true }} className="relative">
         <CarouselContent>
           {screenshots.map((s, i) => (
             <CarouselItem key={i}>
-              <div className="overflow-hidden rounded-2xl border border-border">
+              <div className="overflow-hidden rounded-xl border border-border">
                 <img
                   src={s.src}
-                  alt={s.label}
+                  alt={s.alt}
                   className="w-full"
                   loading={i === 0 ? 'eager' : 'lazy'}
                 />
@@ -47,10 +54,16 @@ export function DinarScreenshotGallery() {
             </CarouselItem>
           ))}
         </CarouselContent>
+        {showNav && (
+          <>
+            <CarouselPrevious className="absolute -left-4 top-1/2 -translate-y-1/2 hidden sm:flex" />
+            <CarouselNext className="absolute -right-4 top-1/2 -translate-y-1/2 hidden sm:flex" />
+          </>
+        )}
       </Carousel>
 
       <div className="mt-4 flex flex-col items-center gap-2">
-        <p className="text-sm font-medium text-foreground">{screenshots[current]?.label}</p>
+        <p className="text-sm font-medium text-foreground">{screenshots[current]?.alt}</p>
         <div className="flex gap-1.5">
           {screenshots.map((_, i) => (
             <button
@@ -61,10 +74,15 @@ export function DinarScreenshotGallery() {
                   ? 'bg-primary scale-125'
                   : 'bg-muted-foreground/30 hover:bg-muted-foreground/50'
               }`}
-              aria-label={`Go to ${screenshots[i].label}`}
+              aria-label={`Go to ${screenshots[i].alt}`}
             />
           ))}
         </div>
+        {showNav && (
+          <p className="font-mono text-[0.625rem] text-muted-foreground/40">
+            {current + 1} / {screenshots.length}
+          </p>
+        )}
       </div>
     </div>
   );
