@@ -3,6 +3,14 @@ import '@/styles/global.css';
 import Header from '@/components/Header.astro';
 import SEO from '@/components/SEO.astro';
 import { Separator } from '@/components/ui/separator';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb';
 
 interface Props {
   title: string;
@@ -21,6 +29,24 @@ const {
   publishedDate,
   modifiedDate,
 } = Astro.props;
+
+// Build breadcrumbs from URL path
+const pathname = Astro.url.pathname;
+const segments = pathname.split('/').filter(Boolean);
+const isHome = segments.length === 0;
+
+const labelMap: Record<string, string> = {
+  blog: 'Writing',
+  projects: 'Projects',
+  about: 'About',
+};
+
+const crumbs = segments.map((seg, i) => {
+  const href = '/' + segments.slice(0, i + 1).join('/') + '/';
+  const isLast = i === segments.length - 1;
+  const label = isLast ? title : labelMap[seg] || seg.replace(/-/g, ' ');
+  return { href, label, isLast };
+});
 ---
 
 <!doctype html>
@@ -78,9 +104,42 @@ const {
     >
     </div>
 
+    <div
+      class="sticky top-0 z-40 w-full border-b border-transparent bg-background/80 backdrop-blur-lg transition-colors"
+      data-header-wrap
+    >
+      <div class="mx-auto max-w-3xl px-6">
+        <Header />
+      </div>
+    </div>
+
     <div class="mx-auto flex min-h-screen max-w-3xl flex-col px-6">
-      <Header />
       <main class="flex-1 pb-16 pt-4">
+        {
+          !isHome && (
+            <Breadcrumb className="mb-6">
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink href="/">Home</BreadcrumbLink>
+                </BreadcrumbItem>
+                {crumbs.map((crumb) => (
+                  <>
+                    <BreadcrumbSeparator />
+                    <BreadcrumbItem>
+                      {crumb.isLast ? (
+                        <BreadcrumbPage className="max-w-[24ch] truncate">
+                          {crumb.label}
+                        </BreadcrumbPage>
+                      ) : (
+                        <BreadcrumbLink href={crumb.href}>{crumb.label}</BreadcrumbLink>
+                      )}
+                    </BreadcrumbItem>
+                  </>
+                ))}
+              </BreadcrumbList>
+            </Breadcrumb>
+          )
+        }
         <slot />
       </main>
       <footer class="pb-8 pt-6">

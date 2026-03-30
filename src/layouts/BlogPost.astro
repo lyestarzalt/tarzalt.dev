@@ -4,14 +4,6 @@ import Base from './Base.astro';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import LinkButton from '@/components/LinkButton.astro';
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
 import { formatDate } from '@/lib/date';
 
 interface Props {
@@ -35,22 +27,6 @@ const { title, description, date, lastmod, tags = [], featuredImage } = Astro.pr
   image={featuredImage?.src}
 >
   <article>
-    <Breadcrumb className="mb-8">
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink href="/">Home</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbLink href="/blog/">Writing</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbPage className="max-w-[24ch] truncate">{title}</BreadcrumbPage>
-        </BreadcrumbItem>
-      </BreadcrumbList>
-    </Breadcrumb>
-
     <header class="mb-8">
       <div class="mb-3 flex items-center gap-2 font-mono text-[0.6875rem] text-muted-foreground/60">
         <time datetime={date.toISOString()}>{formatDate(date)}</time>
