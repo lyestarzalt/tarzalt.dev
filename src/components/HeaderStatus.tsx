@@ -31,7 +31,7 @@ export function HeaderStatus() {
 
   return (
     <span
-      className={`hidden md:inline-block font-mono text-[0.625rem] text-muted-foreground/50 transition-opacity duration-1000 select-none ${
+      className={`hidden md:inline-block font-mono text-[0.625rem] text-muted-foreground/70 transition-opacity duration-1000 select-none ${
         visible ? 'opacity-100' : 'opacity-0'
       }`}
       title="Refresh for a new one"
