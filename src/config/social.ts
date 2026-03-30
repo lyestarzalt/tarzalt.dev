@@ -9,19 +9,19 @@ export const socialLinks: SocialLink[] = [
   {
     label: 'GitHub',
     href: 'https://github.com/lyestarzalt',
-    tip: 'where the code lives',
+    tip: 'where I mass-delete things professionally',
     username: 'lyestarzalt',
   },
   {
     label: 'LinkedIn',
     href: 'https://linkedin.com/in/lyes-tarzalt',
-    tip: 'the professional one',
+    tip: 'I hate that place',
     username: 'lyes-tarzalt',
   },
   {
-    label: 'Email',
+    label: 'lyes.trzlt@gmail.com',
     href: 'mailto:lyes.trzlt@gmail.com',
-    tip: 'old school',
+    tip: 'I might reply',
     username: 'lyes.trzlt',
   },
 ];
