@@ -12,7 +12,9 @@ let image = '';
 let siteName = '';
 
 try {
-  const res = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+  const res = await fetch(url, {
+    headers: { 'User-Agent': 'tarzalt.dev-bot/1.0 (+https://tarzalt.dev)' },
+  });
   const html = await res.text();
 
   const getMetaContent = (property: string) => {
