@@ -20,6 +20,43 @@ const {
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const imageURL = new URL(image, Astro.site);
 const siteName = 'Lyes Tarzalt';
+const siteURL = Astro.site?.toString() || 'https://tarzalt.dev';
+
+// JSON-LD structured data
+const personSchema = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Lyes Tarzalt",
+  url: siteURL,
+  jobTitle: "Product Engineer",
+  sameAs: [
+    "https://github.com/lyestarzalt",
+    "https://linkedin.com/in/lyes-tarzalt",
+  ],
+};
+
+const articleSchema = type === 'article' ? {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: title,
+  description: description,
+  url: canonicalURL.toString(),
+  image: imageURL.toString(),
+  datePublished: publishedDate?.toISOString(),
+  dateModified: modifiedDate?.toISOString() || publishedDate?.toISOString(),
+  author: {
+    "@type": "Person",
+    name: "Lyes Tarzalt",
+    url: siteURL,
+  },
+} : null;
+
+const websiteSchema = type === 'website' ? {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: siteName,
+  url: siteURL,
+} : null;
 ---
 
 <!-- Primary Meta -->
@@ -48,3 +85,8 @@ const siteName = 'Lyes Tarzalt';
 
 <!-- Favicon -->
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+<!-- JSON-LD Structured Data -->
+<script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
+{articleSchema && <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />}
+{websiteSchema && <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />}

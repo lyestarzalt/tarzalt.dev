@@ -24,6 +24,20 @@ const {
 ---
 
 <!doctype html>
+<!--
+
+    _    _
+   | |  | |
+   | |_ | |_
+   |  _||  _|
+   |_|  |_|
+
+   Built by hand. Powered by stubbornness.
+   https://github.com/lyestarzalt
+
+   P.S. try /wtf
+
+-->
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -54,32 +68,26 @@ const {
     <!-- Grain overlay -->
     <div class="pointer-events-none fixed inset-0 z-[9999] opacity-[0.025] dark:opacity-[0.04]" style="background-image: url(&quot;data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E&quot;);"></div>
 
-    <div class="mx-auto flex min-h-screen max-w-2xl flex-col px-6">
+    <div class="mx-auto flex min-h-screen max-w-3xl flex-col px-6">
       <Header />
       <main class="flex-1 pb-16 pt-4">
         <slot />
       </main>
       <footer class="pb-8 pt-6">
         <Separator className="mb-6" />
-        <div class="flex items-center justify-between">
-          <span class="text-xs text-muted-foreground">
-            &copy; {new Date().getFullYear()} Lyes Tarzalt
-          </span>
-          <span class="font-mono text-[0.625rem] text-muted-foreground/40 select-none" title="You found one.">
-            42
-          </span>
-        </div>
+        <span class="text-xs text-muted-foreground">
+          &copy; {new Date().getFullYear()} Lyes Tarzalt
+        </span>
       </footer>
     </div>
 
     <!-- Console easter egg -->
     <script is:inline>
       console.log(
-        '%c hey. %c\n\nYou\'re looking at the source. I respect that.\n\nIf you\'re here because something broke, sorry.\nIf you\'re here because you\'re curious, good.\n\nI built this with Astro, React, Tailwind, and too many opinions.\n\n— Lyes\n\nhttps://github.com/lyestarzalt',
+        '%c hey. %c\n\nYou\'re either debugging my site or you\'re curious.\nEither way, I respect it.\n\n— Lyes\n\nhttps://github.com/lyestarzalt',
         'font-size: 24px; font-weight: bold; color: #d4a054;',
         'font-size: 13px; color: #8a8a8a; line-height: 1.6;'
       );
-      console.log('%c Try: document.body.style.fontFamily = "Comic Sans MS"', 'color: #555; font-style: italic;');
     </script>
   </body>
 </html>
