@@ -1,0 +1,120 @@
+---
+import { Image } from 'astro:assets';
+import Base from '@/layouts/Base.astro';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import dinarIcon from '@/assets/projects/dinar-echange/icon.png';
+import { DinarScreenshotGallery } from '@/components/DinarScreenshotGallery';
+---
+
+<Base
+  title="Dinar Échange — Algerian Dinar Exchange Rates"
+  description="Mobile app for tracking Algerian dinar parallel market and official exchange rates. Flutter, AWS Lambda, Firebase."
+>
+  <!-- Hero -->
+  <section class="py-12">
+    <div class="flex items-start gap-5">
+      <Image src={dinarIcon} alt="Dinar Échange icon" width={80} height={80} loading="eager" class="!m-0 size-16 shrink-0 rounded-2xl sm:size-20" />
+      <div>
+        <h1 class="font-heading text-3xl font-bold italic tracking-tight sm:text-4xl">Dinar Échange</h1>
+        <p class="mt-1 text-sm text-muted-foreground">
+          Algerian dinar exchange rates. Parallel market and official, side by side.
+        </p>
+        <div class="mt-3 flex flex-wrap gap-1.5">
+          {["Flutter", "Dart", "AWS Lambda", "Python", "Firebase", "BeautifulSoup"].map(t => (
+            <Badge variant="secondary" className="text-[0.6rem] font-normal">{t}</Badge>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-6 flex flex-wrap items-center gap-3">
+      <Button asChild><a href="https://play.google.com/store/apps/details?id=com.dinarexchange.app" target="_blank" rel="noopener">Play Store</a></Button>
+      <Button variant="outline" asChild><a href="https://github.com/lyestarzalt/Dinar-Echange" target="_blank" rel="noopener">GitHub (app)</a></Button>
+      <Button variant="outline" asChild><a href="https://github.com/lyestarzalt/currencies_scraper" target="_blank" rel="noopener">GitHub (backend)</a></Button>
+    </div>
+
+    <div class="mt-5 flex gap-6 font-mono text-xs text-muted-foreground">
+      <span><span class="text-primary">v1.4.8</span></span>
+      <span><span class="text-primary">20</span> releases</span>
+      <span><span class="text-primary">3</span> languages</span>
+    </div>
+  </section>
+
+  <!-- Screenshots -->
+  <section class="py-8">
+    <DinarScreenshotGallery client:load />
+  </section>
+
+  <Separator className="my-10" />
+
+  <!-- About -->
+  <section class="space-y-5">
+    <p class="text-sm leading-relaxed text-muted-foreground">
+      Algeria has two exchange rates. The official one the government publishes, and the parallel market rate that everyone actually uses. The gap between them is significant and it changes daily. There's no official API for the parallel rate. It lives on informal websites and word of mouth.
+    </p>
+    <p class="text-sm leading-relaxed text-muted-foreground">
+      A friend wanted a simple way to check it. Most exchange rate apps look like financial terminals, numbers and jargon everywhere. He just wanted to know: if I have 100 euros, how many dinars do I get today?
+    </p>
+    <p class="text-sm leading-relaxed text-muted-foreground">
+      So I built it. A Flutter app with a Python backend on AWS Lambda that scrapes multiple sources every morning at 8am Algiers time. Each source is its own Lambda function, all returning the same data shape. Freshest data wins. If one source goes down, the others keep working.
+    </p>
+    <p class="text-sm leading-relaxed text-muted-foreground">
+      The app shows both rates side by side. Pin your currencies, drag to reorder, see trends over time. Works in English, Arabic, and French. Caches everything locally so it works even with spotty internet, which matters in Algeria.
+    </p>
+    <div>
+      <Button variant="outline" size="sm" asChild>
+        <a href="/blog/building-dinar-echange/">Read the full story</a>
+      </Button>
+    </div>
+  </section>
+
+  <Separator className="my-10" />
+
+  <!-- How it works -->
+  <section>
+    <h2 class="mb-6 font-heading text-xl font-semibold italic">How it works</h2>
+    <div class="space-y-6">
+      <div>
+        <h3 class="text-sm font-medium text-foreground">Data pipeline</h3>
+        <p class="mt-1 text-sm leading-relaxed text-muted-foreground">
+          EventBridge triggers a main Lambda daily at 8am. It invokes separate scraper Lambdas, each hitting a different source. All share the same contract. First valid response wins. Core currencies (EUR, USD, GBP, etc.) come from scrapers. Every other currency is derived by cross-referencing the USD parallel rate against a public exchange rate API. Approximate but good enough, ±3 dinars.
+        </p>
+      </div>
+      <div>
+        <h3 class="text-sm font-medium text-foreground">Storage</h3>
+        <p class="mt-1 text-sm leading-relaxed text-muted-foreground">
+          Firebase Firestore. Daily rates keyed by date. Two-year trend history per currency, trimmed on each update. Separate collections for parallel and official rates.
+        </p>
+      </div>
+      <div>
+        <h3 class="text-sm font-medium text-foreground">The app</h3>
+        <p class="mt-1 text-sm leading-relaxed text-muted-foreground">
+          Flutter with Provider for state management. Cache-first with 7-day offline fallback. Anonymous Firebase auth with App Check so there's no account creation needed. Push notifications in the user's chosen language via FCM topic subscriptions. Ad frequency controlled server-side through Remote Config.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <Separator className="my-10" />
+
+  <!-- Read more -->
+  <section>
+    <h2 class="mb-4 font-heading text-xl font-semibold italic">Read more</h2>
+    <a href="/blog/building-dinar-echange/" class="group -mx-3 flex items-center gap-3 rounded-lg px-3 py-3 no-underline transition-colors hover:bg-card">
+      <span class="text-sm font-medium text-foreground transition-colors group-hover:text-primary">Building Dinar Échange</span>
+      <span class="font-mono text-xs text-muted-foreground/40">the full story</span>
+    </a>
+  </section>
+
+  <Separator className="my-10" />
+
+  <!-- CTA -->
+  <section class="py-6">
+    <p class="text-sm text-muted-foreground">Available on Android. Open source.</p>
+    <div class="mt-4 flex flex-wrap gap-3">
+      <Button asChild><a href="https://play.google.com/store/apps/details?id=com.dinarexchange.app" target="_blank" rel="noopener">Get on Play Store</a></Button>
+    </div>
+  </section>
+</Base>
