@@ -112,19 +112,19 @@ const {
   h2,
   h3,
   h4 {
-    font-family: 'Bricolage Grotesque', sans-serif;
+    font-family: var(--font-heading);
     font-optical-sizing: auto;
   }
 
   /* ── Code blocks ── */
   pre {
     @apply !rounded-lg !border !border-border !bg-card !p-5 !text-[0.8125rem] !leading-relaxed;
-    font-family: 'JetBrains Mono', var(--font-mono, monospace);
+    font-family: var(--font-mono);
     overflow-x: auto;
     margin: 1.5rem 0;
   }
   code {
-    font-family: 'JetBrains Mono', var(--font-mono, monospace);
+    font-family: var(--font-mono);
     font-size: 0.875em;
   }
   :not(pre) > code {
