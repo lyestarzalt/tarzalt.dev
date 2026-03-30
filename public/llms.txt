@@ -1,0 +1,29 @@
+# tarzalt.dev
+
+> Personal site and blog of Lyes Tarzalt — product engineer based in Malaysia, originally from Algeria.
+
+## About
+
+- Building tools that solve real problems
+- Running AI initiatives — voice agents, LLM integrations
+- Writing about parsing, real-time systems, and engineering decisions
+
+## Projects
+
+- [X-Dispatch](https://tarzalt.dev/projects/x-dispatch/): Flight dispatch and airport visualization for X-Plane 12. 2,800+ downloads, open source.
+- [Dinar Échange](https://tarzalt.dev/projects/dinar-echange/): Algerian dinar exchange rates app. Flutter + AWS Lambda.
+- [AI Voice Agent](https://tarzalt.dev/blog/ai-voice-agent-supervisor/): Real-time supervisor dashboard for AI phone calls.
+
+## Blog
+
+- [Building X-Dispatch](https://tarzalt.dev/blog/building-x-dispatch/): How a comment on the Laminar Research blog turned into an app 2,800 people downloaded.
+- [Building Dinar Échange](https://tarzalt.dev/blog/building-dinar-echange/): An app for tracking Algerian dinar exchange rates.
+- [Parsing X-Plane Airport Geometry](https://tarzalt.dev/blog/parsing-xplane-airport-geometry/): Bezier curves, control point mirroring, winding order from apt.dat.
+- [X-Plane Linear Features](https://tarzalt.dev/blog/xplane-linear-features-line-types/): Painted lines and taxiway lights.
+- [AI Voice Agent Supervisor](https://tarzalt.dev/blog/ai-voice-agent-supervisor/): Real-time supervisor dashboard architecture.
+
+## Contact
+
+- GitHub: https://github.com/lyestarzalt
+- LinkedIn: https://linkedin.com/in/lyes-tarzalt
+- Email: lyes.trzlt@gmail.com

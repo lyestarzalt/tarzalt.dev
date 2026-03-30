@@ -15,7 +15,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
 );
 ---
 
-<Base title="Lyes Tarzalt">
+<Base title="Lyes Tarzalt — building things that solve real problems">
   <!-- Hero -->
   <section class="pt-16 pb-12 sm:pt-24 sm:pb-16">
     <div class="flex items-center gap-5 sm:gap-6">
@@ -38,9 +38,9 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
   <!-- Divider -->
   <div class="flex items-center gap-4">
     <div class="h-px flex-1 bg-border"></div>
-    <span class="font-mono text-[0.5rem] uppercase tracking-[0.3em] text-muted-foreground/40">
+    <h2 class="font-mono text-[0.5rem] uppercase tracking-[0.3em] text-muted-foreground/40">
       Projects
-    </span>
+    </h2>
     <div class="h-px flex-1 bg-border"></div>
   </div>
 
@@ -152,9 +152,9 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
   <!-- Divider -->
   <div class="flex items-center gap-4">
     <div class="h-px flex-1 bg-border"></div>
-    <span class="font-mono text-[0.5rem] uppercase tracking-[0.3em] text-muted-foreground/40">
+    <h2 class="font-mono text-[0.5rem] uppercase tracking-[0.3em] text-muted-foreground/40">
       Writing
-    </span>
+    </h2>
     <div class="h-px flex-1 bg-border"></div>
   </div>
 

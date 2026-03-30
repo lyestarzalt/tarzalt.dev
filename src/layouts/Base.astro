@@ -96,6 +96,21 @@ const crumbs = segments.map((seg, i) => {
       })();
     </script>
     <title>{title}</title>
+    <!-- Google Analytics (production only) -->
+    <script is:inline>
+      if (window.location.hostname !== 'localhost') {
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=G-DSSGSXVXJE';
+        document.head.appendChild(s);
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function () {
+          dataLayer.push(arguments);
+        };
+        window.gtag('js', new Date());
+        window.gtag('config', 'G-DSSGSXVXJE');
+      }
+    </script>
   </head>
   <body class="min-h-screen bg-background text-foreground">
     <!-- Grain overlay -->
