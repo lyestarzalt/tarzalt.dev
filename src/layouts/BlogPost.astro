@@ -29,7 +29,7 @@ function formatDate(d: Date) {
 }
 ---
 
-<Base title={title} description={description} type="article" publishedDate={date} modifiedDate={lastmod}>
+<Base title={title} description={description} type="article" publishedDate={date} modifiedDate={lastmod} image={featuredImage?.src}>
   <article>
     <Breadcrumb className="mb-8">
       <BreadcrumbList>
@@ -57,7 +57,7 @@ function formatDate(d: Date) {
           </>
         )}
       </div>
-      <h1 class="mb-5 font-heading text-3xl font-bold italic tracking-tight md:text-4xl">{title}</h1>
+      <h1 class="mb-5 font-heading text-3xl font-bold tracking-tight md:text-4xl">{title}</h1>
       {tags.length > 0 && (
         <div class="flex flex-wrap gap-1.5">
           {tags.map((tag) => (
@@ -89,7 +89,7 @@ function formatDate(d: Date) {
 
   .prose { @apply leading-relaxed text-muted-foreground; }
   .prose :global(h2) {
-    @apply mt-14 mb-4 font-heading text-xl font-semibold italic tracking-tight text-foreground;
+    @apply mt-14 mb-4 font-heading text-xl font-semibold tracking-tight text-foreground;
   }
   .prose :global(h3) { @apply mt-8 mb-3 font-heading text-lg font-semibold text-foreground; }
   .prose :global(p) { @apply mb-5; }
