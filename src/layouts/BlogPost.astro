@@ -115,6 +115,9 @@ const { title, description, date, lastmod, tags = [], featuredImage } = Astro.pr
   .prose :global(h3) {
     @apply mt-8 mb-3 font-heading text-lg font-semibold text-foreground;
   }
+  .prose :global(h4) {
+    @apply mt-6 mb-2 font-heading text-base font-semibold text-foreground;
+  }
   .prose :global(p) {
     @apply mb-5;
   }
@@ -139,5 +142,8 @@ const { title, description, date, lastmod, tags = [], featuredImage } = Astro.pr
   }
   .prose :global(figcaption) {
     @apply mt-3 text-center font-mono text-xs text-muted-foreground/60;
+  }
+  .prose :global(hr) {
+    @apply my-10;
   }
 </style>
