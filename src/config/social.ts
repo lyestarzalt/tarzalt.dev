@@ -9,7 +9,7 @@ export const socialLinks: SocialLink[] = [
   {
     label: 'GitHub',
     href: 'https://github.com/lyestarzalt',
-    tip: 'where I mass-delete things professionally',
+    tip: 'I hate this place too',
     username: 'lyestarzalt',
   },
   {
