@@ -12,12 +12,7 @@ import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   site: 'https://tarzalt.dev',
-  integrations: [
-    mermaid({ autoTheme: true }),
-    mdx(),
-    sitemap(),
-    react(),
-  ],
+  integrations: [mermaid({ autoTheme: true }), mdx(), sitemap(), react()],
 
   markdown: {
     remarkPlugins: [remarkMath, remarkCallout],

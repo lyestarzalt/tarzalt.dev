@@ -8,9 +8,17 @@ interface Props {
   rel?: string;
 }
 
-const { href, variant = 'default', size = 'default', class: className = '', target, rel } = Astro.props;
+const {
+  href,
+  variant = 'default',
+  size = 'default',
+  class: className = '',
+  target,
+  rel,
+} = Astro.props;
 
-const base = 'inline-flex shrink-0 items-center justify-center rounded-md border border-transparent font-medium whitespace-nowrap transition-all outline-none select-none no-underline';
+const base =
+  'inline-flex shrink-0 items-center justify-center rounded-md border border-transparent font-medium whitespace-nowrap transition-all outline-none select-none no-underline';
 
 const variants: Record<string, string> = {
   default: 'bg-primary text-primary-foreground hover:bg-primary/80',

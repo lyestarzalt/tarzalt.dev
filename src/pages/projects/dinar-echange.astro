@@ -15,24 +15,49 @@ import { DinarScreenshotGallery } from '@/components/DinarScreenshotGallery';
   <!-- Hero -->
   <section class="py-12">
     <div class="flex items-start gap-5">
-      <Image src={dinarIcon} alt="Dinar Échange icon" width={80} height={80} loading="eager" class="!m-0 size-16 shrink-0 rounded-2xl sm:size-20" />
+      <Image
+        src={dinarIcon}
+        alt="Dinar Échange icon"
+        width={80}
+        height={80}
+        loading="eager"
+        class="!m-0 size-16 shrink-0 rounded-2xl sm:size-20"
+      />
       <div>
         <h1 class="font-heading text-3xl font-bold tracking-tight sm:text-4xl">Dinar Échange</h1>
         <p class="mt-1 text-sm text-muted-foreground">
           Algerian dinar exchange rates. Parallel market and official, side by side.
         </p>
         <div class="mt-3 flex flex-wrap gap-1.5">
-          {["Flutter", "Dart", "AWS Lambda", "Python", "Firebase", "BeautifulSoup"].map(t => (
-            <Badge variant="secondary" className="text-[0.6rem] font-normal">{t}</Badge>
-          ))}
+          {
+            ['Flutter', 'Dart', 'AWS Lambda', 'Python', 'Firebase', 'BeautifulSoup'].map((t) => (
+              <Badge variant="secondary" className="text-[0.6rem] font-normal">
+                {t}
+              </Badge>
+            ))
+          }
         </div>
       </div>
     </div>
 
     <div class="mt-6 flex flex-wrap items-center gap-3">
-      <LinkButton href="https://play.google.com/store/apps/details?id=com.dinarexchange.app" target="_blank" rel="noopener">Play Store</LinkButton>
-      <LinkButton variant="outline" href="https://github.com/lyestarzalt/Dinar-Echange" target="_blank" rel="noopener">GitHub (app)</LinkButton>
-      <LinkButton variant="outline" href="https://github.com/lyestarzalt/currencies_scraper" target="_blank" rel="noopener">GitHub (backend)</LinkButton>
+      <LinkButton
+        href="https://play.google.com/store/apps/details?id=com.dinarexchange.app"
+        target="_blank"
+        rel="noopener">Play Store</LinkButton
+      >
+      <LinkButton
+        variant="outline"
+        href="https://github.com/lyestarzalt/Dinar-Echange"
+        target="_blank"
+        rel="noopener">GitHub (app)</LinkButton
+      >
+      <LinkButton
+        variant="outline"
+        href="https://github.com/lyestarzalt/currencies_scraper"
+        target="_blank"
+        rel="noopener">GitHub (backend)</LinkButton
+      >
     </div>
 
     <div class="mt-5 flex gap-6 font-mono text-xs text-muted-foreground">
@@ -52,16 +77,25 @@ import { DinarScreenshotGallery } from '@/components/DinarScreenshotGallery';
   <!-- About -->
   <section class="space-y-5">
     <p class="text-sm leading-relaxed text-muted-foreground">
-      Algeria has two exchange rates. The official one the government publishes, and the parallel market rate that everyone actually uses. The gap between them is significant and it changes daily. There's no official API for the parallel rate. It lives on informal websites and word of mouth.
+      Algeria has two exchange rates. The official one the government publishes, and the parallel
+      market rate that everyone actually uses. The gap between them is significant and it changes
+      daily. There's no official API for the parallel rate. It lives on informal websites and word
+      of mouth.
     </p>
     <p class="text-sm leading-relaxed text-muted-foreground">
-      A friend wanted a simple way to check it. Most exchange rate apps look like financial terminals, numbers and jargon everywhere. He just wanted to know: if I have 100 euros, how many dinars do I get today?
+      A friend wanted a simple way to check it. Most exchange rate apps look like financial
+      terminals, numbers and jargon everywhere. He just wanted to know: if I have 100 euros, how
+      many dinars do I get today?
     </p>
     <p class="text-sm leading-relaxed text-muted-foreground">
-      So I built it. A Flutter app with a Python backend on AWS Lambda that scrapes multiple sources every morning at 8am Algiers time. Each source is its own Lambda function, all returning the same data shape. Freshest data wins. If one source goes down, the others keep working.
+      So I built it. A Flutter app with a Python backend on AWS Lambda that scrapes multiple sources
+      every morning at 8am Algiers time. Each source is its own Lambda function, all returning the
+      same data shape. Freshest data wins. If one source goes down, the others keep working.
     </p>
     <p class="text-sm leading-relaxed text-muted-foreground">
-      The app shows both rates side by side. Pin your currencies, drag to reorder, see trends over time. Works in English, Arabic, and French. Caches everything locally so it works even with spotty internet, which matters in Algeria.
+      The app shows both rates side by side. Pin your currencies, drag to reorder, see trends over
+      time. Works in English, Arabic, and French. Caches everything locally so it works even with
+      spotty internet, which matters in Algeria.
     </p>
     <div>
       <LinkButton size="sm" href="/blog/building-dinar-echange/">Read the full story</LinkButton>
@@ -77,19 +111,27 @@ import { DinarScreenshotGallery } from '@/components/DinarScreenshotGallery';
       <div>
         <h3 class="text-sm font-medium text-foreground">Data pipeline</h3>
         <p class="mt-1 text-sm leading-relaxed text-muted-foreground">
-          EventBridge triggers a main Lambda daily at 8am. It invokes separate scraper Lambdas, each hitting a different source. All share the same contract. First valid response wins. Core currencies (EUR, USD, GBP, etc.) come from scrapers. Every other currency is derived by cross-referencing the USD parallel rate against a public exchange rate API. Approximate but good enough, ±3 dinars.
+          EventBridge triggers a main Lambda daily at 8am. It invokes separate scraper Lambdas, each
+          hitting a different source. All share the same contract. First valid response wins. Core
+          currencies (EUR, USD, GBP, etc.) come from scrapers. Every other currency is derived by
+          cross-referencing the USD parallel rate against a public exchange rate API. Approximate
+          but good enough, ±3 dinars.
         </p>
       </div>
       <div>
         <h3 class="text-sm font-medium text-foreground">Storage</h3>
         <p class="mt-1 text-sm leading-relaxed text-muted-foreground">
-          Firebase Firestore. Daily rates keyed by date. Two-year trend history per currency, trimmed on each update. Separate collections for parallel and official rates.
+          Firebase Firestore. Daily rates keyed by date. Two-year trend history per currency,
+          trimmed on each update. Separate collections for parallel and official rates.
         </p>
       </div>
       <div>
         <h3 class="text-sm font-medium text-foreground">The app</h3>
         <p class="mt-1 text-sm leading-relaxed text-muted-foreground">
-          Flutter with Provider for state management. Cache-first with 7-day offline fallback. Anonymous Firebase auth with App Check so there's no account creation needed. Push notifications in the user's chosen language via FCM topic subscriptions. Ad frequency controlled server-side through Remote Config.
+          Flutter with Provider for state management. Cache-first with 7-day offline fallback.
+          Anonymous Firebase auth with App Check so there's no account creation needed. Push
+          notifications in the user's chosen language via FCM topic subscriptions. Ad frequency
+          controlled server-side through Remote Config.
         </p>
       </div>
     </div>
@@ -101,7 +143,9 @@ import { DinarScreenshotGallery } from '@/components/DinarScreenshotGallery';
   <section>
     <h2 class="mb-4 font-heading text-xl font-semibold">Related posts</h2>
     <div class="flex flex-wrap gap-2">
-      <LinkButton variant="outline" size="sm" href="/blog/building-dinar-echange/">Building Dinar Échange</LinkButton>
+      <LinkButton variant="outline" size="sm" href="/blog/building-dinar-echange/"
+        >Building Dinar Échange</LinkButton
+      >
     </div>
   </section>
 
@@ -111,7 +155,11 @@ import { DinarScreenshotGallery } from '@/components/DinarScreenshotGallery';
   <section class="py-6">
     <p class="text-sm text-muted-foreground">Available on Android. Open source.</p>
     <div class="mt-4 flex flex-wrap gap-3">
-      <LinkButton href="https://play.google.com/store/apps/details?id=com.dinarexchange.app" target="_blank" rel="noopener">Get on Play Store</LinkButton>
+      <LinkButton
+        href="https://play.google.com/store/apps/details?id=com.dinarexchange.app"
+        target="_blank"
+        rel="noopener">Get on Play Store</LinkButton
+      >
     </div>
   </section>
 </Base>

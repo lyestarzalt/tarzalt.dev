@@ -17,25 +17,56 @@ import xDispatchIcon from '@/assets/projects/x-dispatch/icon.png';
   <!-- Hero -->
   <section class="py-12">
     <div class="flex items-start gap-5">
-      <Image src={xDispatchIcon} alt="X-Dispatch icon" width={80} height={80} loading="eager" class="!m-0 size-16 shrink-0 rounded-2xl sm:size-20" />
+      <Image
+        src={xDispatchIcon}
+        alt="X-Dispatch icon"
+        width={80}
+        height={80}
+        loading="eager"
+        class="!m-0 size-16 shrink-0 rounded-2xl sm:size-20"
+      />
       <div>
         <h1 class="font-heading text-3xl font-bold tracking-tight sm:text-4xl">X-Dispatch</h1>
         <p class="mt-1 text-sm text-muted-foreground">
-          A free companion app for X-Plane 12. Browse airports on a 3D globe, set up your flight, and launch directly.
+          A free companion app for X-Plane 12. Browse airports on a 3D globe, set up your flight,
+          and launch directly.
         </p>
         <div class="mt-3 flex flex-wrap gap-1.5">
-          {["Electron", "React", "TypeScript", "MapLibre", "Tailwind", "SQLite"].map(t => (
-            <Badge variant="secondary" className="text-[0.6rem] font-normal">{t}</Badge>
-          ))}
+          {
+            ['Electron', 'React', 'TypeScript', 'MapLibre', 'Tailwind', 'SQLite'].map((t) => (
+              <Badge variant="secondary" className="text-[0.6rem] font-normal">
+                {t}
+              </Badge>
+            ))
+          }
         </div>
       </div>
     </div>
 
     <div class="mt-6 flex flex-wrap items-center gap-3">
-      <LinkButton href="https://github.com/lyestarzalt/x-dispatch/releases/latest" target="_blank" rel="noopener">Download</LinkButton>
-      <LinkButton variant="outline" href="https://github.com/lyestarzalt/x-dispatch" target="_blank" rel="noopener">GitHub</LinkButton>
-      <LinkButton variant="outline" href="https://discord.gg/7QBCNv8B" target="_blank" rel="noopener">Discord</LinkButton>
-      <LinkButton variant="outline" href="https://ko-fi.com/lyestarzalt" target="_blank" rel="noopener">Ko-fi</LinkButton>
+      <LinkButton
+        href="https://github.com/lyestarzalt/x-dispatch/releases/latest"
+        target="_blank"
+        rel="noopener">Download</LinkButton
+      >
+      <LinkButton
+        variant="outline"
+        href="https://github.com/lyestarzalt/x-dispatch"
+        target="_blank"
+        rel="noopener">GitHub</LinkButton
+      >
+      <LinkButton
+        variant="outline"
+        href="https://discord.gg/7QBCNv8B"
+        target="_blank"
+        rel="noopener">Discord</LinkButton
+      >
+      <LinkButton
+        variant="outline"
+        href="https://ko-fi.com/lyestarzalt"
+        target="_blank"
+        rel="noopener">Ko-fi</LinkButton
+      >
     </div>
 
     <div class="mt-5 flex gap-6 font-mono text-xs text-muted-foreground">
@@ -55,13 +86,22 @@ import xDispatchIcon from '@/assets/projects/x-dispatch/icon.png';
   <!-- About the app -->
   <section class="space-y-5">
     <p class="text-sm leading-relaxed text-muted-foreground">
-      Back in 2021, I asked Laminar Research if they had plans for a global airport map in X-Plane. They weren't interested. The idea stuck with me for years. I kept brainstorming how it would work, what it would look like, which problems I'd need to solve first.
+      Back in 2021, I asked Laminar Research if they had plans for a global airport map in X-Plane.
+      They weren't interested. The idea stuck with me for years. I kept brainstorming how it would
+      work, what it would look like, which problems I'd need to solve first.
     </p>
     <p class="text-sm leading-relaxed text-muted-foreground">
-      The two hard parts were parsing X-Plane's airport data file (every smooth curve you see is a bezier encoded in a way that took me months to get right) and figuring out how to actually launch X-Plane with the user's choices (through an undocumented config file, and later an undocumented command line flag). I failed the first attempt with Flutter, shelved it, came back years later with MapLibre and Electron, and got it working.
+      The two hard parts were parsing X-Plane's airport data file (every smooth curve you see is a
+      bezier encoded in a way that took me months to get right) and figuring out how to actually
+      launch X-Plane with the user's choices (through an undocumented config file, and later an
+      undocumented command line flag). I failed the first attempt with Flutter, shelved it, came
+      back years later with MapLibre and Electron, and got it working.
     </p>
     <p class="text-sm leading-relaxed text-muted-foreground">
-      X-Dispatch gives you a 3D globe with 35,000+ airports. Click any airport to see the full layout: runways, taxiways, gates, markings, all rendered from X-Plane's own data. Pick a starting position, choose your aircraft and livery, configure fuel and weather, hit launch. Or relocate mid-flight if the sim is already running.
+      X-Dispatch gives you a 3D globe with 35,000+ airports. Click any airport to see the full
+      layout: runways, taxiways, gates, markings, all rendered from X-Plane's own data. Pick a
+      starting position, choose your aircraft and livery, configure fuel and weather, hit launch. Or
+      relocate mid-flight if the sim is already running.
     </p>
     <p class="text-sm leading-relaxed text-muted-foreground">
       Free and open source. Windows, macOS, Linux.
@@ -80,37 +120,49 @@ import xDispatchIcon from '@/assets/projects/x-dispatch/icon.png';
       <div>
         <h3 class="text-sm font-medium text-foreground">Map & airports</h3>
         <p class="mt-1 text-sm leading-relaxed text-muted-foreground">
-          3D globe with terrain elevation, hillshade, contour lines. 6 basemap styles. 35,000+ airports with custom scenery detection. Day/night terminator. Weather radar overlay with playback. Range rings by aircraft category.
+          3D globe with terrain elevation, hillshade, contour lines. 6 basemap styles. 35,000+
+          airports with custom scenery detection. Day/night terminator. Weather radar overlay with
+          playback. Range rings by aircraft category.
         </p>
       </div>
       <div>
         <h3 class="text-sm font-medium text-foreground">Airport detail</h3>
         <p class="mt-1 text-sm leading-relaxed text-muted-foreground">
-          Runways with surface types, dimensions, lighting, markings. Taxiways, aprons, pavement areas with signs. Gates and parking with heading indicators. Helipads, windsocks, beacons. All parsed from apt.dat.
+          Runways with surface types, dimensions, lighting, markings. Taxiways, aprons, pavement
+          areas with signs. Gates and parking with heading indicators. Helipads, windsocks, beacons.
+          All parsed from apt.dat.
         </p>
       </div>
       <div>
         <h3 class="text-sm font-medium text-foreground">Navigation</h3>
         <p class="mt-1 text-sm leading-relaxed text-muted-foreground">
-          VOR, NDB, DME, TACAN, ILS/LOC with course visualization. High and low altitude airways. Airspace boundaries and FIR regions. SID, STAR, approach procedures overlaid on the map. X-Plane native data or Navigraph with AIRAC detection.
+          VOR, NDB, DME, TACAN, ILS/LOC with course visualization. High and low altitude airways.
+          Airspace boundaries and FIR regions. SID, STAR, approach procedures overlaid on the map.
+          X-Plane native data or Navigraph with AIRAC detection.
         </p>
       </div>
       <div>
         <h3 class="text-sm font-medium text-foreground">Flight setup & launch</h3>
         <p class="mt-1 text-sm leading-relaxed text-muted-foreground">
-          Aircraft browser with search, filters, favorites. Livery selection remembered per aircraft. Fuel, payload, weight & balance. Start from any gate, runway, helipad, or custom pin drop. Air start, carrier catapult, frigate deck, glider tow. Weather presets or full custom. Direct X-Plane launch or mid-flight relocation via REST API.
+          Aircraft browser with search, filters, favorites. Livery selection remembered per
+          aircraft. Fuel, payload, weight & balance. Start from any gate, runway, helipad, or custom
+          pin drop. Air start, carrier catapult, frigate deck, glider tow. Weather presets or full
+          custom. Direct X-Plane launch or mid-flight relocation via REST API.
         </p>
       </div>
       <div>
         <h3 class="text-sm font-medium text-foreground">SimBrief & live traffic</h3>
         <p class="mt-1 text-sm leading-relaxed text-muted-foreground">
-          One-click OFP import with route visualization. Fuel breakdown, weight summary, nav log. VATSIM and IVAO overlays with pilot callsigns. Live METAR with flight category display.
+          One-click OFP import with route visualization. Fuel breakdown, weight summary, nav log.
+          VATSIM and IVAO overlays with pilot callsigns. Live METAR with flight category display.
         </p>
       </div>
       <div>
         <h3 class="text-sm font-medium text-foreground">Addon manager & tracking</h3>
         <p class="mt-1 text-sm leading-relaxed text-muted-foreground">
-          Browse installed aircraft, plugins, liveries, Lua scripts. Drag-and-drop install from ZIP, RAR, 7z. Scenery priority management. Real-time flight tracking via WebSocket. Multiple X-Plane installations with quick switching.
+          Browse installed aircraft, plugins, liveries, Lua scripts. Drag-and-drop install from ZIP,
+          RAR, 7z. Scenery priority management. Real-time flight tracking via WebSocket. Multiple
+          X-Plane installations with quick switching.
         </p>
       </div>
     </div>
@@ -121,7 +173,9 @@ import xDispatchIcon from '@/assets/projects/x-dispatch/icon.png';
   <!-- Press -->
   <section>
     <h2 class="mb-4 font-heading text-xl font-semibold">Press</h2>
-    <LinkPreview url="https://fselite.net/content/x-dispatch-adds-world-map-flight-launcher-and-add-on-manager-to-x-plane-12/" />
+    <LinkPreview
+      url="https://fselite.net/content/x-dispatch-adds-world-map-flight-launcher-and-add-on-manager-to-x-plane-12/"
+    />
   </section>
 
   <Separator className="my-12" />
@@ -135,19 +189,32 @@ import xDispatchIcon from '@/assets/projects/x-dispatch/icon.png';
 
     <div class="space-y-5">
       <div class="border-l-2 border-primary/20 pl-4">
-        <p class="text-sm leading-relaxed text-muted-foreground">"Hands down the best add-on for X-Plane! Period! I absolutely love the design and how fluid and quick to react this tool is. Oh boy, are the MSFS guys & gals gonna be jealous of this one."</p>
+        <p class="text-sm leading-relaxed text-muted-foreground">
+          "Hands down the best add-on for X-Plane! Period! I absolutely love the design and how
+          fluid and quick to react this tool is. Oh boy, are the MSFS guys & gals gonna be jealous
+          of this one."
+        </p>
         <p class="mt-1.5 font-mono text-xs text-muted-foreground/40">Haui</p>
       </div>
       <div class="border-l-2 border-primary/20 pl-4">
-        <p class="text-sm leading-relaxed text-muted-foreground">"X-Dispatch is the one stop tool that every simmer needs. I honestly thought Laminar would one day come up with something like this, but instead, you have taken the lead. I think Austin Meyer owes you a great one on this release."</p>
+        <p class="text-sm leading-relaxed text-muted-foreground">
+          "X-Dispatch is the one stop tool that every simmer needs. I honestly thought Laminar would
+          one day come up with something like this, but instead, you have taken the lead. I think
+          Austin Meyer owes you a great one on this release."
+        </p>
         <p class="mt-1.5 font-mono text-xs text-muted-foreground/40">DZ-Aviation</p>
       </div>
       <div class="border-l-2 border-primary/20 pl-4">
-        <p class="text-sm leading-relaxed text-muted-foreground">"WOW. You should contact Laminar so they recruit you."</p>
+        <p class="text-sm leading-relaxed text-muted-foreground">
+          "WOW. You should contact Laminar so they recruit you."
+        </p>
         <p class="mt-1.5 font-mono text-xs text-muted-foreground/40">Encounia</p>
       </div>
       <div class="border-l-2 border-primary/20 pl-4">
-        <p class="text-sm leading-relaxed text-muted-foreground">"Amazing utility app for X-Plane, I'm really enjoying the features, especially the 3D terrain viewer."</p>
+        <p class="text-sm leading-relaxed text-muted-foreground">
+          "Amazing utility app for X-Plane, I'm really enjoying the features, especially the 3D
+          terrain viewer."
+        </p>
         <p class="mt-1.5 font-mono text-xs text-muted-foreground/40">Sean McLeod</p>
       </div>
       <div class="border-l-2 border-primary/20 pl-4">
@@ -155,21 +222,34 @@ import xDispatchIcon from '@/assets/projects/x-dispatch/icon.png';
         <p class="mt-1.5 font-mono text-xs text-muted-foreground/40">Tenebrae Aeternae</p>
       </div>
       <div class="border-l-2 border-primary/20 pl-4">
-        <p class="text-sm leading-relaxed text-muted-foreground">"Awesome application! Free and open source. Can't thank the creator enough."</p>
+        <p class="text-sm leading-relaxed text-muted-foreground">
+          "Awesome application! Free and open source. Can't thank the creator enough."
+        </p>
         <p class="mt-1.5 font-mono text-xs text-muted-foreground/40">Suh</p>
       </div>
       <div class="border-l-2 border-primary/20 pl-4">
-        <p class="text-sm leading-relaxed text-muted-foreground">"This is a very sleek UI. Well done."</p>
+        <p class="text-sm leading-relaxed text-muted-foreground">
+          "This is a very sleek UI. Well done."
+        </p>
         <p class="mt-1.5 font-mono text-xs text-muted-foreground/40">ColinM9991</p>
       </div>
       <div class="border-l-2 border-primary/20 pl-4">
-        <p class="text-sm leading-relaxed text-muted-foreground">"Already shows great promise. The dev is very open to new ideas and looking for help to work out bugs. A big thank you for sharing this with the community."</p>
+        <p class="text-sm leading-relaxed text-muted-foreground">
+          "Already shows great promise. The dev is very open to new ideas and looking for help to
+          work out bugs. A big thank you for sharing this with the community."
+        </p>
         <p class="mt-1.5 font-mono text-xs text-muted-foreground/40">kemosabe</p>
       </div>
     </div>
 
     <p class="mt-6 text-xs text-muted-foreground/50">
-      <a href="https://forums.x-plane.org/files/file/98500-x-dispatch/" target="_blank" rel="noopener" class="text-primary underline underline-offset-2 decoration-primary/30 hover:decoration-primary">All 19 reviews on X-Plane.Org</a>
+      <a
+        href="https://forums.x-plane.org/files/file/98500-x-dispatch/"
+        target="_blank"
+        rel="noopener"
+        class="text-primary underline underline-offset-2 decoration-primary/30 hover:decoration-primary"
+        >All 19 reviews on X-Plane.Org</a
+      >
     </p>
   </section>
 
@@ -179,9 +259,15 @@ import xDispatchIcon from '@/assets/projects/x-dispatch/icon.png';
   <section>
     <h2 class="mb-4 font-heading text-xl font-semibold">Related posts</h2>
     <div class="flex flex-wrap gap-2">
-      <LinkButton variant="outline" size="sm" href="/blog/building-x-dispatch/">Building X-Dispatch</LinkButton>
-      <LinkButton variant="outline" size="sm" href="/blog/parsing-xplane-airport-geometry/">Parsing apt.dat geometry</LinkButton>
-      <LinkButton variant="outline" size="sm" href="/blog/xplane-linear-features-line-types/">Painted lines & taxiway lights</LinkButton>
+      <LinkButton variant="outline" size="sm" href="/blog/building-x-dispatch/"
+        >Building X-Dispatch</LinkButton
+      >
+      <LinkButton variant="outline" size="sm" href="/blog/parsing-xplane-airport-geometry/"
+        >Parsing apt.dat geometry</LinkButton
+      >
+      <LinkButton variant="outline" size="sm" href="/blog/xplane-linear-features-line-types/"
+        >Painted lines & taxiway lights</LinkButton
+      >
     </div>
   </section>
 
@@ -192,8 +278,17 @@ import xDispatchIcon from '@/assets/projects/x-dispatch/icon.png';
     <p class="font-heading text-lg font-semibold">Free and open source.</p>
     <p class="mt-1 text-sm text-muted-foreground">Windows, macOS, Linux. Requires X-Plane 12.4+.</p>
     <div class="mt-5 flex flex-wrap gap-3">
-      <LinkButton href="https://github.com/lyestarzalt/x-dispatch/releases/latest" target="_blank" rel="noopener">Download latest</LinkButton>
-      <LinkButton variant="outline" href="https://ko-fi.com/lyestarzalt" target="_blank" rel="noopener">Support on Ko-fi</LinkButton>
+      <LinkButton
+        href="https://github.com/lyestarzalt/x-dispatch/releases/latest"
+        target="_blank"
+        rel="noopener">Download latest</LinkButton
+      >
+      <LinkButton
+        variant="outline"
+        href="https://ko-fi.com/lyestarzalt"
+        target="_blank"
+        rel="noopener">Support on Ko-fi</LinkButton
+      >
     </div>
   </section>
 </Base>

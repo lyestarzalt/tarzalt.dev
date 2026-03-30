@@ -42,7 +42,14 @@ const {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <SEO title={title} description={description} image={image} type={type} publishedDate={publishedDate} modifiedDate={modifiedDate} />
+    <SEO
+      title={title}
+      description={description}
+      image={image}
+      type={type}
+      publishedDate={publishedDate}
+      modifiedDate={modifiedDate}
+    />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -57,7 +64,7 @@ const {
     />
     <script is:inline>
       // Theme: dark by default
-      (function() {
+      (function () {
         var t = localStorage.getItem('theme') || 'dark';
         if (t === 'dark') document.documentElement.classList.add('dark');
       })();
@@ -66,7 +73,11 @@ const {
   </head>
   <body class="min-h-screen bg-background text-foreground">
     <!-- Grain overlay -->
-    <div class="pointer-events-none fixed inset-0 z-[9999] opacity-[0.025] dark:opacity-[0.04]" style="background-image: url(&quot;data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E&quot;);"></div>
+    <div
+      class="pointer-events-none fixed inset-0 z-[9999] opacity-[0.025] dark:opacity-[0.04]"
+      style="background-image: url(&quot;data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E&quot;);"
+    >
+    </div>
 
     <div class="mx-auto flex min-h-screen max-w-3xl flex-col px-6">
       <Header />
@@ -84,9 +95,9 @@ const {
     <!-- Console easter egg -->
     <script is:inline>
       console.log(
-        '%c hey. %c\n\nYou\'re either debugging my site or you\'re curious.\nEither way, I respect it.\n\n— Lyes\n\nhttps://github.com/lyestarzalt',
+        "%c hey. %c\n\nYou're either debugging my site or you're curious.\nEither way, I respect it.\n\n— Lyes\n\nhttps://github.com/lyestarzalt",
         'font-size: 24px; font-weight: bold; color: #d4a054;',
-        'font-size: 13px; color: #8a8a8a; line-height: 1.6;'
+        'font-size: 13px; color: #8a8a8a; line-height: 1.6;',
       );
     </script>
   </body>
@@ -96,7 +107,11 @@ const {
   @reference "@/styles/global.css";
 
   /* ── Heading font ── */
-  .font-heading, h1, h2, h3, h4 {
+  .font-heading,
+  h1,
+  h2,
+  h3,
+  h4 {
     font-family: 'Bricolage Grotesque', sans-serif;
     font-optical-sizing: auto;
   }
@@ -117,17 +132,25 @@ const {
   }
 
   /* Shiki dual theme */
-  .dark pre code .line span { color: var(--shiki-dark, inherit) !important; }
-  html:not(.dark) pre code .line span { color: var(--shiki-light, inherit) !important; }
+  .dark pre code .line span {
+    color: var(--shiki-dark, inherit) !important;
+  }
+  html:not(.dark) pre code .line span {
+    color: var(--shiki-light, inherit) !important;
+  }
 
   /* ── Images ── */
-  img { @apply max-w-full h-auto rounded-lg; }
+  img {
+    @apply max-w-full h-auto rounded-lg;
+  }
 
   /* ── Blockquotes ── */
   blockquote {
     @apply border-l-2 border-primary/40 rounded-r-md bg-card px-5 py-3 my-6 text-muted-foreground italic;
   }
-  blockquote p { @apply m-0; }
+  blockquote p {
+    @apply m-0;
+  }
 
   /* ── GitHub callouts ── */
   .markdown-alert {
@@ -138,30 +161,58 @@ const {
   }
 
   /* ── Tables ── */
-  table { @apply w-full border-collapse my-6 text-sm; }
+  table {
+    @apply w-full border-collapse my-6 text-sm;
+  }
   th {
     @apply font-mono text-[0.6875rem] font-medium uppercase tracking-wider text-muted-foreground text-left p-3 border-b border-border;
   }
-  td { @apply p-3 border-b border-border/50 text-muted-foreground; }
-  tr:hover td { @apply bg-card/50; }
+  td {
+    @apply p-3 border-b border-border/50 text-muted-foreground;
+  }
+  tr:hover td {
+    @apply bg-card/50;
+  }
 
   /* ── HR ── */
-  hr { @apply border-none border-t border-border my-10; }
+  hr {
+    @apply border-none border-t border-border my-10;
+  }
 
   /* ── Lists ── */
-  ul, ol { @apply pl-5; }
-  li { @apply mb-1 text-muted-foreground; }
-  li::marker { @apply text-primary/40; }
+  ul,
+  ol {
+    @apply pl-5;
+  }
+  li {
+    @apply mb-1 text-muted-foreground;
+  }
+  li::marker {
+    @apply text-primary/40;
+  }
 
   /* ── KaTeX ── */
-  .katex-display { @apply my-6 overflow-x-auto overflow-y-hidden; }
+  .katex-display {
+    @apply my-6 overflow-x-auto overflow-y-hidden;
+  }
 
   /* ── Selection — amber tint ── */
-  ::selection { @apply bg-primary/20 text-primary; }
+  ::selection {
+    @apply bg-primary/20 text-primary;
+  }
 
   /* ── Scrollbar ── */
-  ::-webkit-scrollbar { width: 5px; height: 5px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { @apply bg-border rounded-full; }
-  ::-webkit-scrollbar-thumb:hover { @apply bg-muted-foreground/50; }
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-border rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground/50;
+  }
 </style>

@@ -1,13 +1,13 @@
 ---
-title: "Parsing Painted Lines and Taxiway Lights from apt.dat"
+title: 'Parsing Painted Lines and Taxiway Lights from apt.dat'
 date: 2026-02-05T10:00:00+00:00
 lastmod: 2026-03-29T10:00:00+00:00
 draft: false
-description: "How X-Plane encodes taxiway markings and embedded lights using linear features in apt.dat, and the type propagation gotchas that make lines disappear."
-summary: "How X-Plane encodes taxiway markings and embedded lights using linear features in apt.dat. Covers the line type system, segment splitting, type inheritance through bezier curves, and the split bezier bug that makes lines invisible."
-tags: ["X-Plane", "Bezier Curves", "Parsing", "Geometry", "Flight Simulation"]
-categories: ["Engineering"]
-featuredImage: "./runway-airfield-marking-taxiway-heading-to-31456452.webp"
+description: 'How X-Plane encodes taxiway markings and embedded lights using linear features in apt.dat, and the type propagation gotchas that make lines disappear.'
+summary: 'How X-Plane encodes taxiway markings and embedded lights using linear features in apt.dat. Covers the line type system, segment splitting, type inheritance through bezier curves, and the split bezier bug that makes lines invisible.'
+tags: ['X-Plane', 'Bezier Curves', 'Parsing', 'Geometry', 'Flight Simulation']
+categories: ['Engineering']
+featuredImage: './runway-airfield-marking-taxiway-heading-to-31456452.webp'
 ---
 
 > [!ABSTRACT] TL;DR
@@ -31,12 +31,12 @@ X-Plane calls them **linear features** and stores them under row code 120:
 
 The format looks similar to pavements: a header line, then a sequence of nodes defining the path. But instead of closing into a polygon, it ends with `115` or `116` (open path terminator). And each node carries extra data — the **line type** and **light type** for the segment that follows it.
 
-| | Pavements (110) | Linear features (120) |
-|---|---|---|
-| Geometry | Filled polygon | Stroked path |
-| Terminates with | 113/114 (close ring) | 115/116 (end path) |
+|                 | Pavements (110)           | Linear features (120)  |
+| --------------- | ------------------------- | ---------------------- |
+| Geometry        | Filled polygon            | Stroked path           |
+| Terminates with | 113/114 (close ring)      | 115/116 (end path)     |
 | Node extra data | Optional line/light types | Line type + light type |
-| Result | Textured surface | Painted line or lights |
+| Result          | Textured surface          | Painted line or lights |
 
 The bezier curve system is identical. Same node codes, same control point mirroring. If you can parse pavements, you already have most of the work done. See [parsing apt.dat geometry](/blog/parsing-xplane-airport-geometry/) for the full breakdown of bezier math and the four connection types.
 
@@ -80,19 +80,19 @@ This works because the two ranges don't overlap. The spec doesn't explicitly cal
 
 The line type determines what gets painted on the ground:
 
-| Code | Appearance |
-|:----:|-----------|
-| 0 | Nothing (transparent) |
-| 1 | Solid yellow |
-| 2 | Broken yellow |
-| 3 | Double solid yellow |
-| 4 | Runway hold (bars + dashes) |
-| 5 | Other hold |
-| 6 | ILS hold |
-| 7 | ILS critical centerline |
-| 20 | Solid white |
-| 21 | Chequered white |
-| 22 | Broken white |
+| Code | Appearance                  |
+| :--: | --------------------------- |
+|  0   | Nothing (transparent)       |
+|  1   | Solid yellow                |
+|  2   | Broken yellow               |
+|  3   | Double solid yellow         |
+|  4   | Runway hold (bars + dashes) |
+|  5   | Other hold                  |
+|  6   | ILS hold                    |
+|  7   | ILS critical centerline     |
+|  20  | Solid white                 |
+|  21  | Chequered white             |
+|  22  | Broken white                |
 
 Add 50 to any code for a black border variant: 51 is solid yellow with black border, 53 is double solid yellow with black border. The border helps visibility on light-coloured concrete where a plain yellow line might wash out.
 
@@ -100,16 +100,16 @@ Add 50 to any code for a black border variant: 51 is solid yellow with black bor
 
 Embedded taxiway lights:
 
-| Code | Appearance | Directionality |
-|:----:|-----------|---------------|
-| 101 | Green centerline | Bidirectional |
-| 102 | Blue edge | Omnidirectional |
-| 103 | Amber hold | Unidirectional |
-| 104 | Amber pulsating | Unidirectional |
-| 105 | Alternating amber/green | Bidirectional |
-| 106 | Red stop bar | Omnidirectional |
-| 107 | Green centerline | Unidirectional |
-| 108 | Alternating amber/green | Unidirectional |
+| Code | Appearance              | Directionality  |
+| :--: | ----------------------- | --------------- |
+| 101  | Green centerline        | Bidirectional   |
+| 102  | Blue edge               | Omnidirectional |
+| 103  | Amber hold              | Unidirectional  |
+| 104  | Amber pulsating         | Unidirectional  |
+| 105  | Alternating amber/green | Bidirectional   |
+| 106  | Red stop bar            | Omnidirectional |
+| 107  | Green centerline        | Unidirectional  |
+| 108  | Alternating amber/green | Unidirectional  |
 
 Directionality matters for rendering. Bidirectional lights are visible from both directions along the taxiway. Unidirectional lights face one way only, typically toward approaching traffic. Omnidirectional lights are visible from all angles.
 
@@ -158,11 +158,13 @@ function splitByType(coords: TypedCoord[]): Segment[] {
   let segStart = 0;
 
   for (let i = 1; i < coords.length; i++) {
-    if (coords[i].lineType !== coords[segStart].lineType ||
-        coords[i].lightType !== coords[segStart].lightType) {
+    if (
+      coords[i].lineType !== coords[segStart].lineType ||
+      coords[i].lightType !== coords[segStart].lightType
+    ) {
       // Type changed — end current segment, include boundary point
       segments.push({
-        coords: coords.slice(segStart, i + 1).map(c => c.pos),
+        coords: coords.slice(segStart, i + 1).map((c) => c.pos),
         lineType: coords[segStart].lineType,
         lightType: coords[segStart].lightType,
       });
@@ -172,12 +174,12 @@ function splitByType(coords: TypedCoord[]): Segment[] {
 
   // Final segment
   segments.push({
-    coords: coords.slice(segStart).map(c => c.pos),
+    coords: coords.slice(segStart).map((c) => c.pos),
     lineType: coords[segStart].lineType,
     lightType: coords[segStart].lightType,
   });
 
-  return segments.filter(s => s.lineType > 0 || s.lightType > 0);
+  return segments.filter((s) => s.lineType > 0 || s.lightType > 0);
 }
 ```
 
@@ -234,8 +236,7 @@ if (coordsEqual(previousPos, currentPos)) {
 } else {
   // Normal curve
   const points = calculateBezier(previousPos, control, currentPos);
-  addBezierSegment(points, currentLineType, currentLightType,
-                   nodeLineType, nodeLightType);
+  addBezierSegment(points, currentLineType, currentLightType, nodeLineType, nodeLightType);
 }
 ```
 

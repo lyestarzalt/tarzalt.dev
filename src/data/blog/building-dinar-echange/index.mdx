@@ -1,11 +1,11 @@
 ---
-title: "Building Dinar Échange"
+title: 'Building Dinar Échange'
 date: 2026-03-30T12:00:00+08:00
 draft: false
 description: "An app for tracking Algerian dinar exchange rates. The hard part wasn't the app, it was finding the data."
 summary: "A friend wanted an easy way to check dinar exchange rates. There's no API for the parallel market. So I built scrapers, a Lambda pipeline, and a Flutter app."
-tags: ["Flutter", "AWS Lambda", "Scraping", "Mobile", "Algeria"]
-categories: ["Projects"]
+tags: ['Flutter', 'AWS Lambda', 'Scraping', 'Mobile', 'Algeria']
+categories: ['Projects']
 ---
 
 import { Badge } from '@/components/ui/badge';
@@ -122,12 +122,22 @@ I'm on version 1.4.8 now. It works. People use it. That's enough.
 
 <div className="flex flex-wrap gap-2">
   <Button variant="outline" size="sm" asChild>
-    <a href="https://play.google.com/store/apps/details?id=com.dinarexchange.app" target="_blank" rel="noopener">Play Store</a>
+    <a
+      href="https://play.google.com/store/apps/details?id=com.dinarexchange.app"
+      target="_blank"
+      rel="noopener"
+    >
+      Play Store
+    </a>
   </Button>
   <Button variant="outline" size="sm" asChild>
-    <a href="https://github.com/lyestarzalt/Dinar-Echange" target="_blank" rel="noopener">GitHub (app)</a>
+    <a href="https://github.com/lyestarzalt/Dinar-Echange" target="_blank" rel="noopener">
+      GitHub (app)
+    </a>
   </Button>
   <Button variant="outline" size="sm" asChild>
-    <a href="https://github.com/lyestarzalt/currencies_scraper" target="_blank" rel="noopener">GitHub (backend)</a>
+    <a href="https://github.com/lyestarzalt/currencies_scraper" target="_blank" rel="noopener">
+      GitHub (backend)
+    </a>
   </Button>
 </div>

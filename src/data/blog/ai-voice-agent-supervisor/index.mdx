@@ -1,14 +1,24 @@
 ---
-title: "Building a Real-Time Supervisor Dashboard for AI Voice Agents"
-subtitle: "Live monitoring and intervention for AI phone calls"
+title: 'Building a Real-Time Supervisor Dashboard for AI Voice Agents'
+subtitle: 'Live monitoring and intervention for AI phone calls'
 date: 2024-11-15T10:00:00+08:00
 lastmod: 2024-11-20T10:00:00+08:00
 draft: false
-description: "Building a real-time supervisor dashboard for AI voice calls. Live sentiment analysis, human intervention, and seamless handoffs - all without complex infrastructure. Just LiveKit rooms and some clever thinking."
-summary: "I had a working voice agent in production and a question: what happens when the AI screws up right now? Not tomorrow in the analytics. Right now. So I built a real-time monitoring dashboard."
-tags: ["AI Voice Agents", "LiveKit", "Real-time Monitoring", "WebRTC", "System Design", "TypeScript", "NestJS", "Next.js"]
-categories: ["Engineering", "Projects"]
-featuredImage: "./cover_939857.png"
+description: 'Building a real-time supervisor dashboard for AI voice calls. Live sentiment analysis, human intervention, and seamless handoffs - all without complex infrastructure. Just LiveKit rooms and some clever thinking.'
+summary: 'I had a working voice agent in production and a question: what happens when the AI screws up right now? Not tomorrow in the analytics. Right now. So I built a real-time monitoring dashboard.'
+tags:
+  [
+    'AI Voice Agents',
+    'LiveKit',
+    'Real-time Monitoring',
+    'WebRTC',
+    'System Design',
+    'TypeScript',
+    'NestJS',
+    'Next.js',
+  ]
+categories: ['Engineering', 'Projects']
+featuredImage: './cover_939857.png'
 ---
 
 import Figure from '../../../components/Figure.astro';
@@ -22,7 +32,7 @@ The agent handled calls fine. Natural-sounding voice, could hold a conversation,
 
 But all of that happens after the call.
 
-The AI might completely misunderstand someone right now. A customer might be getting frustrated this second, needing a human while we make them sit through three more minutes of AI troubleshooting. We'd see it in the post-call analytics. We'd adjust our prompts, add it to the test suite, prevent it from happening to the next customer. 
+The AI might completely misunderstand someone right now. A customer might be getting frustrated this second, needing a human while we make them sit through three more minutes of AI troubleshooting. We'd see it in the post-call analytics. We'd adjust our prompts, add it to the test suite, prevent it from happening to the next customer.
 
 Great for iteration. Terrible for the person on the phone right now.
 
@@ -31,6 +41,7 @@ I started digging through [LiveKit's documentation][livekit-docs] looking for so
 LiveKit works through [rooms][livekit-rooms] - realtime sessions where [participants][livekit-participants] connect. A participant can be a user, an agent, or anything that needs to send or receive audio/video/data. Each participant publishes tracks (audio, video) and subscribes to tracks from other participants.
 
 When a call happens:
+
 - Customer joins the room as a participant (via [WebRTC][webrtc] or [SIP][livekit-sip] if calling from a phone), publishes their audio
 - AI agent joins the room as a participant, subscribes to customer audio, publishes its own audio back
 - They communicate through LiveKit's media server
@@ -42,6 +53,7 @@ Not as some special observer with a monitoring system watching from outside. Jus
 The platform had everything we needed.
 
 ---
+
 ## What I Built
 
 I built two things: a real-time supervisor dashboard where you can monitor and intervene in AI phone calls, and the backend infrastructure that makes it work.
@@ -60,13 +72,17 @@ The inspiration came from the Apple Watch - how do you pack maximum information 
 
 Negative sentiment calls automatically drift toward the center of the screen. So when you've got 10+ calls happening at once, the ones that need attention are literally harder to miss.
 
-<Figure src="/images/ai-voice-agent-supervisor/animation_bubble.gif" caption="Bubble view in action. Red = angry customer, green = happy customer. The pulsing means someone's talking right now." />
+<Figure
+  src="/images/ai-voice-agent-supervisor/animation_bubble.gif"
+  caption="Bubble view in action. Red = angry customer, green = happy customer. The pulsing means someone's talking right now."
+/>
 
 I had time, a motion animation library, and free will. This is what happened.
 
 **How it works:**
 
 The bubble positioning isn't random - it uses a hexagonal packing algorithm. Think honeycomb. I wrote a function that calculates positions in concentric rings:
+
 - Center position (layer 0): 1 bubble
 - First ring (layer 1): 6 bubbles in a perfect hexagon
 - Second ring (layer 2): 12 bubbles
@@ -86,7 +102,7 @@ function getHexagonalRingPositions(layer, radius, centerX, centerY) {
         x: centerX + Math.cos(angle) * distance,
         y: centerY + Math.sin(angle) * distance
     ..... More
-  
+
   return positions;
 }
 ```
@@ -99,16 +115,22 @@ The bubbles themselves are built with Framer Motion for the animations and a cus
 
 Sometimes you want a normal grid. This shows all the important details at a glance - who's on the call, how long they've been talking, current sentiment, that sort of thing.
 
-<Figure src="/images/ai-voice-agent-supervisor/card_view.png" caption="Traditional card grid view for when you want details without the fancy graphics." />
+<Figure
+  src="/images/ai-voice-agent-supervisor/card_view.png"
+  caption="Traditional card grid view for when you want details without the fancy graphics."
+/>
 
 **Room View**
 
 Click any call to enter the monitoring interface.
 
-
-<Figure src="/images/ai-voice-agent-supervisor/room_view.png" caption="Inside a call. Live transcript on the left, audio controls on the right, debug panel at the bottom." />
+<Figure
+  src="/images/ai-voice-agent-supervisor/room_view.png"
+  caption="Inside a call. Live transcript on the left, audio controls on the right, debug panel at the bottom."
+/>
 
 You get:
+
 - Live transcript of everything being said (updates as people speak)
 - Audio controls to listen, speak, or take over
 - Debug panel showing what the AI is doing under the hood
@@ -118,7 +140,10 @@ You get:
 
 This is where you intervene:
 
-<Figure src="/images/ai-voice-agent-supervisor/control_bar.png" caption="The 'oh shit' buttons. Mute the AI, take over, or transfer to a human agent." />
+<Figure
+  src="/images/ai-voice-agent-supervisor/control_bar.png"
+  caption="The 'oh shit' buttons. Mute the AI, take over, or transfer to a human agent."
+/>
 
 - Mute the AI (it shuts up but keeps listening)
 - Unmute yourself (now you're talking to the customer)
@@ -127,16 +152,16 @@ This is where you intervene:
 
 The controls are dead simple because when something's going wrong, you don't have time to figure out a complicated UI.
 
-
-
 **Post-Call Analytics**
 
 Beyond live monitoring, there's a separate analytics view for the business side - call volume trends, average handle time (AHT), average talk time (ATT), completion rates. Standard call center KPIs pulling from the MongoDB archives.
 
-<Figure src="/images/ai-voice-agent-supervisor/post_call.png" caption="Post-call analytics dashboard" />
+<Figure
+  src="/images/ai-voice-agent-supervisor/post_call.png"
+  caption="Post-call analytics dashboard"
+/>
 
 This wasn't interesting to build - just queries on archived call data. But it's what operational people looks at.
-
 
 ---
 
@@ -150,7 +175,7 @@ Join any call and just listen. The customer has no idea you're there. The AI kee
 
 **2. Guide the AI via Text**
 
-This one's unusual but effective. You can type messages to the AI, and it'll speak your instructions to the customer. 
+This one's unusual but effective. You can type messages to the AI, and it'll speak your instructions to the customer.
 
 Type: "Tell them we're closed today"
 
@@ -161,13 +186,13 @@ It works because I had to override LiveKit's default text handling. Normally, th
 ```python
 def custom_text_handler(reader, participant_identity):
     # Security check: only supervisors and the linked participant
-    if not (participant_identity.startswith("supervisor_") 
+    if not (participant_identity.startswith("supervisor_")
             or participant_identity == agent_session._room_io._participant_identity):
         return
-    
+
     # Read supervisor's text
     text = await reader.read_all()
-    
+
     # Interrupt agent and inject the text as a user message
     agent_session.interrupt()
     agent_session.generate_reply(user_input=text)
@@ -186,9 +211,9 @@ This uses LiveKit's `RoomServiceClient.mutePublishedTrack()` API. The frontend m
 
 ```typescript {title="mute_agent.ts"}
 await roomService.mutePublishedTrack(
-  roomName, 
-  agentIdentity, 
-  trackSid, 
+  roomName,
+  agentIdentity,
+  trackSid,
   muted: true
 );
 ```
@@ -204,17 +229,15 @@ Done talking? Hit "Hand Back." Same API call but with `muted: false`. AI unmutes
 Sometimes you just need to route them to a real human agent. Click transfer, pick a language (English/Malay), and we do a SIP transfer:
 
 ```typescript
-    await sipClient.transferSipParticipant(
-      roomName,
-      participantIdentity,
-      transferTo,
-      sipTransferOptions
-    );
+await sipClient.transferSipParticipant(
+  roomName,
+  participantIdentity,
+  transferTo,
+  sipTransferOptions,
+);
 ```
 
 The customer's experience is just like any other call transfer. They hear a brief message, maybe some hold music, then they're connected to the call center queue.
-
-
 
 ---
 
@@ -227,6 +250,7 @@ Join a room mid-call and you see... nothing. No message history, no conversation
 First time a supervisor joined a live call, they asked: "Is the agent even talking? What's the customer's problem?" The audio worked fine. Everything else was blank.
 
 I needed to solve three things:
+
 1. Store conversation history somewhere
 2. Give supervisors that history when they join
 3. Keep everything synchronized in real-time
@@ -243,13 +267,13 @@ graph TB
     Agent[Python Agent] -->|WebRTC Audio| LK
     Agent -->|POST /call-event| MW[NestJS Middleware]
     LK -->|Webhooks Backup| MW
-    
+
     MongoDB[(MongoDB)] <--> |Historical Data| MW
-    
+
     MW <-->|Store| Redis[(Redis)]
     MW <-->|WebSocket Updates| Dashboard[Supervisor Dashboard]
     LK <-->|WebSocket Chat| Dashboard
-    
+
     style LK fill:#4a9eff
     style MW fill:#e535ab
     style Redis fill:#dc382d
@@ -261,7 +285,7 @@ Three layers, each doing one thing well:
 
 ### 1. The Voice Layer (LiveKit)
 
-All audio goes through LiveKit for transport. 
+All audio goes through LiveKit for transport.
 
 Customer calls via PSTN → SIP provider → LiveKit SIP bridge → LiveKit server → AI agent connects as participant
 
@@ -286,7 +310,7 @@ sequenceDiagram
     participant Middleware
     participant Redis
     participant Dashboard
-    
+
     Customer->>Agent: Speaks (via LiveKit)
     Agent->>Agent: Transcribes with STT
     Agent->>Middleware: HTTP POST /call-event
@@ -295,7 +319,7 @@ sequenceDiagram
     Redis-->>Middleware: Keyspace notification
     Middleware->>Dashboard: WebSocket broadcast
     Dashboard->>Dashboard: Updates UI
-    
+
     Agent->>Customer: Responds (via LiveKit)
 ```
 
@@ -309,7 +333,7 @@ class CallEventStore:
         self.webhook_url = os.getenv("CALL_SUPERVISOR_URL")
         self.timeout = httpx.Timeout(5.0)
 
-    def store_call_event(self, room_name: str, session_id: str, 
+    def store_call_event(self, room_name: str, session_id: str,
                          event_type: str, data: dict) -> bool:
         payload = {
             "room_name": room_name,
@@ -317,7 +341,7 @@ class CallEventStore:
             "event_type": event_type,
             "data": data,
         }
-        
+
         response = client.post(
             f"{self.webhook_url}/call-event",
             json=payload,
@@ -346,16 +370,16 @@ sequenceDiagram
     participant Redis
     participant Dashboard
     participant LiveKit
-    
+
     Customer->>Agent: Having conversation
     Note over Agent: Agent crashes!
     Note over Agent,Middleware: No "call ended" event sent
-    
+
     rect rgb(255, 200, 200)
         Note over Redis: Call still marked as "active"
         Note over Dashboard: Shows ghost call forever
     end
-    
+
     LiveKit->>LiveKit: Room closes (agent disconnected)
     LiveKit->>Middleware: POST /webhook (room_finished)
     Note over LiveKit,Middleware: Webhook fires regardless<br/>of agent state
@@ -376,10 +400,10 @@ This is where LiveKit webhooks become critical. LiveKit's server sends webhooks 
 @Post('webhook')
 async handleLivekitWebhook(@Headers('authorization') authHeader: string) {
   const event: WebhookEvent = await this.webhookReceiver.receive(
-    req.body, 
+    req.body,
     authHeader
   );
-  
+
   switch (event.event) {
     case 'room_finished':
       // Clean up even if agent never reported end
@@ -392,6 +416,7 @@ async handleLivekitWebhook(@Headers('authorization') authHeader: string) {
 
 > [!NOTE]
 > Two paths for the same event:
+>
 > 1. **Primary path:** Agent sends HTTP event → Middleware processes → Redis updated
 > 2. **Backup path:** Agent crashes → LiveKit webhook fires → Middleware catches it → Redis cleaned up anyway
 
@@ -410,21 +435,21 @@ sequenceDiagram
     participant Middleware
     participant Redis
     participant LiveKit
-    
+
     Supervisor->>Dashboard: Opens room view
     Dashboard->>Middleware: WebSocket: join_chat_room
-    
+
     rect rgb(200, 255, 200)
         Note over Middleware,Redis: Read full conversation<br/>from Redis
         Middleware->>Redis: HGET call:room-123
         Redis-->>Middleware: Complete transcript
         Middleware->>Dashboard: emit('chat_history', messages)
     end
-    
+
     Dashboard->>Dashboard: Displays full history
     Supervisor->>LiveKit: Connects to room audio
     Note over Supervisor,LiveKit: Live audio stream begins
-    
+
     loop Real-time updates
         Middleware->>Dashboard: emit('new_message', msg)
     end
@@ -434,16 +459,16 @@ When a supervisor connects and joins a chat room, the gateway immediately dumps 
 
 ```typescript
 @SubscribeMessage('join_chat_room')
-async handleJoinChatRoom(@MessageBody() roomName: string, 
+async handleJoinChatRoom(@MessageBody() roomName: string,
                          @ConnectedSocket() client: Socket) {
   await client.join(`chat:${roomName}`);
-  
+
   // Get full conversation from Redis
   const messages = await this.realtimeService.getChatMessages(roomName);
-  
+
   // Send everything at once
   client.emit('chat_history', messages);
-  
+
   return {status: 'joined_chat_room', roomName};
 }
 ```
@@ -455,7 +480,7 @@ From that point forward, they receive live updates as they happen. This is why t
 The supervisor dashboard connects through three separate channels:
 
 - **LiveKit WebRTC** - Direct audio streams for listening/speaking
-- **NestJS WebSocket** - State updates and chat history  
+- **NestJS WebSocket** - State updates and chat history
 - **LiveKit API** - Control actions (mute/unmute/transfer)
 
 Three channels, each optimized for what it does best.
@@ -471,6 +496,7 @@ The middleware subscribes to `__keyspace@0__:call:*` which means "tell me every 
 When someone's speaking, updates fire constantly. Every transcription chunk triggers a notification. That's too much, so I added debouncing - updates get batched, multiple changes within 50ms get collapsed into one broadcast. The dashboard sees smooth updates without getting hammered.
 
 ---
+
 ## Real-Time Debug & Metrics
 
 One of the most valuable features: **live instrumentation** from the agent.
@@ -488,14 +514,14 @@ class DebugSender:
     @staticmethod
     async def _send_debug_event(event_type: str, data: dict[str, Any]):
         job_ctx = get_job_context()
-        
+
         debug_payload = {
             "event": event_type,
             "data": data,
             "type": "debug",
             "timestamp": time.time()
         }
-        
+
         await job_ctx.room.local_participant.send_text(
             json.dumps(debug_payload),
             topic="agent-debug"
@@ -504,8 +530,8 @@ class DebugSender:
 
 The dashboard subscribes to the `agent-debug` topic and receives these events in real-time without polling. Events are sent asynchronously (fire-and-forget) so they never block the agent's STT → LLM → TTS pipeline.
 
-
 What gets streamed:
+
 - Agent state transitions (initializing → listening → thinking → speaking)
 - Tool calls with parameters and results
 - LLM time-to-first-token and total latency
@@ -513,7 +539,10 @@ What gets streamed:
 - RAG query results
 - API calls to external services
 
-<Figure src="/images/ai-voice-agent-supervisor/debug_events.png" caption="Debug panel showing live agent state transitions and performance metrics" />
+<Figure
+  src="/images/ai-voice-agent-supervisor/debug_events.png"
+  caption="Debug panel showing live agent state transitions and performance metrics"
+/>
 
 The agent subscribes to LiveKit's metrics hooks and forwards everything to the dashboard:
 
@@ -524,7 +553,11 @@ def on_metrics_collected(ev) -> None:
 ```
 
 ---
-<Figure src="/images/ai-voice-agent-supervisor/metrics.png" caption="Debug panel with live events" />
+
+<Figure
+  src="/images/ai-voice-agent-supervisor/metrics.png"
+  caption="Debug panel with live events"
+/>
 
 > [!TIP]
 > Debug events aren't persisted - they're real-time only. The metrics get saved to Langfuse for historical analysis, but the debug stream is ephemeral. It exists for live monitoring.
@@ -564,15 +597,18 @@ Current mitigation: webhook fallback catches most cases, rooms auto-expire after
 Single Redis instance, single middleware instance. On paper, everything can scale horizontally - Redis clustering, multiple middleware nodes with session affinity. In practice, untested beyond current load.
 
 ---
+
 ## The Tech Stack
 
 **Voice Agent**
+
 - Python + [LiveKit Agents SDK][livekit-agents] (multi-agent workflow)
 - [Whisper V3][whisper] (speech-to-text)
 - [Qwen 2.5 32B][qwen], self-hosted (conversation LLM)
 - Custom TTS, self-hosted (voice synthesis)
 
 **Middleware**
+
 - [NestJS][nestjs] (event processing & WebSocket gateway)
 - [Redis][redis] (active call state, message buffering)
 - [MongoDB][mongodb] (call archives, historical data)
@@ -580,14 +616,15 @@ Single Redis instance, single middleware instance. On paper, everything can scal
 I picked NestJS because it had WebSocket support, Redis integration, and decent architectural patterns built in. Also wanted to work more with TypeScript beyond React.
 
 **Dashboard**
+
 - [Next.js][nextjs] (supervisor interface)
 - [LiveKit Components React][livekit-components] (voice integration)
 - [Framer Motion][framer-motion] (animations)
 - [tsparticles][tsparticles] (particle effects)
 
 **Observability**
-- [Langfuse][langfuse] (LLM metrics, traces, performance monitoring)
 
+- [Langfuse][langfuse] (LLM metrics, traces, performance monitoring)
 
 ---
 

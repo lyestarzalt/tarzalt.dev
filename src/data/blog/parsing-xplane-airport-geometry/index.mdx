@@ -1,14 +1,14 @@
 ---
-title: "Parsing X-Plane Airport Layout Geometry from apt.dat"
-subtitle: "From row codes to rendered polygons"
+title: 'Parsing X-Plane Airport Layout Geometry from apt.dat'
+subtitle: 'From row codes to rendered polygons'
 date: 2026-02-05T10:00:00+00:00
 lastmod: 2026-03-29T10:00:00+00:00
 draft: false
 description: "A guide to parsing airport geometry from X-Plane's apt.dat format — bezier curves, control point mirroring, winding order for holes, split beziers for sharp corners, and the gotchas that break your parser."
 summary: "A practical guide to parsing airport geometry from X-Plane's apt.dat format. Covers bezier curve encoding, control point mirroring, winding order for holes, split beziers for sharp corners, and common mistakes."
-tags: ["X-Plane", "Bezier Curves", "Parsing", "Geometry", "Flight Simulation"]
-categories: ["Engineering"]
-featuredImage: "./pavement.png"
+tags: ['X-Plane', 'Bezier Curves', 'Parsing', 'Geometry', 'Flight Simulation']
+categories: ['Engineering']
+featuredImage: './pavement.png'
 ---
 
 > [!ABSTRACT] TL;DR
@@ -57,37 +57,37 @@ Here's a simplified view of how one airport looks:
 115 47.4655 -122.3110 1 0
 ```
 
-| Line | Code | What it means |
-|:----:|:----:|---------------|
-| 1 | `1` | Airport header: elevation 1000ft, ICAO "KSEA" |
-| 2-3 | `100` | Two runways (16L and 16C) |
-| 4 | `110` | Start of a pavement shape (Taxiway A) |
-| 5-8 | `111-113` | Nodes defining the pavement boundary |
-| 9 | `120` | Start of a painted line (Centerline A) |
-| 10-11 | `111-115` | Nodes defining the line path |
+| Line  |   Code    | What it means                                 |
+| :---: | :-------: | --------------------------------------------- |
+|   1   |    `1`    | Airport header: elevation 1000ft, ICAO "KSEA" |
+|  2-3  |   `100`   | Two runways (16L and 16C)                     |
+|   4   |   `110`   | Start of a pavement shape (Taxiway A)         |
+|  5-8  | `111-113` | Nodes defining the pavement boundary          |
+|   9   |   `120`   | Start of a painted line (Centerline A)        |
+| 10-11 | `111-115` | Nodes defining the line path                  |
 
 Context matters. Code `111` after a `110` is a pavement boundary node. The same `111` after a `120` is a painted line node.
 
 Three header codes produce geometry:
 
-| Header | Name | Shape | Closed by |
-|--------|------|-------|-----------|
-| 110 | Pavement | Filled polygon | 113/114 (ring close) |
-| 120 | Linear feature | Stroked path | 115/116 (path end) |
-| 130 | Boundary | Filled polygon | 113/114 (ring close) |
+| Header | Name           | Shape          | Closed by            |
+| ------ | -------------- | -------------- | -------------------- |
+| 110    | Pavement       | Filled polygon | 113/114 (ring close) |
+| 120    | Linear feature | Stroked path   | 115/116 (path end)   |
+| 130    | Boundary       | Filled polygon | 113/114 (ring close) |
 
 ## The node system
 
 All geometry in apt.dat is built from six node types:
 
-| Code | Type | Role |
-|------|------|------|
-| 111 | Plain | Interior node |
-| 112 | Bezier | Interior node with control point |
-| 113 | Plain | Ring close (connects back to first node) |
-| 114 | Bezier | Ring close with control point |
-| 115 | Plain | End of open path |
-| 116 | Bezier | End of open path with control point |
+| Code | Type   | Role                                     |
+| ---- | ------ | ---------------------------------------- |
+| 111  | Plain  | Interior node                            |
+| 112  | Bezier | Interior node with control point         |
+| 113  | Plain  | Ring close (connects back to first node) |
+| 114  | Bezier | Ring close with control point            |
+| 115  | Plain  | End of open path                         |
+| 116  | Bezier | End of open path with control point      |
 
 Odd codes are plain, even codes carry a bezier control point.
 
@@ -95,7 +95,7 @@ The closing codes (113/114) connect back to the first node and seal a polygon. E
 
 ## Why bezier curves?
 
-![Why bezier curves matter](./why-bezier.svg "Left: straight lines between nodes. Right: bezier curves.")
+![Why bezier curves matter](./why-bezier.svg 'Left: straight lines between nodes. Right: bezier curves.')
 
 The left image connects node coordinates with straight lines. The right is what the taxiway actually looks like.
 
@@ -124,10 +124,7 @@ To draw a bezier, evaluate the formula at many values of t:
 ```typescript
 type Point = [number, number]; // [lon, lat]
 
-function sampleQuadraticBezier(
-  p0: Point, p1: Point, p2: Point,
-  steps = 60
-): Point[] {
+function sampleQuadraticBezier(p0: Point, p1: Point, p2: Point, steps = 60): Point[] {
   const points: Point[] = [];
   for (let i = 0; i <= steps; i++) {
     const t = i / steps;
@@ -209,10 +206,10 @@ Cubic bezier with four control points. The first node's control is used directly
 ```typescript
 function bezierToBezier(
   startNode: { pos: Point; control: Point },
-  endNode: { pos: Point; control: Point }
+  endNode: { pos: Point; control: Point },
 ): Point[] {
   const p0 = startNode.pos;
-  const p1 = startNode.control;           // outgoing: use directly
+  const p1 = startNode.control; // outgoing: use directly
   const p2 = mirrorControl(endNode.pos, endNode.control); // incoming: mirror
   const p3 = endNode.pos;
   return sampleCubicBezier(p0, p1, p2, p3);
@@ -253,8 +250,7 @@ Before drawing any curve, check if start and end are the same point. If they are
 const COORD_EPSILON = 1e-9;
 
 function coordsEqual(a: Point, b: Point): boolean {
-  return Math.abs(a[0] - b[0]) < COORD_EPSILON
-      && Math.abs(a[1] - b[1]) < COORD_EPSILON;
+  return Math.abs(a[0] - b[0]) < COORD_EPSILON && Math.abs(a[1] - b[1]) < COORD_EPSILON;
 }
 
 // When processing a node:
@@ -332,7 +328,7 @@ Putting it all together, here's how to parse a pavement from start to finish:
 // apt.dat line: 111 47.464000 -122.312000
 const lat = parseFloat(tokens[1]); // 47.464
 const lon = parseFloat(tokens[2]); // -122.312
-const coord: Point = [lon, lat];   // GeoJSON order: [lon, lat]
+const coord: Point = [lon, lat]; // GeoJSON order: [lon, lat]
 ```
 
 > **Gotcha: ring closure re-processes the first node.** When 113/114 closes a ring, process the closing node, then re-process the first node. If the first node is a 112, its control point defines the tangent for the closing curve. Skip this and the closure segment is a straight line where there should be a curve.
@@ -395,13 +391,13 @@ Let's trace through parsing this pavement:
 113 47.464000 -122.310000
 ```
 
-| Step | Code | Action | Result |
-|------|------|--------|--------|
-| 1 | 111 | First node. Record position. | `[-122.312, 47.464]` |
-| 2 | 111 | 111→111: straight line | Add `[-122.312, 47.465]` |
-| 3 | 112 | 111→112: quadratic bezier (mirror control) | ~60 curve points |
-| 4 | 111 | 112→111: quadratic bezier (control direct) | ~60 curve points |
-| 5 | 113 | Ring close: process node, then re-process first node | Close polygon |
+| Step | Code | Action                                               | Result                   |
+| ---- | ---- | ---------------------------------------------------- | ------------------------ |
+| 1    | 111  | First node. Record position.                         | `[-122.312, 47.464]`     |
+| 2    | 111  | 111→111: straight line                               | Add `[-122.312, 47.465]` |
+| 3    | 112  | 111→112: quadratic bezier (mirror control)           | ~60 curve points         |
+| 4    | 111  | 112→111: quadratic bezier (control direct)           | ~60 curve points         |
+| 5    | 113  | Ring close: process node, then re-process first node | Close polygon            |
 
 Winding order check: counter-clockwise. This is an outer boundary, not a hole.
 

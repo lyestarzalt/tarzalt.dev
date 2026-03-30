@@ -3,15 +3,15 @@ import {
   NavigationMenuList,
   NavigationMenuItem,
   NavigationMenuLink,
-} from "@/components/ui/navigation-menu"
+} from '@/components/ui/navigation-menu';
 
 interface NavItem {
-  label: string
-  href: string
+  label: string;
+  href: string;
 }
 
 interface DesktopNavProps {
-  items: NavItem[]
+  items: NavItem[];
 }
 
 export function DesktopNav({ items }: DesktopNavProps) {
@@ -30,5 +30,5 @@ export function DesktopNav({ items }: DesktopNavProps) {
         ))}
       </NavigationMenuList>
     </NavigationMenu>
-  )
+  );
 }

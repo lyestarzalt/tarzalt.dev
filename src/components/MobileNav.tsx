@@ -1,26 +1,35 @@
-import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet"
-import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { FiMenu, FiEdit3, FiUser, FiGithub, FiLinkedin, FiMail, FiSun, FiMoon } from "react-icons/fi"
-import { useState } from "react"
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  FiMenu,
+  FiEdit3,
+  FiUser,
+  FiGithub,
+  FiLinkedin,
+  FiMail,
+  FiSun,
+  FiMoon,
+} from 'react-icons/fi';
+import { useState } from 'react';
 
 interface NavItem {
-  label: string
-  href: string
+  label: string;
+  href: string;
 }
 
 interface MobileNavProps {
-  items: NavItem[]
+  items: NavItem[];
 }
 
 const navIcons: Record<string, React.ReactNode> = {
   Writing: <FiEdit3 className="size-4" />,
   About: <FiUser className="size-4" />,
-}
+};
 
 export function MobileNav({ items }: MobileNavProps) {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -67,20 +76,30 @@ export function MobileNav({ items }: MobileNavProps) {
 
         {/* Social */}
         <div className="flex flex-col gap-1">
-          <a href="https://github.com/lyestarzalt" target="_blank" rel="noopener"
-            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground">
+          <a
+            href="https://github.com/lyestarzalt"
+            target="_blank"
+            rel="noopener"
+            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+          >
             <FiGithub className="size-4" />
             <span className="flex-1">GitHub</span>
             <span className="font-mono text-[0.625rem] opacity-40">lyestarzalt</span>
           </a>
-          <a href="https://linkedin.com/in/lyes-tarzalt" target="_blank" rel="noopener"
-            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground">
+          <a
+            href="https://linkedin.com/in/lyes-tarzalt"
+            target="_blank"
+            rel="noopener"
+            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+          >
             <FiLinkedin className="size-4" />
             <span className="flex-1">LinkedIn</span>
             <span className="font-mono text-[0.625rem] opacity-40">lyes-tarzalt</span>
           </a>
-          <a href="mailto:lyes.trzlt@gmail.com"
-            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground">
+          <a
+            href="mailto:lyes.trzlt@gmail.com"
+            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+          >
             <FiMail className="size-4" />
             <span className="flex-1">Email</span>
             <span className="font-mono text-[0.625rem] opacity-40">lyes.trzlt</span>
@@ -93,17 +112,31 @@ export function MobileNav({ items }: MobileNavProps) {
         <div className="flex items-center justify-between px-3">
           <span className="text-xs text-muted-foreground">Theme</span>
           <div className="flex gap-1">
-            <Button variant="ghost" size="sm" className="gap-1.5"
-              onClick={() => { document.documentElement.classList.remove('dark'); localStorage.setItem('theme', 'light') }}>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="gap-1.5"
+              onClick={() => {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+              }}
+            >
               <FiSun className="size-3.5" /> Light
             </Button>
-            <Button variant="ghost" size="sm" className="gap-1.5"
-              onClick={() => { document.documentElement.classList.add('dark'); localStorage.setItem('theme', 'dark') }}>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="gap-1.5"
+              onClick={() => {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+              }}
+            >
               <FiMoon className="size-3.5" /> Dark
             </Button>
           </div>
         </div>
       </SheetContent>
     </Sheet>
-  )
+  );
 }
