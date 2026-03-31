@@ -21,7 +21,7 @@ export function HeaderStatus() {
 
   return (
     <span
-      className={`font-mono text-[0.625rem] text-muted-foreground/70 transition-opacity duration-1000 select-none ${
+      className={`font-mono text-[0.625rem] text-muted-foreground transition-opacity duration-1000 select-none ${
         visible ? 'opacity-100' : 'opacity-0'
       }`}
     >

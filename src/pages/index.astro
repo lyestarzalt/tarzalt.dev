@@ -38,7 +38,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
   <!-- Divider -->
   <div class="flex items-center gap-4">
     <div class="h-px flex-1 bg-border"></div>
-    <h2 class="font-mono text-[0.5rem] uppercase tracking-[0.3em] text-muted-foreground/40">
+    <h2 class="font-mono text-[0.5rem] uppercase tracking-[0.3em] text-muted-foreground">
       Projects
     </h2>
     <div class="h-px flex-1 bg-border"></div>
@@ -57,6 +57,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
             alt="X-Dispatch world map showing airports"
             width={672}
             loading="eager"
+            fetchpriority="high"
             class="!m-0 size-full !rounded-none object-cover transition-transform duration-700 group-hover:scale-[1.03]"
           />
           <div class="absolute inset-0 bg-gradient-to-t from-card via-card/40 to-transparent"></div>
@@ -98,7 +99,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
         >
           <div class="relative h-36 overflow-hidden sm:h-40">
             <img
-              src="/images/ai-voice-agent-supervisor/room_view.png"
+              src="/images/ai-voice-agent-supervisor/room_view.webp"
               alt="AI Voice Agent supervisor dashboard"
               class="!m-0 size-full !rounded-none object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]"
               loading="lazy"
@@ -128,7 +129,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
             class="relative flex h-36 items-center justify-center overflow-hidden bg-card sm:h-40"
           >
             <img
-              src="/images/projects/dinar-echange/screenshot-currencies.png"
+              src="/images/projects/dinar-echange/screenshot-currencies.webp"
               alt="Dinar Échange currency rates screen"
               class="!m-0 h-full !rounded-none object-contain transition-transform duration-500 group-hover:scale-[1.03]"
               loading="lazy"
@@ -152,7 +153,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
   <!-- Divider -->
   <div class="flex items-center gap-4">
     <div class="h-px flex-1 bg-border"></div>
-    <h2 class="font-mono text-[0.5rem] uppercase tracking-[0.3em] text-muted-foreground/40">
+    <h2 class="font-mono text-[0.5rem] uppercase tracking-[0.3em] text-muted-foreground">
       Writing
     </h2>
     <div class="h-px flex-1 bg-border"></div>
@@ -172,7 +173,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
             href={`/blog/${post.id}/`}
             class="group flex items-center gap-5 py-4 no-underline sm:py-5"
           >
-            <span class="hidden font-mono text-[0.625rem] text-muted-foreground/30 sm:block">
+            <span class="hidden font-mono text-[0.625rem] text-muted-foreground/50 sm:block">
               {String(i + 1).padStart(2, '0')}
             </span>
             {post.data.featuredImage && (
@@ -192,12 +193,12 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
                 {post.data.title}
               </p>
               {post.data.description && (
-                <p class="mt-0.5 hidden text-xs text-muted-foreground/60 sm:line-clamp-1 sm:block">
+                <p class="mt-0.5 hidden text-xs text-muted-foreground sm:line-clamp-1 sm:block">
                   {post.data.description}
                 </p>
               )}
             </div>
-            <time class="shrink-0 font-mono text-[0.625rem] text-muted-foreground/40">
+            <time class="shrink-0 font-mono text-[0.625rem] text-muted-foreground">
               {formatDateShort(post.data.date)}
             </time>
           </a>
