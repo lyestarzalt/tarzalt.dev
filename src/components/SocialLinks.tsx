@@ -1,5 +1,6 @@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { FiGithub, FiLinkedin, FiMail } from 'react-icons/fi';
+import { Fragment } from 'react';
 import { socialLinks } from '@/config/social';
 
 const iconMap: Record<string, React.ReactNode> = {
@@ -17,8 +18,8 @@ export function SocialLinks() {
     <TooltipProvider delayDuration={300}>
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
         {socialLinks.map((link, i) => (
-          <>
-            <Tooltip key={link.href}>
+          <Fragment key={link.href}>
+            <Tooltip>
               <TooltipTrigger asChild>
                 <a
                   href={link.href}
@@ -39,7 +40,7 @@ export function SocialLinks() {
                 ·
               </span>
             )}
-          </>
+          </Fragment>
         ))}
       </div>
     </TooltipProvider>
