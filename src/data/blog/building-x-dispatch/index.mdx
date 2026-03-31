@@ -2,17 +2,23 @@
 title: 'Building X-Dispatch'
 date: 2026-03-30T10:00:00+08:00
 draft: false
-description: 'How a comment I left on the Laminar Research blog in 2021 turned into the app 2,800 people downloaded.'
+description: 'I left a comment asking for a feature in 2021. Five years later I built it myself.'
 summary: "I asked Laminar if they'd build a global map for X-Plane. They weren't sold on it. The idea wouldn't leave me alone."
 tags: ['X-Plane', 'Electron', 'React', 'MapLibre', 'Parsing']
 categories: ['Projects']
 featuredImage: './cover.png'
 ---
 
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+
+[X-Plane](https://www.x-plane.com/) is a flight simulator. Not the casual kind — it's used by real pilots for training, and by people like me who've been flying virtual planes since they were kids. It's made by a small company called Laminar Research, and the sim itself is incredibly detailed. But the UI around it? That's where things get interesting.
+
+This is what setting up a flight looks like in X-Plane 12:
+
+![X-Plane 12 flight configuration screen](https://www.x-plane.com/manuals/desktop/images/v12/ch2/flight_config.png)
+
+You pick an airport from a list, choose your aircraft, set the weather, and go. It works. But there's no map. No way to browse 35,000 airports visually, see what's around you, or plan a route by looking at the world. X-Plane 11 had a basic airport rendering in the location picker, but it was still a list — you had to know the airport code or scroll through names.
 
 In September 2021, Laminar Research had just announced X-Plane 12. I asked them if they'd consider adding a global map to the main menu.
 
@@ -30,13 +36,7 @@ Second, getting X-Plane to actually start with the user's choices. I knew the si
 
 ## The first attempt
 
-<div className="flex flex-wrap gap-1.5 mb-4">
-  <Badge variant="secondary">Flutter</Badge>
-  <Badge variant="secondary">Dart</Badge>
-  <Badge variant="secondary">flutter_map</Badge>
-</div>
-
-I tried building it in Flutter because that's what I was comfortable with. My approach back then was different from what X-Dispatch ended up being. I wanted to show the airports on a map, sure, but the actual airport detail view would be a separate canvas where I'd draw the layout myself, converting the coordinates to X,Y screen positions. On top of that, rendering each airport's data points on the Flutter map was painfully slow. There was clustering, but it felt like I was fighting the framework the whole time. It defeated the vision I had for the app. I parked it.
+I tried building it in Dart with Flutter because that's what I was comfortable with. My approach back then was different from what X-Dispatch ended up being. I wanted to show the airports on a map, sure, but the actual airport detail view would be a separate canvas where I'd draw the layout myself, converting the coordinates to X,Y screen positions. On top of that, rendering each airport's data points on the Flutter map was painfully slow. There was clustering, but it felt like I was fighting the framework the whole time. It defeated the vision I had for the app. I parked it.
 
 But I kept thinking about it.
 
@@ -58,22 +58,7 @@ Still in the back of my head. Always scratching.
 
 I got a job, got more engineering experience, built other things. Decided to pick this up again, but differently.
 
-<Card className="my-6">
-  <CardContent className="p-5">
-    <p className="text-sm font-medium text-foreground mb-3">The stack I landed on</p>
-    <div className="flex flex-wrap gap-1.5">
-      <Badge>Electron</Badge>
-      <Badge>React 18</Badge>
-      <Badge>TypeScript</Badge>
-      <Badge>MapLibre GL JS</Badge>
-      <Badge>Tailwind CSS</Badge>
-      <Badge>shadcn/ui</Badge>
-      <Badge>Zustand</Badge>
-      <Badge>TanStack Query</Badge>
-      <Badge>SQLite</Badge>
-    </div>
-  </CardContent>
-</Card>
+The stack I landed on: Electron, React, TypeScript, MapLibre GL JS, Tailwind, shadcn/ui, Zustand, TanStack Query, and SQLite.
 
 MapLibre GL JS ticked every box: polygons, GeoJSON shapes, extensible, stable, and it handles coordinate projections for me. That last part was the big one. All the projection math I was doing by hand before? MapLibre just does it. I could even add 3D terrain if I wanted. Basically I could do anything, limited only by the user's machine.
 

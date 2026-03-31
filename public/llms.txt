@@ -10,7 +10,7 @@
 
 ## Projects
 
-- [X-Dispatch](https://tarzalt.dev/projects/x-dispatch/): Flight dispatch and airport visualization for X-Plane 12. 2,800+ downloads, open source.
+- [X-Dispatch](https://tarzalt.dev/projects/x-dispatch/): Flight dispatch and airport visualization for X-Plane 12. 6k+ downloads, open source.
 - [Dinar Échange](https://tarzalt.dev/projects/dinar-echange/): Algerian dinar exchange rates app. Flutter + AWS Lambda.
 - [AI Voice Agent](https://tarzalt.dev/blog/ai-voice-agent-supervisor/): Real-time supervisor dashboard for AI phone calls.
 
