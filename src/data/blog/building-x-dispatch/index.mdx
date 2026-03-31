@@ -60,6 +60,10 @@ I got a job, got more engineering experience, built other things. Decided to pic
 
 The stack I landed on: Electron, React, TypeScript, MapLibre GL JS, Tailwind, shadcn/ui, Zustand, TanStack Query, and SQLite.
 
+This is what it became — 35,000 airports on a 3D globe:
+
+![X-Dispatch world map with airports](/images/projects/x-dispatch/x-dispatch-map.png)
+
 MapLibre GL JS ticked every box: polygons, GeoJSON shapes, extensible, stable, and it handles coordinate projections for me. That last part was the big one. All the projection math I was doing by hand before? MapLibre just does it. I could even add 3D terrain if I wanted. Basically I could do anything, limited only by the user's machine.
 
 But MapLibre is a web thing, and this needed to be a desktop app. Two options: Electron or Tauri. Tauri is actually the better fit on paper. Less memory, lighter, more modern. But it's built on Rust. I know nothing about Rust. The last thing I wanted while building something this complex was to also be learning a new language. Even with Claude and other AI tools helping, I didn't want code in my app that I couldn't reason about when something breaks. So Electron it was. My users run flight simulators, they have plenty of RAM, the overhead wasn't going to matter.
@@ -91,7 +95,11 @@ If a user has custom scenery installed for an airport, that gets priority over t
 
 ## OK I have airports. Now what?
 
-I got to the point where I could render gates and runways, and the user could pick a starting position. Looked good. But then I sat there thinking, right, they picked a gate... now what? How does X-Plane actually know about this?
+I got to the point where I could render gates and runways, and the user could pick a starting position.
+
+![Flight setup in X-Dispatch — pick your aircraft, gate, weather, and launch](/images/projects/x-dispatch/x-dispatch-flight-setup.png)
+
+Looked good. But then I sat there thinking, right, they picked a gate... now what? How does X-Plane actually know about this?
 
 Remember `Freeflight.prf`? This is what's in it:
 
@@ -112,6 +120,8 @@ But the cold start problem was still there. Command line flags I knew about didn
 
 This solved everything. X-Dispatch can launch X-Plane from scratch with a fully configured flight, or relocate mid flight if the sim is already open.
 
+![3D terrain view in X-Dispatch](/images/projects/x-dispatch/x-dispatch-terrain.png)
+
 If Laminar changes or removes that flag, my app breaks. I'm hoping they won't. Honestly, the fact that it exists at all makes me think they might be working on their own external launcher at some point.
 
 ## Design
@@ -124,9 +134,19 @@ I took the same idea. Started with a dark colour palette using X-Plane's signatu
 
 ![X-Dispatch design system foundations](./design-system.png)
 
+Weather, SID/STAR procedures, SimBrief integration — all built with the same design language:
+
+![Weather overlay in X-Dispatch](/images/projects/x-dispatch/x-dispatch-weather.png)
+
+![SID/STAR procedure visualization](/images/projects/x-dispatch/x-dispatch-procedures.png)
+
 ## After launch
 
-Most of the features that came after were from users asking for them. One person in particular, Gilles (enjxp / simtwk3 on the forums), gave me the best bug reports I've ever seen. Detailed reproduction steps, screenshots, everything tracked in a Google Sheet. A lot of the features he proposed made the app noticeably better, and some of the bugs he caught would have been deal breakers. I owe him a lot.
+Most of the features that came after were from users asking for them. The addon manager, SimBrief import, live tracking — all community-driven.
+
+![Addon manager in X-Dispatch](/images/projects/x-dispatch/x-dispatch-addon1.png)
+
+One person in particular, Gilles (enjxp / simtwk3 on the forums), gave me the best bug reports I've ever seen. Detailed reproduction steps, screenshots, everything tracked in a Google Sheet. A lot of the features he proposed made the app noticeably better, and some of the bugs he caught would have been deal breakers. I owe him a lot.
 
 A community started growing around the app. I had to set up a Discord server for it, which I didn't plan on doing. FSElite [covered the app](https://fselite.net/content/x-dispatch-adds-world-map-flight-launcher-and-add-on-manager-to-x-plane-12/). 19 reviews on X-Plane.Org, most of them five stars. People said really kind things.
 
