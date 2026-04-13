@@ -11,7 +11,10 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
 import { getCollection } from 'astro:content';
 ---
 
-<Base title="Writing - Lyes Tarzalt">
+<Base
+  title="Writing - Lyes Tarzalt"
+  description="Engineering deep dives on parsing X-Plane airport data, building real-time dashboards, and the decisions behind shipping software."
+>
   <section class="pt-12 sm:pt-16">
     <h1 class="font-heading text-4xl font-normal tracking-tight sm:text-5xl">Writing</h1>
     <p class="mt-3 text-sm text-muted-foreground">

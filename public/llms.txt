@@ -1,6 +1,6 @@
 # tarzalt.dev
 
-> Personal site and blog of Lyes Tarzalt — product engineer based in Malaysia, originally from Algeria.
+> Personal site and blog of Lyes Tarzalt — software engineer based in Malaysia, originally from Algeria. Builds and ships ideas end-to-end, from bootstrapping to polish.
 
 ## About
 

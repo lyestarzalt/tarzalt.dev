@@ -15,7 +15,10 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
 );
 ---
 
-<Base title="Lyes Tarzalt — building things that solve real problems">
+<Base
+  title="Lyes Tarzalt — building things that solve real problems"
+  description="Software engineer building X-Dispatch, Dinar Échange, and writing about parsing, real-time systems, and the details behind shipping software."
+>
   <!-- Hero -->
   <section class="pt-16 pb-12 sm:pt-24 sm:pb-16">
     <div class="flex items-center gap-5 sm:gap-6">

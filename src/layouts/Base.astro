@@ -19,16 +19,21 @@ interface Props {
   type?: 'website' | 'article';
   publishedDate?: Date;
   modifiedDate?: Date;
+  tags?: string[];
 }
 
 const {
   title,
-  description = 'Lyes Tarzalt - Product engineer building software that solves real problems. Writing about parsing, real-time systems, and the engineering behind it.',
+  description = 'Lyes Tarzalt - Software engineer. Bootstraps ideas, ships them, sweats the details.',
   image,
   type,
   publishedDate,
   modifiedDate,
+  tags,
 } = Astro.props;
+
+const siteName = 'Lyes Tarzalt';
+const fullTitle = title.includes(siteName) ? title : `${title} | ${siteName}`;
 
 // Build breadcrumbs from URL path
 const pathname = Astro.url.pathname;
@@ -75,6 +80,7 @@ const crumbs = segments.map((seg, i) => {
       type={type}
       publishedDate={publishedDate}
       modifiedDate={modifiedDate}
+      tags={tags}
     />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
@@ -123,7 +129,7 @@ const crumbs = segments.map((seg, i) => {
         if (t === 'dark') document.documentElement.classList.add('dark');
       })();
     </script>
-    <title>{title}</title>
+    <title>{fullTitle}</title>
   </head>
   <body class="min-h-screen bg-background text-foreground">
     <!-- Grain overlay -->

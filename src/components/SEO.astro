@@ -6,6 +6,7 @@ interface Props {
   type?: 'website' | 'article';
   publishedDate?: Date;
   modifiedDate?: Date;
+  tags?: string[];
 }
 
 const {
@@ -15,6 +16,7 @@ const {
   type = 'website',
   publishedDate,
   modifiedDate,
+  tags = [],
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
@@ -22,13 +24,38 @@ const imageURL = new URL(image, Astro.site);
 const siteName = 'Lyes Tarzalt';
 const siteURL = Astro.site?.toString() || 'https://tarzalt.dev';
 
+// Title with consistent branding
+const fullTitle = title.includes(siteName) ? title : `${title} | ${siteName}`;
+
+// Breadcrumb structured data
+const pathname = Astro.url.pathname;
+const segments = pathname.split('/').filter(Boolean);
+const labelMap: Record<string, string> = {
+  blog: 'Writing',
+  projects: 'Projects',
+  about: 'About',
+};
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: siteURL },
+    ...segments.map((seg, i) => ({
+      '@type': 'ListItem',
+      position: i + 2,
+      name: i === segments.length - 1 ? title : labelMap[seg] || seg.replace(/-/g, ' '),
+      item: new URL('/' + segments.slice(0, i + 1).join('/') + '/', Astro.site).toString(),
+    })),
+  ],
+};
+
 // JSON-LD structured data
 const personSchema = {
   '@context': 'https://schema.org',
   '@type': 'Person',
   name: 'Lyes Tarzalt',
   url: siteURL,
-  jobTitle: 'Product Engineer',
+  jobTitle: 'Software Engineer',
   sameAs: ['https://github.com/lyestarzalt', 'https://linkedin.com/in/lyes-tarzalt'],
 };
 
@@ -40,13 +67,29 @@ const articleSchema =
         headline: title,
         description: description,
         url: canonicalURL.toString(),
-        image: imageURL.toString(),
+        image: {
+          '@type': 'ImageObject',
+          url: imageURL.toString(),
+          width: 1200,
+          height: 630,
+        },
         datePublished: publishedDate?.toISOString(),
         dateModified: modifiedDate?.toISOString() || publishedDate?.toISOString(),
         author: {
           '@type': 'Person',
           name: 'Lyes Tarzalt',
           url: siteURL,
+        },
+        publisher: {
+          '@type': 'Person',
+          name: 'Lyes Tarzalt',
+          url: siteURL,
+        },
+        ...(tags.length > 0 && { keywords: tags.join(', ') }),
+        ...(tags[0] && { articleSection: tags[0] }),
+        mainEntityOfPage: {
+          '@type': 'WebPage',
+          '@id': canonicalURL.toString(),
         },
       }
     : null;
@@ -63,9 +106,11 @@ const websiteSchema =
 ---
 
 <!-- Primary Meta -->
-<meta name="title" content={title} />
+<meta name="title" content={fullTitle} />
 <meta name="description" content={description} />
 <meta name="author" content="Lyes Tarzalt" />
+<meta name="theme-color" content="#1a1d2e" media="(prefers-color-scheme: dark)" />
+<meta name="theme-color" content="#f7f5f0" media="(prefers-color-scheme: light)" />
 <link rel="canonical" href={canonicalURL} />
 
 <!-- Open Graph -->
@@ -74,10 +119,14 @@ const websiteSchema =
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
 <meta property="og:image" content={imageURL} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
 <meta property="og:site_name" content={siteName} />
 <meta property="og:locale" content="en_US" />
 {publishedDate && <meta property="article:published_time" content={publishedDate.toISOString()} />}
 {modifiedDate && <meta property="article:modified_time" content={modifiedDate.toISOString()} />}
+{type === 'article' && <meta property="article:author" content={siteURL} />}
+{tags.map((tag) => <meta property="article:tag" content={tag} />)}
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image" />
@@ -88,8 +137,17 @@ const websiteSchema =
 
 <!-- Favicon -->
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+<!-- RSS -->
+<link rel="alternate" type="application/rss+xml" title="Lyes Tarzalt" href="/rss.xml" />
 
 <!-- JSON-LD Structured Data -->
 <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
 {articleSchema && <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />}
 {websiteSchema && <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />}
+{
+  segments.length > 0 && (
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  )
+}
