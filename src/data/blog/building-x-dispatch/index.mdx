@@ -18,7 +18,7 @@ Here's what setting up a flight looks like in X-Plane 12:
 
 ![X-Plane 12 flight configuration screen](https://www.x-plane.com/manuals/desktop/images/v12/ch2/flight_config.png)
 
-You pick an airport from a list, choose your aircraft, set the weather, and go. It works. But there's no map. No way to browse 35,000 airports visually, see what's around you, or plan a route by looking at the world. X-Plane 11 had a basic airport rendering in the location picker, but it was still a list — you had to know the airport code or scroll through names.
+You pick an airport from a list, choose your aircraft, set the weather, and go. It works. But there's no map. No way to browse 35,000 airports visually, see what's around you, or plan a route by looking at the world. X-Plane 11 had a basic airport rendering in the location picker, but it was still a list. You had to know the airport code or scroll through names.
 
 In September 2021, Laminar Research had just announced X-Plane 12. I asked them if they'd consider adding a global map to the main menu.
 
@@ -60,7 +60,7 @@ I got a job, got more engineering experience, built other things. Decided to pic
 
 The stack I landed on: Electron, React, TypeScript, MapLibre GL JS, Tailwind, shadcn/ui, Zustand, TanStack Query, and SQLite.
 
-This is what it became — 35,000 airports on a 3D globe:
+This is what it became. 35,000 airports on a 3D globe:
 
 ![X-Dispatch world map with airports](/images/projects/x-dispatch/x-dispatch-map.png)
 
@@ -89,7 +89,11 @@ This is what the final airport rendering looks like. Taxiways, pavement, painted
 
 ![Airport rendering in X-Dispatch](./airport-render.png)
 
-One cool thing about X-Plane: they open sourced their airport data through the [Scenery Gateway](https://gateway.x-plane.com/). People design airports, upload them, and if approved, they appear in the next sim update. In the sim itself, all these airports live in one file. I had to parse that global file, extract each airport individually, and save them to a local SQLite database. I stored just the airport code, some metadata, and the raw apt.dat text for that airport in one field. When someone clicks on an airport, I parse and render from that field, on demand. Trying to pre-calculate all polygons for every airport at startup would take forever.
+One cool thing about X-Plane: they open sourced their airport data through the [Scenery Gateway](https://gateway.x-plane.com/). People design airports, upload them, and if approved, they appear in the next sim update. This was one of the smartest things Laminar ever did. Thousands of airports in X-Plane are handcrafted by the community. People spending hours looking at real charts, overlaying Google Maps imagery, getting taxiway widths and gate positions right so that a default airport actually looks like the real thing. It's a massive, quiet effort that most users never think about.
+
+That's part of why I wanted to build this. I wanted to give those airports justice. Let people actually see the detail that went into them instead of picking an ICAO code from a list and hoping for the best. I spent a good chunk of one summer working on all the Algerian airports myself. Algiers, Oran, Constantine, the smaller ones. I had a blast doing it. So I know what it takes. When someone's airport renders beautifully in X-Dispatch, with every taxiway and gate in the right place, that's their work being shown off.
+
+In the sim itself, all these airports live in one file. I had to parse that global file, extract each airport individually, and save them to a local SQLite database. I stored just the airport code, some metadata, and the raw apt.dat text for that airport in one field. When someone clicks on an airport, I parse and render from that field, on demand. Trying to pre-calculate all polygons for every airport at startup would take forever.
 
 If a user has custom scenery installed for an airport, that gets priority over the default.
 
@@ -97,7 +101,7 @@ If a user has custom scenery installed for an airport, that gets priority over t
 
 I got to the point where I could render gates and runways, and the user could pick a starting position.
 
-![Flight setup in X-Dispatch — pick your aircraft, gate, weather, and launch](/images/projects/x-dispatch/x-dispatch-flight-setup.png)
+![Flight setup in X-Dispatch: pick your aircraft, gate, weather, and launch](/images/projects/x-dispatch/x-dispatch-flight-setup.png)
 
 Looked good. But then I sat there thinking, right, they picked a gate... now what? How does X-Plane actually know about this?
 
@@ -134,7 +138,7 @@ I took the same idea. Started with a dark colour palette using X-Plane's signatu
 
 ![X-Dispatch design system foundations](./design-system.png)
 
-Weather, SID/STAR procedures, SimBrief integration — all built with the same design language:
+Weather, SID/STAR procedures, SimBrief integration. All built with the same design language:
 
 ![Weather overlay in X-Dispatch](/images/projects/x-dispatch/x-dispatch-weather.png)
 
@@ -142,7 +146,7 @@ Weather, SID/STAR procedures, SimBrief integration — all built with the same d
 
 ## After launch
 
-Most of the features that came after were from users asking for them. The addon manager, SimBrief import, live tracking — all community-driven.
+Most of the features that came after were from users asking for them. The addon manager, SimBrief import, live tracking. All community-driven.
 
 ![Addon manager in X-Dispatch](/images/projects/x-dispatch/x-dispatch-addon1.png)
 
