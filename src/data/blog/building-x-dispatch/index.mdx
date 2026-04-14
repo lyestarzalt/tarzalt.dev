@@ -14,6 +14,10 @@ import { Separator } from '@/components/ui/separator';
 
 [X-Plane](https://www.x-plane.com/) is a flight simulator, part of a scene that includes FSX, Prepar3D, MSFS, and a community that's been around for decades. Some people fly for fun, some like operating complex aircraft with all their systems, some build addons. I've been in it since I was a kid. X-Plane is made by Laminar Research, small company. The flight physics are some of the best out there, the sim is wide open to modifications, and there's a massive addon ecosystem around it. But there was always room for improvement on the user experience side.
 
+One of the smartest things Laminar ever did was open sourcing the airport data through the [Scenery Gateway](https://gateway.x-plane.com/). People design airports, upload them, and if approved, they appear in the next sim update. Thousands of airports in X-Plane are handcrafted by the community. People spending hours looking at real charts, overlaying Google Maps imagery, getting taxiway widths and gate positions right so that a default airport actually looks like the real thing. It's a massive, quiet effort that most users never think about.
+
+I spent a good chunk of one summer working on all the Algerian airports myself. Algiers, Oran, Constantine, the smaller ones. I had a blast doing it. So I know what it takes. I wanted to give those airports justice. Let people actually see the detail that went into them instead of picking an ICAO code from a list and hoping for the best. That's a big part of why I built this.
+
 Here's what setting up a flight looks like in X-Plane 12:
 
 ![X-Plane 12 flight configuration screen](https://www.x-plane.com/manuals/desktop/images/v12/ch2/flight_config.png)
@@ -88,10 +92,6 @@ I wrote the full technical breakdown. Then I tackled linear features, the painte
 This is what the final airport rendering looks like. Taxiways, pavement, painted lines, edge lights, gates, runways. All parsed from that one text file.
 
 ![Airport rendering in X-Dispatch](./airport-render.png)
-
-One cool thing about X-Plane: they open sourced their airport data through the [Scenery Gateway](https://gateway.x-plane.com/). People design airports, upload them, and if approved, they appear in the next sim update. This was one of the smartest things Laminar ever did. Thousands of airports in X-Plane are handcrafted by the community. People spending hours looking at real charts, overlaying Google Maps imagery, getting taxiway widths and gate positions right so that a default airport actually looks like the real thing. It's a massive, quiet effort that most users never think about.
-
-That's part of why I wanted to build this. I wanted to give those airports justice. Let people actually see the detail that went into them instead of picking an ICAO code from a list and hoping for the best. I spent a good chunk of one summer working on all the Algerian airports myself. Algiers, Oran, Constantine, the smaller ones. I had a blast doing it. So I know what it takes. When someone's airport renders beautifully in X-Dispatch, with every taxiway and gate in the right place, that's their work being shown off.
 
 In the sim itself, all these airports live in one file. I had to parse that global file, extract each airport individually, and save them to a local SQLite database. I stored just the airport code, some metadata, and the raw apt.dat text for that airport in one field. When someone clicks on an airport, I parse and render from that field, on demand. Trying to pre-calculate all polygons for every airport at startup would take forever.
 
