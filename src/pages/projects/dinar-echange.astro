@@ -5,7 +5,6 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import LinkButton from '@/components/LinkButton.astro';
 import dinarIcon from '@/assets/projects/dinar-echange/icon.png';
-import { Gallery } from '@/components/Gallery';
 ---
 
 <Base
@@ -67,21 +66,39 @@ import { Gallery } from '@/components/Gallery';
     </div>
   </section>
 
-  <!-- Screenshots -->
-  <section class="py-8">
-    <Gallery
-      client:load
-      maxWidth="mx-auto max-w-xs"
-      showNav={false}
-      screenshots={[
-        {
-          src: '/images/projects/dinar-echange/screenshot-currencies.webp',
-          alt: 'Currency Rates',
-        },
-        { src: '/images/projects/dinar-echange/screenshot-converter.png', alt: 'Converter' },
-        { src: '/images/projects/dinar-echange/screenshot-trends.png', alt: 'Trends' },
-      ]}
-    />
+  <!-- Screenshots — side by side like App Store -->
+  <section class="py-4">
+    <div class="grid grid-cols-3 gap-3">
+      <div class="overflow-hidden rounded-xl border border-border">
+        <img
+          src="/images/projects/dinar-echange/screenshot-currencies.webp"
+          alt="Currency rates screen showing parallel market buy and sell prices"
+          class="!m-0 w-full !rounded-none"
+          loading="eager"
+        />
+      </div>
+      <div class="overflow-hidden rounded-xl border border-border">
+        <img
+          src="/images/projects/dinar-echange/screenshot-converter.png"
+          alt="Currency converter with live parallel market rates"
+          class="!m-0 w-full !rounded-none"
+          loading="lazy"
+        />
+      </div>
+      <div class="overflow-hidden rounded-xl border border-border">
+        <img
+          src="/images/projects/dinar-echange/screenshot-trends.png"
+          alt="Rate trends chart showing dinar exchange rate history"
+          class="!m-0 w-full !rounded-none"
+          loading="lazy"
+        />
+      </div>
+    </div>
+    <div class="mt-3 flex justify-center gap-6 font-mono text-[0.5625rem] text-muted-foreground/40">
+      <span>Rates</span>
+      <span>Converter</span>
+      <span>Trends</span>
+    </div>
   </section>
 
   <Separator className="my-10" />
