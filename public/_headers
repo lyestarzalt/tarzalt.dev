@@ -14,6 +14,10 @@
 /*.html
   Cache-Control: public, max-age=0, must-revalidate
 
+# Homepage - agent discovery Link headers
+/
+  Link: </sitemap-index.xml>; rel="sitemap", </llms.txt>; rel="alternate"; type="text/markdown"
+
 # Default for everything else
 /*
   Cache-Control: public, max-age=3600
