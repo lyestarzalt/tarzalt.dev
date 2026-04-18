@@ -6,7 +6,7 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import remarkCallout from 'remark-github-blockquote-alert';
 import mermaid from 'astro-mermaid';
-import markdownForAgents from 'astro-markdown-for-agents';
+import { agentmarkup } from '@agentmarkup/astro';
 
 import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
@@ -24,7 +24,13 @@ export default defineConfig({
       },
     }),
     react(),
-    markdownForAgents(),
+    agentmarkup({
+      site: 'https://tarzalt.dev',
+      name: 'Lyes Tarzalt',
+      description: 'Personal site and blog of Lyes Tarzalt.',
+      markdownPages: { enabled: true },
+      contentSignalHeaders: { enabled: true },
+    }),
   ],
 
   markdown: {

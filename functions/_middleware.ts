@@ -12,8 +12,8 @@ export const onRequest: PagesFunction = async (context) => {
     path = path.slice(0, -1);
   }
 
-  // Map to markdown cache path
-  const mdPath = path === '/' ? '/_markdown-cache/index.md' : `/_markdown-cache${path}/index.md`;
+  // agentmarkup puts .md files alongside HTML: /about.md, /blog/foo.md, /index.md
+  const mdPath = path === '/' ? '/index.md' : `${path}.md`;
 
   const mdUrl = new URL(mdPath, url.origin);
   const mdResponse = await context.env.ASSETS.fetch(mdUrl);

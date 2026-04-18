@@ -29,7 +29,6 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "astro": "^6.1.1",
-    "astro-markdown-for-agents": "^0.1.1",
     "astro-mermaid": "^2.0.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -59,6 +58,7 @@
     ]
   },
   "devDependencies": {
+    "@agentmarkup/astro": "^0.5.0",
     "@typescript-eslint/eslint-plugin": "^8.57.2",
     "@typescript-eslint/parser": "^8.57.2",
     "eslint": "^9.39.4",
