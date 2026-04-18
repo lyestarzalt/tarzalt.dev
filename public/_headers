@@ -20,9 +20,8 @@
 
 # The honeypot
 /definitely-not-a-secret/
-  X-Secret-Status: nice try
-  X-Clearance-Level: insufficient
-  X-Couscous-Freshness: steaming
+  X-Why-Are-You-Here: the name was quite clear
+  X-Content-Warning: existential
 
 # Default for everything else
 /*
