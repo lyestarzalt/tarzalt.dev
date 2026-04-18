@@ -18,6 +18,12 @@
 /
   Link: </sitemap-index.xml>; rel="sitemap", </llms.txt>; rel="alternate"; type="text/markdown"
 
+# The honeypot
+/definitely-not-a-secret/
+  X-Secret-Status: nice try
+  X-Clearance-Level: insufficient
+  X-Couscous-Freshness: steaming
+
 # Default for everything else
 /*
   Cache-Control: public, max-age=3600

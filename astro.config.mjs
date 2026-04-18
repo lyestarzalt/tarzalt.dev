@@ -17,7 +17,7 @@ export default defineConfig({
     mermaid({ autoTheme: true }),
     mdx(),
     sitemap({
-      filter: (page) => !page.includes('/wtf'),
+      filter: (page) => !page.includes('/wtf') && !page.includes('/definitely-not-a-secret'),
       serialize(item) {
         item.lastmod = new Date().toISOString();
         return item;
