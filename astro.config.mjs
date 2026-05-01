@@ -7,6 +7,7 @@ import rehypeKatex from 'rehype-katex';
 import remarkCallout from 'remark-github-blockquote-alert';
 import mermaid from 'astro-mermaid';
 import { agentmarkup } from '@agentmarkup/astro';
+import agentFooter from './src/integrations/agent-footer.ts';
 
 import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
@@ -31,6 +32,7 @@ export default defineConfig({
       markdownPages: { enabled: true },
       contentSignalHeaders: { enabled: true },
     }),
+    agentFooter(),
   ],
 
   markdown: {

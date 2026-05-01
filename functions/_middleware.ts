@@ -1,4 +1,10 @@
-export const onRequest: PagesFunction = async (context) => {
+interface MiddlewareContext {
+  request: Request;
+  next: () => Promise<Response>;
+  env: { ASSETS: { fetch: (url: URL) => Promise<Response> } };
+}
+
+export const onRequest = async (context: MiddlewareContext): Promise<Response> => {
   const accept = context.request.headers.get('Accept') || '';
   if (!accept.includes('text/markdown')) {
     return context.next();
