@@ -4,6 +4,7 @@ import Base from '@/layouts/Base.astro';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import LinkButton from '@/components/LinkButton.astro';
+import PageHeader from '@/components/layout/PageHeader.astro';
 import dinarIcon from '@/assets/projects/dinar-echange/icon.png';
 ---
 
@@ -11,35 +12,32 @@ import dinarIcon from '@/assets/projects/dinar-echange/icon.png';
   title="Dinar Échange — Algerian Dinar Exchange Rates"
   description="Mobile app for tracking Algerian dinar parallel market and official exchange rates. Flutter, AWS Lambda, Firebase."
 >
-  <!-- Hero -->
-  <section class="py-12">
-    <div class="flex items-start gap-5">
-      <Image
-        src={dinarIcon}
-        alt="Dinar Échange icon"
-        width={80}
-        height={80}
-        loading="eager"
-        class="!m-0 size-16 shrink-0 rounded-2xl sm:size-20"
-      />
-      <div>
-        <h1 class="font-heading text-3xl font-bold tracking-tight sm:text-4xl">Dinar Échange</h1>
-        <p class="mt-1 text-sm text-muted-foreground">
-          Algerian dinar exchange rates. Parallel market and official, side by side.
-        </p>
-        <div class="mt-3 flex flex-wrap gap-1.5">
-          {
-            ['Flutter', 'Dart', 'AWS Lambda', 'Python', 'Firebase', 'BeautifulSoup'].map((t) => (
-              <Badge variant="secondary" className="text-[0.6rem] font-normal">
-                {t}
-              </Badge>
-            ))
-          }
-        </div>
-      </div>
+  <PageHeader
+    title="Dinar Échange"
+    subtitle="Algerian dinar exchange rates. Parallel market and official, side by side."
+    layout="lockup"
+  >
+    <Image
+      slot="media"
+      src={dinarIcon}
+      alt="Dinar Échange icon"
+      width={80}
+      height={80}
+      loading="eager"
+      class="!m-0 size-16 rounded-2xl sm:size-20"
+    />
+
+    <div slot="meta" class="flex flex-wrap gap-1.5">
+      {
+        ['Flutter', 'Dart', 'AWS Lambda', 'Python', 'Firebase', 'BeautifulSoup'].map((t) => (
+          <Badge variant="secondary" className="text-[0.6rem] font-normal">
+            {t}
+          </Badge>
+        ))
+      }
     </div>
 
-    <div class="mt-6 flex flex-wrap items-center gap-3">
+    <div slot="actions" class="flex flex-wrap items-center gap-3">
       <LinkButton
         href="https://play.google.com/store/apps/details?id=com.dinarexchange.app"
         target="_blank"
@@ -59,12 +57,15 @@ import dinarIcon from '@/assets/projects/dinar-echange/icon.png';
       >
     </div>
 
-    <div class="mt-5 flex gap-6 font-mono text-xs text-muted-foreground">
-      <span><span class="text-primary">v1.4.8</span></span>
-      <span><span class="text-primary">20</span> releases</span>
-      <span><span class="text-primary">3</span> languages</span>
+    <div
+      slot="stats"
+      class="flex flex-wrap gap-x-6 gap-y-2 font-mono text-xs text-muted-foreground"
+    >
+      <span><span class="text-primary tabular-nums">v1.4.8</span></span>
+      <span><span class="text-primary tabular-nums">20</span> releases</span>
+      <span><span class="text-primary tabular-nums">3</span> languages</span>
     </div>
-  </section>
+  </PageHeader>
 
   <!-- Screenshots — side by side like App Store -->
   <section class="py-4">

@@ -22,6 +22,8 @@ package-lock.json
 .vscode-test/
 .claude
 /docs
+# Local-only tooling (data generation scripts with absolute paths, etc.)
+/scripts
 # do not commit .env files or any files that end with `.env`
 *.env
 

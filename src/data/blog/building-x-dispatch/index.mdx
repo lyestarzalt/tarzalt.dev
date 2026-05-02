@@ -11,6 +11,26 @@ featuredImage: './cover.png'
 
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { AirportDiagram } from '@/components/AirportDiagram';
+
+<div className="not-prose mt-2 mb-4">
+  <div className="mb-3 flex items-baseline justify-between">
+    <p className="font-mono text-[0.625rem] uppercase tracking-[0.2em] text-muted-foreground/70">
+      Live · LFMN Nice Côte d’Azur
+    </p>
+    <p className="font-mono text-[0.625rem] text-muted-foreground/50">
+      the parser, in your browser
+    </p>
+  </div>
+  <div className="relative aspect-[16/10] sm:aspect-[16/9] overflow-hidden rounded-2xl border border-border bg-card/40">
+    <AirportDiagram client:visible variant="interactive" showCaption={false} />
+  </div>
+  <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+    Drag to pan, scroll to zoom. The whole shape that follows in the post is what gets parsed out of{' '}
+    <code className="font-mono text-[0.6875rem]">apt.dat</code>: runways, taxiways, painted
+    markings, hold lines.
+  </p>
+</div>
 
 [X-Plane](https://www.x-plane.com/) is a flight simulator, part of a scene that includes FSX, Prepar3D, MSFS, and a community that's been around for decades. Some people fly for fun, some like operating complex aircraft with all their systems, some build addons. I've been in it since I was a kid. X-Plane is made by Laminar Research, small company. The flight physics are some of the best out there, the sim is wide open to modifications, and there's a massive addon ecosystem around it. But there was always room for improvement on the user experience side.
 
