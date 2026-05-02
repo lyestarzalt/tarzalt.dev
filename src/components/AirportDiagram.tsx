@@ -9,6 +9,7 @@ import {
   type WheelEvent as ReactWheelEvent,
 } from 'react';
 import { motion, useInView, useReducedMotion } from 'framer-motion';
+import { GithubDownloadCount } from './GithubDownloadCount';
 import {
   LFMN_BOUNDARY,
   LFMN_LINEARS,
@@ -294,8 +295,14 @@ function AirportDiagramImpl({ variant, className, showCaption = true }: AirportD
             )}
           </div>
           {variant === 'compact' && (
-            <span className="hidden font-mono text-[0.625rem] tabular-nums text-muted-foreground/70 sm:inline">
-              14k+ downloads
+            <span className="hidden font-mono text-[0.625rem] text-muted-foreground/70 sm:inline">
+              <GithubDownloadCount
+                owner="lyestarzalt"
+                repo="x-dispatch"
+                fallback="14k+"
+                className="tabular-nums"
+              />{' '}
+              downloads
             </span>
           )}
         </div>

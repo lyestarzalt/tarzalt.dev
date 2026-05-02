@@ -8,6 +8,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Gallery } from '@/components/Gallery';
 import LinkPreview from '@/components/LinkPreview.astro';
 import { AirportDiagram } from '@/components/AirportDiagram';
+import { GithubDownloadCount } from '@/components/GithubDownloadCount';
 import PageHeader from '@/components/layout/PageHeader.astro';
 import xDispatchIcon from '@/assets/projects/x-dispatch/icon.png';
 ---
@@ -71,8 +72,17 @@ import xDispatchIcon from '@/assets/projects/x-dispatch/icon.png';
       slot="stats"
       class="flex flex-wrap gap-x-6 gap-y-2 font-mono text-xs text-muted-foreground"
     >
-      <span><span class="text-primary tabular-nums">14k+</span> downloads</span>
-      <span><span class="text-primary tabular-nums">29</span> reviews</span>
+      <span>
+        <GithubDownloadCount
+          client:load
+          owner="lyestarzalt"
+          repo="x-dispatch"
+          fallback="14k+"
+          className="text-primary tabular-nums"
+        />
+        {' '}downloads
+      </span>
+      <span><span class="text-primary tabular-nums">35</span> reviews</span>
       <span><span class="text-primary tabular-nums">10</span> languages</span>
     </div>
   </PageHeader>
