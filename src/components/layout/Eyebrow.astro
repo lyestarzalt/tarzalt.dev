@@ -1,0 +1,22 @@
+---
+/**
+ * Small uppercase eyebrow label used as a caption / over-line.
+ * Examples: "Live · LFMN · Nice Côte d'Azur", "Featured · Apr 2026".
+ *
+ * Always font-mono, always uppercase, always wide tracking.
+ * Use a `<span>` inside slot for inline content — the component renders a <p>.
+ */
+interface Props {
+  class?: string;
+  /** Use a slightly stronger contrast (default is muted/60). */
+  emphatic?: boolean;
+}
+
+const { class: className = '', emphatic = false } = Astro.props;
+
+const tone = emphatic ? 'text-muted-foreground/70' : 'text-muted-foreground/60';
+---
+
+<p class:list={['font-mono text-[0.625rem] uppercase tracking-[0.25em]', tone, className]}>
+  <slot />
+</p>

@@ -1,0 +1,27 @@
+---
+/**
+ * Vertical-rhythm container for page sections.
+ *
+ * Usage:
+ *   <Section>...content...</Section>
+ *   <Section tight>...less vertical padding...</Section>
+ *   <Section flush>...no vertical padding (caller controls)...</Section>
+ *
+ * The two variants exist so callers don't keep reinventing `py-X sm:py-Y`.
+ */
+interface Props {
+  class?: string;
+  /** Reduced vertical padding — for tight content stacks. */
+  tight?: boolean;
+  /** No vertical padding — caller controls spacing. Useful for inline divider+section pairs. */
+  flush?: boolean;
+}
+
+const { class: className = '', tight = false, flush = false } = Astro.props;
+
+const padding = flush ? '' : tight ? 'py-8 sm:py-10' : 'py-12 sm:py-16';
+---
+
+<section class:list={[padding, className]}>
+  <slot />
+</section>

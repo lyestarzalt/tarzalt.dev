@@ -32,6 +32,13 @@ const {
   tags,
 } = Astro.props;
 
+/*
+ * SINGLE SOURCE OF TRUTH for the site's content width.
+ * To change page width across the entire site, edit this constant.
+ * Do NOT add a `wide` prop — there is one width on this site, on purpose.
+ */
+const containerClass = 'max-w-3xl';
+
 const siteName = 'Lyes Tarzalt';
 const fullTitle = title.includes(siteName) ? title : `${title} | ${siteName}`;
 
@@ -104,17 +111,17 @@ const crumbs = segments.map((seg, i) => {
     <link
       rel="preload"
       as="style"
-      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,600;12..96,700&family=JetBrains+Mono:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,600;12..96,700&family=JetBrains+Mono:wght@400;500&display=swap"
     />
     <link
-      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,600;12..96,700&family=JetBrains+Mono:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,600;12..96,700&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
       media="print"
       onload="this.media='all'"
     />
     <noscript>
       <link
-        href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,600;12..96,700&family=JetBrains+Mono:wght@400;500&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,600;12..96,700&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet"
       />
     </noscript>
@@ -158,12 +165,12 @@ const crumbs = segments.map((seg, i) => {
       class="sticky top-0 z-40 w-full border-b border-transparent bg-background/80 backdrop-blur-lg transition-colors"
       data-header-wrap
     >
-      <div class="mx-auto max-w-3xl px-6">
+      <div class:list={['mx-auto px-6', containerClass]}>
         <Header />
       </div>
     </div>
 
-    <div class="mx-auto flex min-h-screen max-w-3xl flex-col px-6">
+    <div class:list={['mx-auto flex min-h-screen flex-col px-6', containerClass]}>
       <main class="flex-1 pb-16 pt-4">
         {
           !isHome && (

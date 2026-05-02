@@ -6,9 +6,8 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-heading: 'Instrument Serif', Georgia, serif;
-  --font-display: 'Bricolage Grotesque', sans-serif;
-  --font-sans: 'Inter Variable', sans-serif;
+  --font-heading: 'Bricolage Grotesque', system-ui, sans-serif;
+  --font-sans: 'Inter Variable', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
   --color-ring: var(--ring);
   --color-input: var(--input);
@@ -38,13 +37,26 @@
 }
 
 /*
- * tarzalt.dev design tokens
- * Dark-first. Warm navy base. Amber accent.
- * "I had time, a motion animation library, and free will."
+ * tarzalt.dev design system — single source of truth.
+ *
+ * Anything that affects how the site looks lives here. Pages and components
+ * read from these tokens. No page should hard-code a font, h1 size, page
+ * padding, or section rhythm — if you find yourself writing one, the right
+ * fix is to add (or use) a token here, not to duplicate the value at the
+ * call site. To restyle the whole site, edit this file.
+ *
+ * Layout primitives that consume these:
+ *   - src/components/layout/PageHeader.astro
+ *   - src/components/layout/Section.astro
+ *   - src/components/layout/SectionDivider.astro
+ *   - src/components/layout/Eyebrow.astro
+ *   - src/layouts/Base.astro
+ *   - src/layouts/BlogPost.astro
  */
 
 /* ── Light theme ── */
 :root {
+  /* Surface colors */
   --background: oklch(0.97 0.005 70);
   --foreground: oklch(0.14 0.02 250);
   --card: oklch(0.93 0.005 70);
@@ -64,6 +76,46 @@
   --input: oklch(0.88 0.005 70);
   --ring: oklch(0.55 0.14 55);
   --radius: 0.5rem;
+
+  /*
+   * Layout system tokens.
+   *
+   * Page width is set by Base.astro (max-w-3xl default, max-w-5xl with `wide`).
+   * Everything else — hero rhythm, h1 scale, section spacing — lives below.
+   */
+
+  /* Page hero (PageHeader.astro): top + bottom padding wrapping the title block */
+  --hero-pt: 3rem; /* mobile  (≈ pt-12) */
+  --hero-pt-md: 4rem; /* sm:     (≈ pt-16) */
+  --hero-pb: 2.5rem; /* mobile  (≈ pb-10) */
+  --hero-pb-md: 3rem; /* sm:     (≈ pb-12) */
+
+  /* Page H1 typography — locked across every page */
+  --hero-h1-size: 2.25rem; /* mobile  (text-4xl) */
+  --hero-h1-size-md: 3rem; /* sm:     (text-5xl) */
+  --hero-h1-leading: 1.05;
+  --hero-h1-tracking: -0.025em;
+
+  /* Page subtitle (the line directly under the H1) */
+  --hero-subtitle-size: 0.875rem; /* text-sm  */
+  --hero-subtitle-size-md: 1rem; /* sm:text-base */
+  --hero-subtitle-leading: 1.625;
+  --hero-subtitle-max-width: 60ch;
+
+  /* Body intro paragraphs (the slot inside PageHeader) */
+  --intro-size: 0.9375rem;
+  --intro-leading: 1.75;
+  --intro-max-width: 58ch;
+
+  /* Generic section vertical rhythm */
+  --section-py: 3rem;
+  --section-py-md: 4rem;
+  --section-py-tight: 2rem;
+  --section-py-tight-md: 2.5rem;
+
+  /* Eyebrow (small uppercase caption) */
+  --eyebrow-size: 0.625rem;
+  --eyebrow-tracking: 0.25em;
 }
 
 /* ── Dark theme (default) ── */

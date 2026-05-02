@@ -2,6 +2,8 @@
 import { Image } from 'astro:assets';
 import Base from '@/layouts/Base.astro';
 import { Badge } from '@/components/ui/badge';
+import PageHeader from '@/components/layout/PageHeader.astro';
+import SectionDivider from '@/components/layout/SectionDivider.astro';
 import xDispatchMap from '@/assets/projects/x-dispatch/map.png';
 import xDispatchIcon from '@/assets/projects/x-dispatch/icon.png';
 ---
@@ -10,18 +12,9 @@ import xDispatchIcon from '@/assets/projects/x-dispatch/icon.png';
   title="Projects - Lyes Tarzalt"
   description="Open source projects: X-Dispatch (flight dispatch for X-Plane 12), Dinar Échange (Algerian exchange rates), and more."
 >
-  <section class="pt-12 sm:pt-16">
-    <h1 class="font-heading text-4xl font-normal tracking-tight sm:text-5xl">Projects</h1>
-    <p class="mt-3 text-sm text-muted-foreground">Things I built because they needed to exist.</p>
-  </section>
+  <PageHeader title="Projects" subtitle="Things I built because they needed to exist." />
 
-  <div class="mt-10 flex items-center gap-4">
-    <div class="h-px flex-1 bg-border"></div>
-    <span class="font-mono text-[0.5rem] uppercase tracking-[0.3em] text-muted-foreground/60">
-      3 projects
-    </span>
-    <div class="h-px flex-1 bg-border"></div>
-  </div>
+  <SectionDivider label="3 projects" class="mt-2" />
 
   <div class="mt-10 space-y-6">
     <!-- X-Dispatch -->

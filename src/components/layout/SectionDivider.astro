@@ -1,0 +1,23 @@
+---
+/**
+ * Standardised section divider used across all top-level pages:
+ *   ── LABEL ──
+ *
+ * Replaces the inline `<div class="flex items-center gap-4">…</div>` pattern.
+ */
+interface Props {
+  label: string;
+  /** Top margin. Defaults to nothing — let the parent control rhythm. */
+  class?: string;
+}
+
+const { label, class: className = '' } = Astro.props;
+---
+
+<div class:list={['flex items-center gap-4', className]}>
+  <div class="h-px flex-1 bg-border"></div>
+  <h2 class="font-mono text-[0.5rem] uppercase tracking-[0.3em] text-muted-foreground">
+    {label}
+  </h2>
+  <div class="h-px flex-1 bg-border"></div>
+</div>

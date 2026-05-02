@@ -1,34 +1,27 @@
 ---
 import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
 import Base from '@/layouts/Base.astro';
 import { Badge } from '@/components/ui/badge';
+import PageHeader from '@/components/layout/PageHeader.astro';
+import SectionDivider from '@/components/layout/SectionDivider.astro';
 import { formatDate } from '@/lib/date';
 
 const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
 );
-
-import { getCollection } from 'astro:content';
 ---
 
 <Base
   title="Writing - Lyes Tarzalt"
   description="Engineering deep dives on parsing X-Plane airport data, building real-time dashboards, and the decisions behind shipping software."
 >
-  <section class="pt-12 sm:pt-16">
-    <h1 class="font-heading text-4xl font-normal tracking-tight sm:text-5xl">Writing</h1>
-    <p class="mt-3 text-sm text-muted-foreground">
-      Engineering deep dives and things I figured out the hard way.
-    </p>
-  </section>
+  <PageHeader
+    title="Writing"
+    subtitle="Engineering deep dives and things I figured out the hard way."
+  />
 
-  <div class="mt-10 flex items-center gap-4">
-    <div class="h-px flex-1 bg-border"></div>
-    <span class="font-mono text-[0.5rem] uppercase tracking-[0.3em] text-muted-foreground/60">
-      {posts.length} posts
-    </span>
-    <div class="h-px flex-1 bg-border"></div>
-  </div>
+  <SectionDivider label={`${posts.length} posts`} class="mt-2" />
 
   <div class="mt-10 space-y-6">
     {
@@ -53,7 +46,7 @@ import { getCollection } from 'astro:content';
                   {post.data.title}
                 </h2>
                 <time
-                  class="shrink-0 font-mono text-[0.625rem] text-muted-foreground/60"
+                  class="shrink-0 font-mono text-[0.625rem] tabular-nums text-muted-foreground/60"
                   datetime={post.data.date.toISOString()}
                 >
                   {formatDate(post.data.date)}

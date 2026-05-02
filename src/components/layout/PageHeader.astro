@@ -1,0 +1,96 @@
+---
+/**
+ * Standardised page header. Every top-level page uses this component
+ * for the area immediately under the global navigation: title, optional
+ * subtitle, optional supporting media (avatar/icon), and slot regions
+ * for meta (badges/tags), actions (CTAs), and stats (mono numbers).
+ *
+ * Two layouts:
+ *   - "stacked"  : media on top, then h1, then subtitle, then intro.
+ *                  Used for index/landing pages (Writing, Projects, About).
+ *   - "lockup"   : media on the left, h1+subtitle+intro on the right.
+ *                  Used when the page represents a thing with an icon
+ *                  (project detail pages, the personal homepage).
+ *
+ * Typography & spacing live INSIDE this component. Pages must not
+ * override the h1 size or intro line-height — that's exactly the kind
+ * of drift this primitive is here to prevent.
+ *
+ * Slots:
+ *   - media   : avatar / icon (positioned by `layout`)
+ *   - default : intro paragraph(s), or any extra content
+ *   - meta    : badges / tags / eyebrow line — sits under the title block
+ *   - actions : CTA buttons — sits under meta
+ *   - stats   : monospace stats line — sits at the bottom
+ */
+interface Props {
+  /** Visible H1. */
+  title: string;
+  /** Short tagline shown directly under the H1, smaller and muted. */
+  subtitle?: string;
+  /** "stacked" places media above h1; "lockup" places it to the left. */
+  layout?: 'stacked' | 'lockup';
+  /** Top/bottom padding control. Defaults to standard hero rhythm. */
+  class?: string;
+}
+
+const { title, subtitle, layout = 'stacked', class: className = '' } = Astro.props;
+---
+
+<section class:list={['pt-12 pb-10 sm:pt-16 sm:pb-12', className]}>
+  {
+    layout === 'lockup' ? (
+      <div class="flex items-start gap-5 sm:gap-6">
+        <div class="shrink-0">
+          <slot name="media" />
+        </div>
+        <div class="min-w-0 flex-1">
+          <h1 class="font-heading text-4xl font-normal leading-[1.05] tracking-tight sm:text-5xl">
+            {title}
+          </h1>
+          {subtitle && (
+            <p class="mt-2 max-w-[60ch] text-sm leading-relaxed text-muted-foreground sm:text-base">
+              {subtitle}
+            </p>
+          )}
+          <slot />
+          <div class="mt-4 empty:hidden">
+            <slot name="meta" />
+          </div>
+          <div class="mt-5 empty:hidden">
+            <slot name="actions" />
+          </div>
+          <div class="mt-5 empty:hidden">
+            <slot name="stats" />
+          </div>
+        </div>
+      </div>
+    ) : (
+      <div>
+        <div class="mb-7 empty:hidden">
+          <slot name="media" />
+        </div>
+        <h1 class="font-heading text-4xl font-normal leading-[1.05] tracking-tight sm:text-5xl">
+          {title}
+        </h1>
+        {subtitle && (
+          <p class="mt-3 max-w-[60ch] text-sm leading-relaxed text-muted-foreground sm:text-base">
+            {subtitle}
+          </p>
+        )}
+        <div class="mt-7 empty:hidden">
+          <slot />
+        </div>
+        <div class="mt-5 empty:hidden">
+          <slot name="meta" />
+        </div>
+        <div class="mt-6 empty:hidden">
+          <slot name="actions" />
+        </div>
+        <div class="mt-6 empty:hidden">
+          <slot name="stats" />
+        </div>
+      </div>
+    )
+  }
+</section>
