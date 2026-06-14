@@ -19,9 +19,9 @@ export const socialLinks: SocialLink[] = [
     username: 'lyes-tarzalt',
   },
   {
-    label: 'lyes.trzlt@gmail.com',
-    href: 'mailto:lyes.trzlt@gmail.com',
-    tip: 'lyes.trzlt@gmail.com',
-    username: 'lyes.trzlt',
+    label: 'lyes@tarzalt.dev',
+    href: 'mailto:lyes@tarzalt.dev',
+    tip: 'lyes@tarzalt.dev',
+    username: 'lyes',
   },
 ];
