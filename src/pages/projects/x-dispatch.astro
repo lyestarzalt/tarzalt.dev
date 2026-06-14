@@ -43,11 +43,34 @@ const galleryItems = await Promise.all(
     return { src: optimized.src, alt };
   }),
 );
+
+const softwareApplicationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'X-Dispatch',
+  description:
+    'Desktop app for X-Plane 12: browse 35,000+ airports on a 3D globe, set up your flight, and launch directly. Free and open source.',
+  applicationCategory: 'GameApplication',
+  applicationSubCategory: 'Flight Simulator Add-on',
+  operatingSystem: 'Windows, macOS, Linux',
+  softwareRequirements: 'X-Plane 12.4+',
+  url: 'https://x-dispatch.app/',
+  downloadUrl: 'https://x-dispatch.app/download/',
+  screenshot: galleryItems.map((item) => new URL(item.src, Astro.site).toString()),
+  author: { '@id': 'https://tarzalt.dev/#person' },
+  publisher: { '@id': 'https://tarzalt.dev/#person' },
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
+  },
+};
 ---
 
 <Base
   title="X-Dispatch — Flight Dispatch for X-Plane 12"
   description="Desktop app for visualizing X-Plane airports, navigation data, and launching flights. 3D globe with 35,000+ airports. Free and open source."
+  jsonLd={softwareApplicationSchema}
 >
   <PageHeader
     title="X-Dispatch"

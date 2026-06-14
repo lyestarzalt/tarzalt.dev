@@ -20,6 +20,7 @@ interface Props {
   publishedDate?: Date;
   modifiedDate?: Date;
   tags?: string[];
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 }
 
 const {
@@ -30,6 +31,7 @@ const {
   publishedDate,
   modifiedDate,
   tags,
+  jsonLd,
 } = Astro.props;
 
 /*
@@ -100,6 +102,7 @@ const crumbs = segments.map((seg, i) => {
       publishedDate={publishedDate}
       modifiedDate={modifiedDate}
       tags={tags}
+      jsonLd={jsonLd}
     />
     <meta
       name="ai-note"

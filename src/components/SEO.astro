@@ -1,4 +1,6 @@
 ---
+type JsonLdItem = Record<string, unknown>;
+
 interface Props {
   title: string;
   description: string;
@@ -7,6 +9,8 @@ interface Props {
   publishedDate?: Date;
   modifiedDate?: Date;
   tags?: string[];
+  // Extra page-specific JSON-LD (e.g. SoftwareApplication on project pages).
+  jsonLd?: JsonLdItem | JsonLdItem[];
 }
 
 const {
@@ -17,7 +21,10 @@ const {
   publishedDate,
   modifiedDate,
   tags = [],
+  jsonLd,
 } = Astro.props;
+
+const extraJsonLd: JsonLdItem[] = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const imageURL = new URL(image, Astro.site);
@@ -159,4 +166,9 @@ const websiteSchema = {
   segments.length > 0 && (
     <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
   )
+}
+{
+  extraJsonLd.map((item) => (
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(item)} />
+  ))
 }
