@@ -6,6 +6,7 @@ import PageHeader from '@/components/layout/PageHeader.astro';
 import SectionDivider from '@/components/layout/SectionDivider.astro';
 import xDispatchMap from '@/assets/projects/x-dispatch/map.png';
 import xDispatchIcon from '@/assets/projects/x-dispatch/icon.png';
+import dinarCurrencies from '@/assets/projects/dinar-echange/screenshots/screenshot-currencies.webp';
 ---
 
 <Base
@@ -96,9 +97,11 @@ import xDispatchIcon from '@/assets/projects/x-dispatch/icon.png';
           <div
             class="relative flex h-36 items-center justify-center overflow-hidden bg-card sm:h-40"
           >
-            <img
-              src="/images/projects/dinar-echange/screenshot-currencies.webp"
+            <Image
+              src={dinarCurrencies}
               alt="Dinar Échange currency rates screen"
+              widths={[320, 480, 640]}
+              sizes="(min-width: 640px) 320px, 50vw"
               class="!m-0 h-full !rounded-none object-contain transition-transform duration-500 group-hover:scale-[1.03]"
               loading="lazy"
             />

@@ -1,5 +1,5 @@
 ---
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import Base from '@/layouts/Base.astro';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -11,6 +11,38 @@ import { AirportDiagram } from '@/components/AirportDiagram';
 import { GithubDownloadCount } from '@/components/GithubDownloadCount';
 import PageHeader from '@/components/layout/PageHeader.astro';
 import xDispatchIcon from '@/assets/projects/x-dispatch/icon.png';
+import mapImg from '@/assets/projects/x-dispatch/screenshots/x-dispatch-map.png';
+import airportImg from '@/assets/projects/x-dispatch/screenshots/x-dispatch-airport.png';
+import terrainImg from '@/assets/projects/x-dispatch/screenshots/x-dispatch-terrain.png';
+import flightSetupImg from '@/assets/projects/x-dispatch/screenshots/x-dispatch-flight-setup.png';
+import proceduresImg from '@/assets/projects/x-dispatch/screenshots/x-dispatch-procedures.png';
+import simbriefImg from '@/assets/projects/x-dispatch/screenshots/x-dispatch-simbrief1.png';
+import weatherImg from '@/assets/projects/x-dispatch/screenshots/x-dispatch-weather.png';
+import trackingImg from '@/assets/projects/x-dispatch/screenshots/x-dispatch-tracking.png';
+import fuelImg from '@/assets/projects/x-dispatch/screenshots/x-dispatch-fuel.png';
+import startingImg from '@/assets/projects/x-dispatch/screenshots/x-dispatch-starting.png';
+import addonImg from '@/assets/projects/x-dispatch/screenshots/x-dispatch-addon1.png';
+
+// Convert each screenshot to an optimized webp at gallery width so the
+// raw 2–5 MB PNGs never ship. 1600px covers Retina up to ~1280 CSS px.
+const galleryItems = await Promise.all(
+  [
+    { src: mapImg, alt: 'World Map' },
+    { src: airportImg, alt: 'Airport Detail' },
+    { src: terrainImg, alt: '3D Terrain' },
+    { src: flightSetupImg, alt: 'Flight Setup' },
+    { src: proceduresImg, alt: 'SID/STAR' },
+    { src: simbriefImg, alt: 'SimBrief' },
+    { src: weatherImg, alt: 'Weather' },
+    { src: trackingImg, alt: 'Live Tracking' },
+    { src: fuelImg, alt: 'Fuel & Payload' },
+    { src: startingImg, alt: 'Start Position' },
+    { src: addonImg, alt: 'Addon Browser' },
+  ].map(async ({ src, alt }) => {
+    const optimized = await getImage({ src, format: 'webp', width: 1600 });
+    return { src: optimized.src, alt };
+  }),
+);
 ---
 
 <Base
@@ -106,22 +138,7 @@ import xDispatchIcon from '@/assets/projects/x-dispatch/icon.png';
 
   <!-- Screenshots -->
   <section>
-    <Gallery
-      client:load
-      screenshots={[
-        { src: '/images/projects/x-dispatch/x-dispatch-map.png', alt: 'World Map' },
-        { src: '/images/projects/x-dispatch/x-dispatch-airport.png', alt: 'Airport Detail' },
-        { src: '/images/projects/x-dispatch/x-dispatch-terrain.png', alt: '3D Terrain' },
-        { src: '/images/projects/x-dispatch/x-dispatch-flight-setup.png', alt: 'Flight Setup' },
-        { src: '/images/projects/x-dispatch/x-dispatch-procedures.png', alt: 'SID/STAR' },
-        { src: '/images/projects/x-dispatch/x-dispatch-simbrief1.png', alt: 'SimBrief' },
-        { src: '/images/projects/x-dispatch/x-dispatch-weather.png', alt: 'Weather' },
-        { src: '/images/projects/x-dispatch/x-dispatch-tracking.png', alt: 'Live Tracking' },
-        { src: '/images/projects/x-dispatch/x-dispatch-fuel.png', alt: 'Fuel & Payload' },
-        { src: '/images/projects/x-dispatch/x-dispatch-starting.png', alt: 'Start Position' },
-        { src: '/images/projects/x-dispatch/x-dispatch-addon1.png', alt: 'Addon Browser' },
-      ]}
-    />
+    <Gallery client:load screenshots={galleryItems} />
   </section>
 
   <Separator className="my-12" />
