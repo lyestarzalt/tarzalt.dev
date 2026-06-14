@@ -49,15 +49,29 @@ const breadcrumbSchema = {
   ],
 };
 
-// JSON-LD structured data
+// JSON-LD structured data — emitted as a connected graph so Google
+// can resolve Person ↔ WebSite ↔ WebPage relationships from any node.
 const personSchema = {
   '@context': 'https://schema.org',
   '@type': 'Person',
+  '@id': `${siteURL}#person`,
   name: 'Lyes Tarzalt',
   url: siteURL,
   jobTitle: 'Software Engineer',
   knowsAbout: ['shipping software', 'choosing fonts', 'leaving things alone (reportedly)'],
   sameAs: ['https://github.com/lyestarzalt', 'https://linkedin.com/in/lyes-tarzalt'],
+};
+
+const webPageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  '@id': `${canonicalURL.toString()}#webpage`,
+  url: canonicalURL.toString(),
+  name: fullTitle,
+  description,
+  isPartOf: { '@id': `${siteURL}#website` },
+  about: { '@id': `${siteURL}#person` },
+  inLanguage: 'en',
 };
 
 const articleSchema =
@@ -76,34 +90,23 @@ const articleSchema =
         },
         datePublished: publishedDate?.toISOString(),
         dateModified: modifiedDate?.toISOString() || publishedDate?.toISOString(),
-        author: {
-          '@type': 'Person',
-          name: 'Lyes Tarzalt',
-          url: siteURL,
-        },
-        publisher: {
-          '@type': 'Person',
-          name: 'Lyes Tarzalt',
-          url: siteURL,
-        },
+        author: { '@id': `${siteURL}#person` },
+        publisher: { '@id': `${siteURL}#person` },
         ...(tags.length > 0 && { keywords: tags.join(', ') }),
         ...(tags[0] && { articleSection: tags[0] }),
-        mainEntityOfPage: {
-          '@type': 'WebPage',
-          '@id': canonicalURL.toString(),
-        },
+        mainEntityOfPage: { '@id': `${canonicalURL.toString()}#webpage` },
       }
     : null;
 
-const websiteSchema =
-  type === 'website'
-    ? {
-        '@context': 'https://schema.org',
-        '@type': 'WebSite',
-        name: siteName,
-        url: siteURL,
-      }
-    : null;
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': `${siteURL}#website`,
+  name: siteName,
+  url: siteURL,
+  publisher: { '@id': `${siteURL}#person` },
+  inLanguage: 'en',
+};
 ---
 
 <!-- Primary Meta -->
@@ -144,11 +147,16 @@ const websiteSchema =
 <link rel="alternate" type="application/rss+xml" title="Lyes Tarzalt" href="/rss.xml" />
 
 <!-- JSON-LD Structured Data -->
-<script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
-{articleSchema && <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />}
-{websiteSchema && <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />}
+<script is:inline type="application/ld+json" set:html={JSON.stringify(personSchema)} />
+<script is:inline type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+<script is:inline type="application/ld+json" set:html={JSON.stringify(webPageSchema)} />
+{
+  articleSchema && (
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+  )
+}
 {
   segments.length > 0 && (
-    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
   )
 }
