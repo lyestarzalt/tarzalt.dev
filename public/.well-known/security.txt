@@ -1,0 +1,8 @@
+# If you find a security issue with tarzalt.dev, please get in touch.
+# See https://securitytxt.org for the spec.
+
+Contact: mailto:lyes.trzlt@gmail.com
+Contact: https://github.com/lyestarzalt
+Expires: 2027-06-15T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://tarzalt.dev/.well-known/security.txt
