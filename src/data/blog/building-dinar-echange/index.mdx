@@ -8,8 +8,12 @@ tags: ['Flutter', 'AWS Lambda', 'Scraping', 'Mobile', 'Algeria']
 categories: ['Projects']
 ---
 
+import { Image } from 'astro:assets';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import currenciesImg from '@/assets/projects/dinar-echange/screenshots/screenshot-currencies.webp';
+import converterImg from '@/assets/projects/dinar-echange/screenshots/screenshot-converter.png';
+import trendsImg from '@/assets/projects/dinar-echange/screenshots/screenshot-trends.png';
 
 A friend wanted an easy way to check Algerian dinar exchange rates. Not the official bank rate that the government publishes. The real one. The parallel market rate that everyone actually uses.
 
@@ -76,23 +80,29 @@ The UX was what I cared about most. Exchange rate apps tend to look like financi
 
 <div className="my-8 grid grid-cols-3 gap-3 mx-auto max-w-md">
   <div className="overflow-hidden rounded-xl border border-border">
-    <img
-      src="/images/projects/dinar-echange/screenshot-currencies.webp"
+    <Image
+      src={currenciesImg}
       alt="Currency rates showing parallel market buy and sell prices"
+      widths={[180, 360]}
+      sizes="(min-width: 640px) 140px, 33vw"
       className="w-full !m-0 !rounded-none"
     />
   </div>
   <div className="overflow-hidden rounded-xl border border-border">
-    <img
-      src="/images/projects/dinar-echange/screenshot-converter.png"
+    <Image
+      src={converterImg}
       alt="Currency converter with live rates"
+      widths={[180, 360]}
+      sizes="(min-width: 640px) 140px, 33vw"
       className="w-full !m-0 !rounded-none"
     />
   </div>
   <div className="overflow-hidden rounded-xl border border-border">
-    <img
-      src="/images/projects/dinar-echange/screenshot-trends.png"
+    <Image
+      src={trendsImg}
       alt="Rate trends chart over time"
+      widths={[180, 360]}
+      sizes="(min-width: 640px) 140px, 33vw"
       className="w-full !m-0 !rounded-none"
     />
   </div>

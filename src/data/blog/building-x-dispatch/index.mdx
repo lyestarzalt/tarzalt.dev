@@ -9,9 +9,16 @@ categories: ['Projects']
 featuredImage: './cover.png'
 ---
 
+import { Image } from 'astro:assets';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { AirportDiagram } from '@/components/AirportDiagram';
+import mapImg from '@/assets/projects/x-dispatch/map.png';
+import flightSetupImg from '@/assets/projects/x-dispatch/screenshots/x-dispatch-flight-setup.png';
+import terrainImg from '@/assets/projects/x-dispatch/terrain.png';
+import weatherImg from '@/assets/projects/x-dispatch/screenshots/x-dispatch-weather.png';
+import proceduresImg from '@/assets/projects/x-dispatch/screenshots/x-dispatch-procedures.png';
+import addonImg from '@/assets/projects/x-dispatch/screenshots/x-dispatch-addon1.png';
 
 <div className="not-prose mt-2 mb-4">
   <div className="mb-3 flex items-baseline justify-between">
@@ -86,7 +93,12 @@ The stack I landed on: Electron, React, TypeScript, MapLibre GL JS, Tailwind, sh
 
 This is what it became. 35,000 airports on a 3D globe:
 
-![X-Dispatch world map with airports](/images/projects/x-dispatch/x-dispatch-map.png)
+<Image
+  src={mapImg}
+  alt="X-Dispatch world map with airports"
+  widths={[640, 1024, 1600]}
+  sizes="(min-width: 768px) 768px, 100vw"
+/>
 
 MapLibre GL JS ticked every box: polygons, GeoJSON shapes, extensible, stable, and it handles coordinate projections for me. That last part was the big one. All the projection math I was doing by hand before? MapLibre just does it. I could even add 3D terrain if I wanted. Basically I could do anything, limited only by the user's machine.
 
@@ -121,7 +133,12 @@ If a user has custom scenery installed for an airport, that gets priority over t
 
 I got to the point where I could render gates and runways, and the user could pick a starting position.
 
-![Flight setup in X-Dispatch: pick your aircraft, gate, weather, and launch](/images/projects/x-dispatch/x-dispatch-flight-setup.png)
+<Image
+  src={flightSetupImg}
+  alt="Flight setup in X-Dispatch: pick your aircraft, gate, weather, and launch"
+  widths={[640, 1024, 1600]}
+  sizes="(min-width: 768px) 768px, 100vw"
+/>
 
 Looked good. But then I sat there thinking, right, they picked a gate... now what? How does X-Plane actually know about this?
 
@@ -144,7 +161,12 @@ But the cold start problem was still there. Command line flags I knew about didn
 
 This solved everything. X-Dispatch can launch X-Plane from scratch with a fully configured flight, or relocate mid flight if the sim is already open.
 
-![3D terrain view in X-Dispatch](/images/projects/x-dispatch/x-dispatch-terrain.png)
+<Image
+  src={terrainImg}
+  alt="3D terrain view in X-Dispatch"
+  widths={[640, 1024, 1600]}
+  sizes="(min-width: 768px) 768px, 100vw"
+/>
 
 If Laminar changes or removes that flag, my app breaks. I'm hoping they won't. Honestly, the fact that it exists at all makes me think they might be working on their own external launcher at some point.
 
@@ -160,15 +182,30 @@ I took the same idea. Started with a dark colour palette using X-Plane's signatu
 
 Weather, SID/STAR procedures, SimBrief integration. All built with the same design language:
 
-![Weather overlay in X-Dispatch](/images/projects/x-dispatch/x-dispatch-weather.png)
+<Image
+  src={weatherImg}
+  alt="Weather overlay in X-Dispatch"
+  widths={[640, 1024, 1600]}
+  sizes="(min-width: 768px) 768px, 100vw"
+/>
 
-![SID/STAR procedure visualization](/images/projects/x-dispatch/x-dispatch-procedures.png)
+<Image
+  src={proceduresImg}
+  alt="SID/STAR procedure visualization"
+  widths={[640, 1024, 1600]}
+  sizes="(min-width: 768px) 768px, 100vw"
+/>
 
 ## After launch
 
 Most of the features that came after were from users asking for them. The addon manager, SimBrief import, live tracking. All community-driven.
 
-![Addon manager in X-Dispatch](/images/projects/x-dispatch/x-dispatch-addon1.png)
+<Image
+  src={addonImg}
+  alt="Addon manager in X-Dispatch"
+  widths={[640, 1024, 1600]}
+  sizes="(min-width: 768px) 768px, 100vw"
+/>
 
 One person in particular, Gilles (enjxp / simtwk3 on the forums), gave me the best bug reports I've ever seen. Detailed reproduction steps, screenshots, everything tracked in a Google Sheet. A lot of the features he proposed made the app noticeably better, and some of the bugs he caught would have been deal breakers. I owe him a lot.
 
