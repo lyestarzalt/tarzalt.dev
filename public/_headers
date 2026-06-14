@@ -23,11 +23,15 @@
   X-Why-Are-You-Here: the name was quite clear
   X-Content-Warning: existential
 
-# Default for everything else
+# Security headers for every response.
+# NOTE: do NOT add Cache-Control here. Cloudflare _headers merges
+# header values across matching rules, so a Cache-Control on /* would
+# concatenate with the one on /*.html etc. Cache-Control lives on
+# specific paths only (see rules above).
 /*
-  Cache-Control: public, max-age=3600
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
-  Permissions-Policy: camera=(), microphone=(), geolocation=()
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdn.jsdelivr.net; img-src 'self' https: data:; connect-src 'self' https://cloudflareinsights.com
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src 'self' https://cdn.jsdelivr.net; img-src 'self' https: data:; connect-src 'self' https://cloudflareinsights.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
