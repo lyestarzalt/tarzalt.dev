@@ -1,1 +1,7 @@
 /sitemap.xml /sitemap-index.xml 301
+
+# Legacy Hugo URLs — Google still has these indexed.
+# Keep these until GSC stops reporting them as 404s.
+/index.xml /rss.xml 301
+/posts /blog/ 301
+/posts/* /blog/:splat 301
