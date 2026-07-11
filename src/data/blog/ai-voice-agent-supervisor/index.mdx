@@ -350,7 +350,7 @@ class CallEventStore:
         return response.status_code == 200
 ```
 
-If the middleware is down? **The call continues.** The agent doesn't wait around. This is crucial - you never want middleware problems to break customer calls.
+If the middleware is down? **The call continues.** The agent doesn't wait around. Middleware problems should never break customer calls.
 
 The middleware stores everything in Redis and broadcasts updates via WebSocket to any connected dashboards.
 

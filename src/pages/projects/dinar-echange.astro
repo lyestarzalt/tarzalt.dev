@@ -6,6 +6,7 @@ import { Separator } from '@/components/ui/separator';
 import LinkButton from '@/components/LinkButton.astro';
 import PageHeader from '@/components/layout/PageHeader.astro';
 import dinarIcon from '@/assets/projects/dinar-echange/icon.png';
+import dinarCurrencies from '@/assets/projects/dinar-echange/screenshots/screenshot-currencies.webp';
 
 const mobileApplicationSchema = {
   '@context': 'https://schema.org',
@@ -28,8 +29,9 @@ const mobileApplicationSchema = {
 ---
 
 <Base
-  title="Dinar Échange — Algerian Dinar Exchange Rates"
+  title="Dinar Échange · Algerian Dinar Exchange Rates"
   description="Mobile app for tracking Algerian dinar parallel market and official exchange rates. Flutter, AWS Lambda, Firebase."
+  image={dinarCurrencies.src}
   jsonLd={mobileApplicationSchema}
 >
   <PageHeader

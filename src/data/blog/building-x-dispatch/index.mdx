@@ -108,9 +108,9 @@ But MapLibre is a web thing, and this needed to be a desktop app. Two options: E
 
 This time I went straight for the bezier rendering. Heart of the app. If this doesn't work, nothing else matters.
 
-The thing that actually made it click: I opened WED, which is X-Plane's airport editor tool, and started drawing shapes. Then I'd look at the `apt.dat` file WED produced and compare. Drawing a shape visually and then reading the output it generated made the control point mirroring logic obvious in a way that reading the spec alone never did. It was a lot of back and forth with Claude and various documentation sources I found online, but WED was the breakthrough.
+The thing that actually made it click: I opened WED, which is X-Plane's airport editor tool, and started drawing shapes. Then I'd look at the `apt.dat` file WED produced and compare. Drawing a shape visually and then reading the output it generated made the [control point mirroring logic](/blog/parsing-xplane-airport-geometry/) obvious in a way that reading the spec alone never did. It was a lot of back and forth with Claude and various documentation sources I found online, but WED was the breakthrough.
 
-I wrote the full technical breakdown. Then I tackled linear features, the painted lines and taxiway lights.
+I wrote the full technical breakdown. Then I tackled [linear features, the painted lines and taxiway lights](/blog/xplane-linear-features-line-types/).
 
 <div className="flex flex-wrap gap-2 my-4">
   <Button variant="outline" size="sm" asChild>

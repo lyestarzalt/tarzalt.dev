@@ -16,6 +16,8 @@ interface Props {
   title: string;
   description?: string;
   image?: string;
+  imageWidth?: number;
+  imageHeight?: number;
   type?: 'website' | 'article';
   publishedDate?: Date;
   modifiedDate?: Date;
@@ -27,6 +29,8 @@ const {
   title,
   description = 'Lyes Tarzalt - Software engineer. Bootstraps ideas, ships them, sweats the details.',
   image,
+  imageWidth,
+  imageHeight,
   type,
   publishedDate,
   modifiedDate,
@@ -42,7 +46,7 @@ const {
 const containerClass = 'max-w-4xl';
 
 const siteName = 'Lyes Tarzalt';
-const fullTitle = title.includes(siteName) ? title : `${title} | ${siteName}`;
+const fullTitle = title.includes(siteName) ? title : `${title} · ${siteName}`;
 
 // Build breadcrumbs from URL path
 const pathname = Astro.url.pathname;
@@ -98,6 +102,8 @@ const crumbs = segments.map((seg, i) => {
       title={title}
       description={description}
       image={image}
+      imageWidth={imageWidth}
+      imageHeight={imageHeight}
       type={type}
       publishedDate={publishedDate}
       modifiedDate={modifiedDate}
@@ -128,26 +134,7 @@ const crumbs = segments.map((seg, i) => {
         rel="stylesheet"
       />
     </noscript>
-    <link
-      rel="preload"
-      as="style"
-      href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"
-      crossorigin="anonymous"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"
-      crossorigin="anonymous"
-      media="print"
-      onload="this.media='all'"
-    />
-    <noscript>
-      <link
-        rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"
-        crossorigin="anonymous"
-      />
-    </noscript>
+    <slot name="head" />
     <script is:inline>
       // Theme: dark by default
       (function () {

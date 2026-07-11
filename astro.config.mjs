@@ -30,7 +30,13 @@ export default defineConfig({
       name: 'Lyes Tarzalt',
       description: 'Personal site and blog of Lyes Tarzalt.',
       markdownPages: { enabled: true },
-      contentSignalHeaders: { enabled: true },
+      contentSignalHeaders: {
+        enabled: true,
+        // Match /public/robots.txt policy: search allowed, AI training blocked.
+        search: 'yes',
+        aiTrain: 'no',
+        aiInput: 'no',
+      },
     }),
     agentFooter(),
   ],

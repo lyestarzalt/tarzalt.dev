@@ -10,11 +10,14 @@ import { formatDate } from '@/lib/date';
 const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
 );
+
+const ogImage = posts[0]?.data.featuredImage?.src;
 ---
 
 <Base
-  title="Lyes Tarzalt — engineering deep dives and lessons learned"
+  title="Writing on parsing and the details behind shipping software · Lyes Tarzalt"
   description="Engineering deep dives on parsing X-Plane airport data, building real-time dashboards, and the decisions behind shipping software."
+  image={ogImage}
 >
   <PageHeader
     title="Writing"
