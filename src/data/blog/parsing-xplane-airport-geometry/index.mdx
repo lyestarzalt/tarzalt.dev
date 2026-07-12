@@ -4,7 +4,7 @@ subtitle: 'From row codes to rendered polygons'
 date: 2026-02-05T10:00:00+00:00
 lastmod: 2026-03-29T10:00:00+00:00
 draft: false
-description: "A guide to parsing airport geometry from X-Plane's apt.dat format — bezier curves, control point mirroring, winding order for holes, split beziers for sharp corners, and the gotchas that break your parser."
+description: "A guide to parsing airport geometry from X-Plane's apt.dat format: bezier curves, control point mirroring, winding order for holes, split beziers for sharp corners, and the gotchas that break your parser."
 summary: "A practical guide to parsing airport geometry from X-Plane's apt.dat format. Covers bezier curve encoding, control point mirroring, winding order for holes, split beziers for sharp corners, and common mistakes."
 tags: ['X-Plane', 'Bezier Curves', 'Parsing', 'Geometry', 'Flight Simulation']
 categories: ['Engineering']
@@ -18,7 +18,7 @@ I built [X-Dispatch](https://github.com/tarzalt/X-Dispatch) to visualize X-Plane
 
 ## The apt.dat file
 
-X-Plane stores **all** airport data in a single file called `apt.dat`. Every airport in the world — over 38,000 of them — in one text file.
+X-Plane stores **all** airport data in a single file called `apt.dat`. Every airport in the world (over 38,000 of them) in one text file.
 
 Why text?
 
@@ -27,7 +27,7 @@ Why text?
 - Portable. No endianness issues, no binary format versioning.
 - Extensible. New features are new row codes.
 
-The file is line-based. Each line starts with a **row code** — a number that identifies the data that follows.
+The file is line-based. Each line starts with a **row code**: a number that identifies the data that follows.
 
 ```
 1      ← Airport header (starts a new airport)
@@ -97,7 +97,7 @@ The closing codes (113/114) connect back to the first node and seal a polygon. E
 
 ![Why bezier curves matter](./why-bezier.svg 'Left: straight lines between nodes. Right: bezier curves.')
 
-The left image connects node coordinates with straight lines. The right is what the taxiway actually looks like.
+The left image connects node coordinates with straight lines. The right is what the taxiway looks like.
 
 Storing smooth curves as dense coordinate lists is wasteful. A bezier curve defines the shape with 3 or 4 points, and you sample it at whatever resolution you want. Store 4 points in the file, generate 60 when rendering. The curve is smooth at any zoom level because it's computed, not approximated by a fixed number of vertices.
 
@@ -187,7 +187,7 @@ function plainToBezier(start: Point, endNode: { pos: Point; control: Point }): P
 
 ### Bezier to plain (112 → 111)
 
-Quadratic bezier. You're leaving a bezier node, so use its stored control directly. No mirroring needed — the control already points in the direction you're going.
+Quadratic bezier. You're leaving a bezier node, so use its stored control directly. No mirroring needed. The control already points in the direction you're going.
 
 ![Quadratic curve from bezier to plain](./connection-bezier-plain.svg)
 
@@ -218,7 +218,7 @@ function bezierToBezier(
 
 Getting the controls backwards gives you spaghetti. The starting node's control always goes direct, the ending node's always gets mirrored.
 
-## Sharp corners — split beziers
+## Sharp corners: split beziers
 
 Bezier curves are smooth by nature. The control point at a node ensures the incoming and outgoing tangents are aligned, so the path flows through without breaking.
 
@@ -243,7 +243,7 @@ Here's the problem: when your parser sees two consecutive nodes at the same posi
 
 ![The spike trap](./spike-trap.svg)
 
-Before drawing any curve, check if start and end are the same point. If they are, skip the curve — but still add the coordinate. (The coordinate matters for type tracking; see [the linear features post](/blog/xplane-linear-features-line-types/).)
+Before drawing any curve, check if start and end are the same point. If they are, skip the curve, but still add the coordinate. (The coordinate matters for type tracking; see [the linear features post](/blog/xplane-linear-features-line-types/).)
 
 ```typescript
 // From pathParser.ts — epsilon comparison, not exact equality
@@ -267,7 +267,7 @@ if (coordsEqual(previousPos, currentPos)) {
 
 Note the epsilon comparison. Floating point equality is unreliable, so the real parser uses `1e-9` as a threshold.
 
-## Winding order — holes and fills
+## Winding order: holes and fills
 
 A taxiway shape might have holes cut out of it: buildings, equipment pads, whatever the scenery developer wanted to exclude from the pavement surface.
 
@@ -374,7 +374,7 @@ Real example:
 114 47.464 -122.310 30 102
 ```
 
-The `30 102` means: paint a solid red line along this edge and embed blue omnidirectional lights. The pavement boundary doubles as a linear feature. Instead of tracing two separate features — a pavement and a painted line on top of it — you define both at once.
+The `30 102` means: paint a solid red line along this edge and embed blue omnidirectional lights. The pavement boundary doubles as a linear feature. Instead of tracing two separate features (a pavement and a painted line on top of it), you define both at once.
 
 For the full line type and light type reference, see [the linear features post](/blog/xplane-linear-features-line-types/).
 
@@ -414,7 +414,7 @@ The result as GeoJSON:
 }
 ```
 
-## Reference — common mistakes
+## Reference: common mistakes
 
 1. Only implementing quadratic beziers. When two 112 nodes are consecutive, you need a cubic bezier with four control points. Quadratics will look close but you'll get kinks on S-curves.
 
@@ -424,13 +424,13 @@ The result as GeoJSON:
 
 4. The first node has no incoming curve. If a path starts with 112, just record its position and control. The curve gets drawn when the second node is processed.
 
-5. Control points can be anywhere. Very close to the node means a gentle curve. Very far means a sharp bend. At the same position as the node is effectively a plain node.
+5. Control points can be anywhere. Close to the node means a gentle curve. Far from the node means a sharp bend. At the same position as the node is a plain node.
 
 ## Resources
 
-- [Understanding the Logic of Bezier Control Points in apt.dat](https://forums.x-plane.org/forums/topic/66713-understanding-the-logic-of-bezier-control-points-in-aptdat/) — Forum thread explaining the mirroring logic
-- [Carlos Bergillos' blog post on apt.dat](https://cbergillos.com/blog/2022-07-11-xplane-aptdat/) — Format structure walkthrough
-- [xplane_apt_convert](https://github.com/CarlosBergillos/xplane_apt_convert) — Python library for converting apt.dat to GeoJSON and other formats
-- [X-Plane Scenery Gateway](https://gateway.x-plane.com/) — Community airport data repository
-- [apt.dat specification](https://developer.x-plane.com/article/airport-data-apt-dat-file-format-specification/) — The official format documentation
-- [Parsing painted lines and taxiway lights from apt.dat](/blog/xplane-linear-features-line-types/) — The companion post covering linear features, line types, and segment splitting
+- [Understanding the Logic of Bezier Control Points in apt.dat](https://forums.x-plane.org/forums/topic/66713-understanding-the-logic-of-bezier-control-points-in-aptdat/): forum thread explaining the mirroring logic
+- [Carlos Bergillos' blog post on apt.dat](https://cbergillos.com/blog/2022-07-11-xplane-aptdat/): format structure walkthrough
+- [xplane_apt_convert](https://github.com/CarlosBergillos/xplane_apt_convert): Python library for converting apt.dat to GeoJSON and other formats
+- [X-Plane Scenery Gateway](https://gateway.x-plane.com/): community airport data repository
+- [apt.dat specification](https://developer.x-plane.com/article/airport-data-apt-dat-file-format-specification/): the official format documentation
+- [Parsing painted lines and taxiway lights from apt.dat](/blog/xplane-linear-features-line-types/): the companion post covering linear features, line types, and segment splitting

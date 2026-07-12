@@ -41,9 +41,9 @@ import addonImg from '@/assets/projects/x-dispatch/screenshots/x-dispatch-addon1
 
 [X-Plane](https://www.x-plane.com/) is a flight simulator, part of a scene that includes FSX, Prepar3D, MSFS, and a community that's been around for decades. Some people fly for fun, some like operating complex aircraft with all their systems, some build addons. I've been in it since I was a kid. X-Plane is made by Laminar Research, small company. The flight physics are some of the best out there, the sim is wide open to modifications, and there's a massive addon ecosystem around it. But there was always room for improvement on the user experience side.
 
-One of the smartest things Laminar ever did was open sourcing the airport data through the [Scenery Gateway](https://gateway.x-plane.com/). People design airports, upload them, and if approved, they appear in the next sim update. Thousands of airports in X-Plane are handcrafted by the community. People spending hours looking at real charts, overlaying Google Maps imagery, getting taxiway widths and gate positions right so that a default airport actually looks like the real thing. It's a massive, quiet effort that most users never think about.
+One of the smartest things Laminar ever did was open sourcing the airport data through the [Scenery Gateway](https://gateway.x-plane.com/). People design airports, upload them, and if approved, they appear in the next sim update. Thousands of airports in X-Plane are handcrafted by the community. People spending hours looking at real charts, overlaying Google Maps imagery, getting taxiway widths and gate positions right so that a default airport looks like the real thing. It's a massive, quiet effort that most users never think about.
 
-I spent a good chunk of one summer working on all the Algerian airports myself. Algiers, Oran, Constantine, the smaller ones. I had a blast doing it. So I know what it takes. I wanted to give those airports justice. Let people actually see the detail that went into them instead of picking an ICAO code from a list and hoping for the best. That's a big part of why I built this.
+I spent a good chunk of one summer working on all the Algerian airports myself. Algiers, Oran, Constantine, the smaller ones. I had a blast doing it. So I know what it takes. I wanted to give those airports justice. Let people see the detail that went into them instead of picking an ICAO code from a list and hoping for the best. That's a big part of why I built this.
 
 Here's what setting up a flight looks like in X-Plane 12:
 
@@ -63,7 +63,7 @@ I like to tackle the hard stuff first. If the hard stuff can't be solved, everyt
 
 Here, there were two hard things. First, parsing `apt.dat`. X-Plane stores all airport data in this one massive text file. Not the 3D models, but the layout: runways, taxiways, pavement, gates, markings. It's a text file, so parsing it should be easy, right? Reading metadata was fine. Straight line polygons, fine. But the curves... oh boy.
 
-Second, getting X-Plane to actually start with the user's choices. I knew the sim kept its last flight configuration in a text file called `Freeflight.prf`. My thinking was: modify that file before launch, and X-Plane reads it and sets everything up. But there were zero docs about how this worked.
+Second, getting X-Plane to start with the user's choices. I knew the sim kept its last flight configuration in a text file called `Freeflight.prf`. My thinking was: modify that file before launch, and X-Plane reads it and sets everything up. But there were zero docs about how this worked.
 
 ## The first attempt
 
@@ -100,15 +100,15 @@ This is what it became. 35,000 airports on a 3D globe:
   sizes="(min-width: 768px) 768px, 100vw"
 />
 
-MapLibre GL JS ticked every box: polygons, GeoJSON shapes, extensible, stable, and it handles coordinate projections for me. That last part was the big one. All the projection math I was doing by hand before? MapLibre just does it. I could even add 3D terrain if I wanted. Basically I could do anything, limited only by the user's machine.
+MapLibre GL JS ticked every box: polygons, GeoJSON shapes, extensible, stable, and it handles coordinate projections for me. That last part was the big one. All the projection math I was doing by hand before? MapLibre just does it. I could even add 3D terrain if I wanted. I could do anything, limited only by the user's machine.
 
-But MapLibre is a web thing, and this needed to be a desktop app. Two options: Electron or Tauri. Tauri is actually the better fit on paper. Less memory, lighter, more modern. But it's built on Rust. I know nothing about Rust. The last thing I wanted while building something this complex was to also be learning a new language. Even with Claude and other AI tools helping, I didn't want code in my app that I couldn't reason about when something breaks. So Electron it was. My users run flight simulators, they have plenty of RAM, the overhead wasn't going to matter.
+But MapLibre is a web thing, and this needed to be a desktop app. Two options: Electron or Tauri. Tauri is the better fit on paper. Less memory, lighter, more modern. But it's built on Rust. I know nothing about Rust. The last thing I wanted while building something this complex was to also be learning a new language. Even with Claude and other AI tools helping, I didn't want code in my app that I couldn't reason about when something breaks. So Electron it was. My users run flight simulators, they have plenty of RAM, the overhead wasn't going to matter.
 
 ## Parsing apt.dat, second attempt
 
 This time I went straight for the bezier rendering. Heart of the app. If this doesn't work, nothing else matters.
 
-The thing that actually made it click: I opened WED, which is X-Plane's airport editor tool, and started drawing shapes. Then I'd look at the `apt.dat` file WED produced and compare. Drawing a shape visually and then reading the output it generated made the [control point mirroring logic](/blog/parsing-xplane-airport-geometry/) obvious in a way that reading the spec alone never did. It was a lot of back and forth with Claude and various documentation sources I found online, but WED was the breakthrough.
+The thing that made it click: I opened WED, which is X-Plane's airport editor tool, and started drawing shapes. Then I'd look at the `apt.dat` file WED produced and compare. Drawing a shape visually and then reading the output it generated made the [control point mirroring logic](/blog/parsing-xplane-airport-geometry/) obvious in a way that reading the spec alone never did. It was a lot of back and forth with Claude and various documentation sources I found online, but WED was the breakthrough.
 
 I wrote the full technical breakdown. Then I tackled [linear features, the painted lines and taxiway lights](/blog/xplane-linear-features-line-types/).
 
@@ -140,7 +140,7 @@ I got to the point where I could render gates and runways, and the user could pi
   sizes="(min-width: 768px) 768px, 100vw"
 />
 
-Looked good. But then I sat there thinking, right, they picked a gate... now what? How does X-Plane actually know about this?
+Looked good. But then I sat there thinking, right, they picked a gate... now what? How does X-Plane know about this?
 
 Remember `Freeflight.prf`? This is what's in it:
 
@@ -168,7 +168,7 @@ This solved everything. X-Dispatch can launch X-Plane from scratch with a fully 
   sizes="(min-width: 768px) 768px, 100vw"
 />
 
-If Laminar changes or removes that flag, my app breaks. I'm hoping they won't. Honestly, the fact that it exists at all makes me think they might be working on their own external launcher at some point.
+If Laminar changes or removes that flag, my app breaks. I'm hoping they won't. The flag existing at all makes me suspect they might be building their own external launcher at some point.
 
 ## Design
 
@@ -209,7 +209,7 @@ Most of the features that came after were from users asking for them. The addon 
 
 One person in particular, Gilles (enjxp / simtwk3 on the forums), gave me the best bug reports I've ever seen. Detailed reproduction steps, screenshots, everything tracked in a Google Sheet. A lot of the features he proposed made the app noticeably better, and some of the bugs he caught would have been deal breakers. I owe him a lot.
 
-A community started growing around the app. I had to set up a Discord server for it, which I didn't plan on doing. FSElite [covered the app](https://fselite.net/content/x-dispatch-adds-world-map-flight-launcher-and-add-on-manager-to-x-plane-12/). 19 reviews on X-Plane.Org, most of them five stars. People said really kind things.
+A community started growing around the app. I had to set up a Discord server for it, which I didn't plan on doing. FSElite [covered the app](https://fselite.net/content/x-dispatch-adds-world-map-flight-launcher-and-add-on-manager-to-x-plane-12/). 19 reviews on X-Plane.Org, most of them five stars. People said kind things.
 
 I've been flying sims since I was a kid. FSX, P3D, X-Plane 10, now 12. This app is my way of giving something back to a community I've been part of for a long time. I'm proud of it.
 

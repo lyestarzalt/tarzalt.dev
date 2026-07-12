@@ -17,7 +17,7 @@ featuredImage: './runway-airfield-marking-taxiway-heading-to-31456452.webp'
 
 Walk around any airport and you'll see paint on the ground. Yellow centerlines guide aircraft along taxiways. Hold short bars tell pilots where to stop before a runway. ILS critical area boundaries mark zones where vehicles must stay clear during instrument approaches. Blue edge lights line the taxiway borders at night.
 
-These are not filled shapes. They are stroked paths — lines painted on the surface, or lights embedded into it.
+These are not filled shapes. They are stroked paths: lines painted on the surface, or lights embedded into it.
 
 X-Plane calls them **linear features** and stores them under row code 120:
 
@@ -29,7 +29,7 @@ X-Plane calls them **linear features** and stores them under row code 120:
 115 47.467 -122.309 4 102
 ```
 
-The format looks similar to pavements: a header line, then a sequence of nodes defining the path. But instead of closing into a polygon, it ends with `115` or `116` (open path terminator). And each node carries extra data — the **line type** and **light type** for the segment that follows it.
+The format looks similar to pavements: a header line, then a sequence of nodes defining the path. But instead of closing into a polygon, it ends with `115` or `116` (open path terminator). And each node carries extra data: the **line type** and **light type** for the segment that follows it.
 
 |                 | Pavements (110)           | Linear features (120)  |
 | --------------- | ------------------------- | ---------------------- |
@@ -123,7 +123,7 @@ Node A (type 1)  ──segment (type 1)──>  Node B (type 4)  ──segment (
 
 Node A's type applies to the line from A to B. Node B's type applies from B to C. Simple enough. The type travels forward.
 
-If a node doesn't specify a type, it defaults to 0 (transparent). This is intentional. Some linear features have gaps where no paint or lights should appear. A default of 0 means "this segment is invisible" — not "this data is missing."
+If a node doesn't specify a type, it defaults to 0 (transparent). This is intentional. Some linear features have gaps where no paint or lights should appear. A default of 0 means "this segment is invisible," not "this data is missing."
 
 ## Segment splitting
 
@@ -204,7 +204,7 @@ Node A's type covers the curve itself. Node B's type covers whatever segment com
 
 ## Sharp corners and split beziers
 
-Bezier curves are inherently smooth — the incoming and outgoing tangent at a node are opposite directions, which produces a continuous curve. Sometimes you need a sharp corner instead: a 90-degree turn, an abrupt direction change. The solution is a **split bezier**: two nodes at the same position with independent control points.
+Bezier curves are inherently smooth. The incoming and outgoing tangent at a node are opposite directions, which produces a continuous curve. Sometimes you need a sharp corner instead: a 90-degree turn, an abrupt direction change. The solution is a **split bezier**: two nodes at the same position with independent control points.
 
 ![Split bezier](./split-bezier.svg)
 
@@ -258,7 +258,7 @@ The pavement boundary doubles as a linear feature. Instead of tracing two separa
 
 ## Reference: gotchas
 
-1. Type 0 is intentional. It means "don't paint anything here." Don't treat it as missing data — it is a deliberate gap in the marking.
+1. Type 0 is intentional. It means "don't paint anything here." Don't treat it as missing data. It is a deliberate gap in the marking.
 2. Lights and paint are independent. A node can have paint only (`1 0`), lights only (`0 102`), both (`1 102`), or neither. You may need to render the same linear feature twice: once for paint, once for lights.
 3. Don't deduplicate coordinates at split nodes. Each coordinate in the output array carries a type that the splitting algorithm depends on. Remove a coordinate and you remove its type.
 4. Types can change mid-curve. A bezier from type 1 to type 4 is valid. Intermediate points inherit the starting type, the endpoint carries the new type. The visual split happens at the node position.
@@ -266,7 +266,7 @@ The pavement boundary doubles as a linear feature. Instead of tracing two separa
 
 ## Resources
 
-- [Parsing X-Plane airport geometry from apt.dat](/blog/parsing-xplane-airport-geometry/) — Bezier math, control point mirroring, winding order
-- [apt.dat specification](https://developer.x-plane.com/article/airport-data-apt-dat-file-format-specification/) — Official format documentation
-- [xplane_apt_convert](https://github.com/CarlosBergillos/xplane_apt_convert) — Python library for apt.dat conversion
-- [X-Plane Scenery Gateway](https://gateway.x-plane.com/) — Community airport data repository
+- [Parsing X-Plane airport geometry from apt.dat](/blog/parsing-xplane-airport-geometry/): bezier math, control point mirroring, winding order
+- [apt.dat specification](https://developer.x-plane.com/article/airport-data-apt-dat-file-format-specification/): official format documentation
+- [xplane_apt_convert](https://github.com/CarlosBergillos/xplane_apt_convert): Python library for apt.dat conversion
+- [X-Plane Scenery Gateway](https://gateway.x-plane.com/): community airport data repository

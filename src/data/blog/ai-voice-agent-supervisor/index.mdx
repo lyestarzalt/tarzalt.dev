@@ -70,7 +70,7 @@ This one looks ridiculous. I like it. Calls appear as glowing bubbles floating i
 
 The inspiration came from the Apple Watch - how do you pack maximum information into minimal space? I thought: why not apply that to call monitoring? Instead of boring rows of data, make each call a living, breathing bubble that tells you everything at a glance.
 
-Negative sentiment calls automatically drift toward the center of the screen. So when you've got 10+ calls happening at once, the ones that need attention are literally harder to miss.
+Negative sentiment calls automatically drift toward the center of the screen. So when you've got 10+ calls happening at once, the ones that need attention are impossible to miss.
 
 <Figure
   src="/images/ai-voice-agent-supervisor/animation_bubble.gif"
@@ -201,7 +201,7 @@ def custom_text_handler(reader, participant_identity):
 The LLM has instructions in its system prompt to handle supervisor messages specially - it knows these are instructions to relay to the customer, not questions from the customer. A bit creepy? Yeah. But it works for the MVP and supervisors love it.
 
 > [!CAUTION]
-> Security-wise, this is obviously not production-ready. Anyone who can join with `supervisor_` in their identity can control the AI. For production, you'd want proper auth tokens and role validation.
+> Security-wise, this is not production-ready. Anyone who can join with `supervisor_` in their identity can control the AI. For production, you'd want proper auth tokens and role validation.
 
 **3. Take Over**
 

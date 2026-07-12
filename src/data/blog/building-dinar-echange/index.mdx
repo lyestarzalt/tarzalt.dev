@@ -16,9 +16,9 @@ import currenciesImg from '@/assets/projects/dinar-echange/screenshots/screensho
 import converterImg from '@/assets/projects/dinar-echange/screenshots/screenshot-converter.png';
 import trendsImg from '@/assets/projects/dinar-echange/screenshots/screenshot-trends.png';
 
-A friend wanted an easy way to check Algerian dinar exchange rates. Not the official bank rate that the government publishes. The real one. The parallel market rate that everyone actually uses.
+A friend wanted an easy way to check Algerian dinar exchange rates. Not the official bank rate that the government publishes. The real one. The parallel market rate that everyone uses in practice.
 
-If you're not familiar with Algeria, there's a big gap between the official exchange rate and what you'd actually get if you exchanged money on the street. Everyone knows this. Nobody talks about it officially. And there's no API for it.
+If you're not familiar with Algeria, there's a big gap between the official exchange rate and what you'd get if you exchanged money on the street. Everyone knows this. Nobody talks about it officially. And there's no API for it.
 
 I figured I'd build an app. Partly because my friend needed it, partly because I wanted to learn what it takes to ship a mobile app end to end, from writing code to having something real on the Play Store.
 
@@ -63,7 +63,7 @@ Simple fallback chain. No complicated orchestration.
 
 ## Core currencies vs everything else
 
-The scrapers only get rates for the major currencies people actually trade on the parallel market: EUR, USD, GBP, CAD, a handful of others. These are the "core" currencies.
+The scrapers only get rates for the major currencies people trade on the parallel market: EUR, USD, GBP, CAD, a handful of others. These are the "core" currencies.
 
 But people want to see rates for all kinds of currencies. So after scraping, I take the USD parallel rate and cross-reference it against a free exchange rate API to calculate approximate rates for every other currency in the world. If the parallel market says 1 USD = 232 DZD, and the API says 1 USD = 0.92 EUR, I can derive what 1 JPY or 1 BRL is worth in dinars on the parallel market.
 
